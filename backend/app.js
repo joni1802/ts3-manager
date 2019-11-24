@@ -71,6 +71,12 @@ io.on('connection', async (socket) => {
       try {
         let response = await teamSpeakConnection.execute(command, params, options)
 
+        // By default socket.io converts the object to JSON and parses it on the client side automatically to a javascript object again.
+        // Sometimes the response contains properties which are undefined. These properties would be removed because JSON have no value "undefined".
+        // Because of that, all undefined properties are converted to "null" before they are emittet to the frontend.
+        response =  JSON.stringify(response, (k, v) => v === undefined ? null : v)
+        response = JSON.parse(response)
+
         fn(response)
       } catch(err) {
         log.error(err.message)

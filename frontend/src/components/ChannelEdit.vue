@@ -11,11 +11,6 @@
             <v-text-field type="password" label="Password" v-model="editedChannel.channel_password"></v-text-field>
             <v-text-field label="Topic" v-model="editedChannel.channel_topic"></v-text-field>
             <v-textarea label="Description" v-model="editedChannel.channel_description"></v-textarea>
-            <!--<v-radio-group v-model="channelType" label="Channel Type">
-              <v-radio label="Temporary" value="1"></v-radio>
-              <v-radio label="Semi-Permanent" value="2"></v-radio>
-              <v-radio label="Permanent" value="3"></v-radio>
-            </v-radio-group>-->
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -39,16 +34,6 @@
         disabled: true,
       }
     },
-    computed: {
-      channelType: {
-        get() {
-
-        },
-        set() {
-
-        }
-      }
-    },
     methods: {
       getChannelInfo() {
         return this.$query('channelinfo', {cid: this.channelId}).then(channelinfo => channelinfo[0])
@@ -57,7 +42,7 @@
         let changes = {}
 
         for(let prop in this.channel) {
-          if(this.channel[prop] !== this.editedChannel[prop]) {
+          if(this.channel[prop] != this.editedChannel[prop]) {
             changes[prop] = this.editedChannel[prop]
           }
         }
