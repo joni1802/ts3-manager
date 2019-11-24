@@ -1,0 +1,15 @@
+{
+  "name": "TS3 Manager",
+  "short_name": "TS3 Manager",
+  "icons": [
+    {
+      "src": "./img/icons/ts3_manager_new.png",
+      "sizes": "380x380",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1c2537"
+}

@@ -1,0 +1,117 @@
+<template>
+  <v-container>
+    <v-layout>
+      <v-flex xs12>
+        <permission-table type="Client Permissions" :grantedPermissions="clientPermissions" :editableContent="['permvalue', 'permskip']" @save="savePermission" @remove="removePermission" @loaded="init">
+          <template slot="selectMenu">
+            <v-flex sm3 xs12>
+              <v-autocomplete :items="clientSelection" v-model="selectedClient" @change="changeClient" label="Client"></v-autocomplete>
+            </v-flex>
+          </template>
+        </permission-table>
+      </v-flex>
+    </v-layout>
+  </v-container>
+</template>
+
+<script>
+  export default {
+    components: {
+      PermissionTable: () => import('@/components/PermissionTable.vue')
+    },
+    data() {
+      return {
+        clientPermissions: [],
+        clients: [],
+        clientDbId: this.$route.params.cldbid,
+      }
+    },
+    computed: {
+      clientSelection() {
+        return this.clients.map(client => {
+          return {text: client.client_nickname, value: client.cldbid}
+        })
+      },
+      selectedClient: {
+        get() {
+          let client = this.clients.find(client => client.cldbid == this.clientDbId)
+
+          return client && {text: client.client_nickname, value: client.cldbid}
+        },
+        set() {
+          //
+        }
+      }
+    },
+    methods: {
+      getClientPermissions() {
+        return this.$query('clientpermlist', {cldbid: this.clientDbId})
+      },
+      getClientdblist() {
+        return this.$fullClientDbList()
+      },
+      changeClient(cldbid) {
+        this.$router.push({name: 'permissions-client', params: {cldbid: cldbid}})
+      },
+      async savePermission(permissionValues) {
+        let {permid, permskip, permvalue} = permissionValues
+
+        try {
+          await this.$query('clientaddperm', {
+            cldbid: this.clientDbId,
+            permid: permid,
+            permskip: + permskip,
+            permvalue: permvalue
+          })
+        } catch(err) {
+          this.$toast.error(err.message, {icon: 'error'})
+        }
+
+        try {
+          this.clientPermissions = await this.getClientPermissions()
+        } catch(err) {
+          this.$toast.error(err.message, {icon: 'error'})
+        }
+
+      },
+      async removePermission(permissionValues) {
+        let {permid} = permissionValues
+
+        try {
+          await this.$query('clientdelperm', {
+            cldbid: this.clientDbId,
+            permid: permid
+          })
+        } catch(err) {
+          this.$toast.error(err.message, {icon: 'error'})
+        }
+
+        try {
+          this.clientPermissions = await this.getClientPermissions()
+        } catch(err) {
+          this.$toast.error(err.message, {icon: 'error'})
+        }
+      },
+      async init() {
+        try {
+          this.clients = await this.getClientdblist()
+          this.clientPermissions = await this.getClientPermissions()
+        } catch(err) {
+          this.$toast.error(err.message, {icon: 'error'})
+        }
+      }
+    },
+    async beforeRouteUpdate(to, from, next) {
+      this.clientDbId = to.params.cldbid
+
+      try {
+        this.clientPermissions = await this.getClientPermissions()
+      } catch(err) {
+        this.$toast.error(err.message, {icon: 'error'})
+      }
+
+
+      next()
+    },
+  }
+</script>

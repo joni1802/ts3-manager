@@ -1,0 +1,31 @@
+# Mac os files
+.DS_Store
+
+# Ignore git files
+./git
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+# Excludes node_modules and dist directories
+node_modules
+dist
+
+# Ignore files which are used for development
+test.js
+/frontend/src/components/Test*
+README.md
+.pw
+*.exe
