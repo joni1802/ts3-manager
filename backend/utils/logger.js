@@ -1,21 +1,45 @@
 const winston = require('winston')
 const path = require('path')
 
-const hidePassword = winston.format(info => {
-  // Replace password with ********
-  if(info.client_login_password) info.client_login_password = '*'.repeat(info.client_login_password.length)
+// If there is a query parameter which contains a password, it will be not logged in clear text.
+// E.g channeledit channel_password=**** cid=5
+const hidePasswords = winston.format(info => {
+  let password = /password/
+  let queryParams = info.message.params
+
+  for(let prop in queryParams) {
+    // Replaces password with *
+    if(password.test(prop)) queryParams[prop] = '*'.repeat(queryParams[prop].length)
+  }
 
   return info
 })
 
+// Converts the sended query object to a string to make it more readable in the logs.
+const stringifyCommand = ({command, params, options}) => {
+  let fullCommand = `${command} `
+
+  for(let [prop, value] of Object.entries(params)) {
+    fullCommand += `${prop}=${value} `
+  }
+
+  for(let value of options) {
+    fullCommand += `${value} `
+  }
+
+  return fullCommand
+}
+
 const myFormat = winston.format.printf(({level, message, label, timestamp, client}) => {
+  if(message.command) message = stringifyCommand(message)
+
   return `${timestamp} | ${client} | ${level.toUpperCase()} | ${message}`;
 });
 
 const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp({format: 'YYYY-MM-DD HH:mm:ss'}),
-    hidePassword(),
+    hidePasswords(),
     myFormat
   ),
   transports: [

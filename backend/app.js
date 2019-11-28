@@ -8,7 +8,7 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const jwt = require('jsonwebtoken')
 const {TeamSpeak} = require('ts3-nodejs-library')
-const {logger, stringifyCommand} = require('./utils')
+const {logger} = require('./utils')
 
 app.use(express.static(path.join(__dirname, '../frontend/dist/')))
 
@@ -66,7 +66,7 @@ io.on('connection', async (socket) => {
     if(teamSpeakConnection instanceof TeamSpeak) {
       let {command, params, options} = query
 
-      log.info(stringifyCommand(command, params, options))
+      log.info(query)
 
       try {
         let response = await teamSpeakConnection.execute(command, params, options)
