@@ -11,7 +11,7 @@
                   <v-text-field label="Server" placeholder="IP or Domain" v-model="form.host" :rules="[rules.required]"></v-text-field>
                 </v-flex>
                 <v-flex xs12 md4>
-                  <v-text-field label="Port" type="number" v-model="form.port" :rules="[rules.required]">
+                  <v-text-field label="Port" type="number" v-model="form.queryport" :rules="[rules.required]">
                     <template slot="prepend">
                       <v-tooltip bottom>
                         <template slot="activator">
@@ -21,6 +21,18 @@
                       </v-tooltip>
                     </template>
                   </v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-checkbox v-model="form.ssh" label="SSH">
+                    <template slot="prepend">
+                      <v-tooltip bottom>
+                        <template slot="activator">
+                          <v-icon>mdi-help-circle-outline</v-icon>
+                        </template>
+                        <span>If SSH is checked (default), the connection to the ServerQuery is encrypted.</span>
+                      </v-tooltip>
+                    </template>
+                  </v-checkbox>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field label="Name" v-model="form.username" :rules="[rules.required]" placeholder="e.g. serveradmin" name="username" browser-autocomplete="username"></v-text-field>
@@ -60,7 +72,8 @@ export default {
       },
       form: {
         host: '',
-        port: 10022,
+        queryport: 10022,
+        ssh: true,
         username: '',
         password: '',
       },

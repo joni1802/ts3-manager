@@ -7,7 +7,7 @@ const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 const jwt = require('jsonwebtoken')
-const {TeamSpeak} = require('ts3-nodejs-library')
+const {TeamSpeak, QueryProtocol} = require('ts3-nodejs-library')
 const {logger} = require('./utils')
 
 app.use(express.static(path.join(__dirname, '../frontend/dist/')))
@@ -33,7 +33,7 @@ io.on('connection', async (socket) => {
       teamSpeakConnection = await TeamSpeak.connect(decoded)
       await teamSpeakConnection.execute('use', {sid: 1})
 
-      log.info(`reconnected to ${decoded.host}:${decoded.port}`)
+      log.info(`reconnected to ${decoded.host}:${decoded.queryport} => ${decoded.protocol}`)
     } catch(err) {
       log.error(err.message)
 
@@ -44,11 +44,19 @@ io.on('connection', async (socket) => {
   // Connect to the ServerQuery and try to login.
   socket.on('connect TeamSpeak', async (options, fn) => {
     try {
-      teamSpeakConnection = await TeamSpeak.connect(options)
+      let connectionParams = {
+        host: options.host,
+        queryport: options.queryport,
+        protocol: options.ssh ? QueryProtocol.SSH : QueryProtocol.RAW,
+        username: options.username,
+        password: options.password,
+      }
 
-      token = jwt.sign(options, secret)
+      teamSpeakConnection = await TeamSpeak.connect(connectionParams)
 
-      log.info(`connected to ${options.host}:${options.port}`)
+      token = jwt.sign(connectionParams, secret)
+
+      log.info(`connected to ${connectionParams.host}:${connectionParams.queryport} => ${connectionParams.protocol}`)
 
       // If the socket gets closed (e.g. when the user sends "quit" on the console or hits logout)
       teamSpeakConnection.on('close', () => socket.emit('TeamSpeak connection closed'))
@@ -83,6 +91,27 @@ io.on('connection', async (socket) => {
 
         fn({message: err.message, ...err})
       }
+    } else {
+      log.error('TeamSpeak instance not created')
+
+      socket.emit('TeamSpeak connection error', 'Please login again')
+    }
+  })
+
+  socket.on('snapshot TeamSpeak', async fn => {
+    if(teamSpeakConnection instanceof TeamSpeak) {
+      log.info('serversnapshotcreate')
+
+      try {
+        let response = await teamSpeakConnection.createSnapshot()
+
+        fn(response)
+      } catch(err) {
+        log.error(err.message)
+
+        fn({message: err.message, ...err})
+      }
+
     } else {
       log.error('TeamSpeak instance not created')
 
