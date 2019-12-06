@@ -1,5 +1,13 @@
 export default [
   {
+    path: '/snapshot',
+    component: () => import('@/components/ServerSnapshot'),
+    name: 'snapshot',
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/settings',
     component: () => import('@/components/Settings'),
     name: 'settings',

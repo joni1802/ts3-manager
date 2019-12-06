@@ -58,6 +58,11 @@
             path: '/servers',
           },
           {
+            title: 'Backup/Restore',
+            icon: 'settings_backup_restore',
+            path: '/snapshot'
+          },
+          {
             title: 'Server Viewer',
             icon: 'remove_red_eye',
             path: '/serverviewer',

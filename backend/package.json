@@ -1,6 +1,6 @@
 {
   "name": "ts3-manager-backend",
-  "version": "v1.0.1-beta",
+  "version": "v1.1.0-beta",
   "private": true,
   "description": "Webserver with websockets which handels the connection to the teamspeak serverquery",
   "main": "app.js",

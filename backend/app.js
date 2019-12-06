@@ -98,12 +98,36 @@ io.on('connection', async (socket) => {
     }
   })
 
-  socket.on('snapshot TeamSpeak', async fn => {
+  socket.on('snapshotcreate TeamSpeak', async fn => {
     if(teamSpeakConnection instanceof TeamSpeak) {
       log.info('serversnapshotcreate')
 
       try {
         let response = await teamSpeakConnection.createSnapshot()
+
+        fn(response)
+      } catch(err) {
+        log.error(err.message)
+
+        fn({message: err.message, ...err})
+      }
+
+    } else {
+      log.error('TeamSpeak instance not created')
+
+      socket.emit('TeamSpeak connection error', 'Please login again')
+    }
+  })
+
+  socket.on('snapshotdeploy TeamSpeak', async (snapshot, fn) => {
+    if(teamSpeakConnection instanceof TeamSpeak) {
+      log.info('serversnapshotdeploy')
+
+      try {
+        // (Re)encoding the sended string (snapshot) to base64.
+        // This prevents crashing the sever if an invalid file is uploaded.
+        let verifiedSnapshot = Buffer.from(snapshot.toString(), 'base64').toString('base64')
+        let response = await teamSpeakConnection.deploySnapshot(verifiedSnapshot)
 
         fn(response)
       } catch(err) {
