@@ -26,11 +26,11 @@
           </v-card-title>
           <v-card-actions>
             <v-layout justify-space-between wrap>
-              <v-flex xs12 sm8 md6>
+              <v-flex xs12 sm12 md6>
                 <input type="file" style="display: none" ref="hiddenFileSelector" @change="readFile" accept=".backup">
                 <v-text-field label="Select Backup File" @click="selectFile" v-model="fileName" prepend-icon="attach_file"></v-text-field>
               </v-flex>
-              <v-flex xs12 sm6 md3>
+              <v-flex xs12 sm12 md5>
                 <v-btn flat color="red" :disabled="filePicked" @click="deploySnapshot">
                   Deploy Snapshot
                   <v-icon right>
