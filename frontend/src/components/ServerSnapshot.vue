@@ -85,6 +85,8 @@
       async readFile(e) {
         let file = e.target.files[0]
 
+        console.log(file);
+
         if(file) {
           this.fileName = file.name
 
@@ -116,6 +118,7 @@
       clearFileSelector() {
         this.fileName = ''
         this.fileContent = {}
+        this.$refs.hiddenFileSelector.value = ''
       },
       selectServer() {
         return this.$query('use', {sid: this.$store.state.connection.serverId})
