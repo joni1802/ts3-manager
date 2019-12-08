@@ -6,7 +6,7 @@
   export default {
     methods: {
       quit() {
-        return this.$query('quit')
+        return this.$TeamSpeak.execute('quit')
       },
       clearStorage() {
         this.$store.dispatch('clearConnection')

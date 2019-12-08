@@ -52,10 +52,10 @@
     },
     methods: {
       getServergroupPermissions() {
-        return this.$query('servergrouppermlist', {sgid: this.servergroupId})
+        return this.$TeamSpeak.execute('servergrouppermlist', {sgid: this.servergroupId})
       },
       getServergrouplist() {
-        return this.$query('servergrouplist')
+        return this.$TeamSpeak.execute('servergrouplist')
       },
       changeGroup(sgid) {
         this.$router.push({name: 'permissions-servergroup', params: {sgid: sgid}})
@@ -72,7 +72,7 @@
         }
 
         try {
-          await this.$query('servergroupaddperm', params)
+          await this.$TeamSpeak.execute('servergroupaddperm', params)
         } catch(err) {
           this.$toast.error(err.message)
         }
@@ -92,7 +92,7 @@
         }
 
         try {
-          await this.$query('servergroupdelperm', params)
+          await this.$TeamSpeak.execute('servergroupdelperm', params)
         } catch(err) {
           this.$toast.error(err.message)
         }
@@ -104,8 +104,15 @@
         }
       },
       async init() {
+
+
         try {
           this.servergroups = await this.getServergrouplist()
+
+          if(!this.servergroupId) {
+            this.$router.replace({name: 'permissions-servergroup', params: {sgid: this.regularServerGroups[0].sgid}})
+          }
+
           this.serverGroupPermissions = await this.getServergroupPermissions()
         } catch(err) {
           this.$toast.error(err.message)

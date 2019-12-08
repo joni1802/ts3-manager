@@ -78,7 +78,7 @@
         }
       },
       async serverAction(action) {
-        return this.$query(action, {sid: this.selectedServer.virtualserver_id})
+        return this.$TeamSpeak.execute(action, {sid: this.selectedServer.virtualserver_id})
       },
       async startServer() {
         try {
@@ -115,14 +115,14 @@
         }
       },
       getServerList() {
-        return this.$query('serverlist')
+        return this.$TeamSpeak.execute('serverlist')
       },
       // Selects the first available server from the list and selects its as default server
       setServerId() {
         this.serverId = [...this.servers].shift().virtualserver_id
       },
       useServer() {
-        return this.$query('use', {sid: this.serverId})
+        return this.$TeamSpeak.execute('use', {sid: this.serverId})
       },
       isOffline(status) {
         return status === 'offline' ? true : false

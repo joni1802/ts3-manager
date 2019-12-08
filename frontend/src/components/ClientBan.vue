@@ -24,11 +24,11 @@
     },
     methods: {
       getClientDbInfo() {
-        return this.$query('clientdbinfo', {cldbid: this.clientDbId}).then(clientdbinfo => clientdbinfo[0])
+        return this.$TeamSpeak.execute('clientdbinfo', {cldbid: this.clientDbId}).then(clientdbinfo => clientdbinfo[0])
       },
       async banClient(data) {
         try {
-          await this.$query('banclient', {
+          await this.$TeamSpeak.execute('banclient', {
             uid: data.uid,
             banreason: data.reason,
             time: data.duration

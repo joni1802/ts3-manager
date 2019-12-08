@@ -21,11 +21,11 @@
     },
     methods: {
       getServerGroupList() {
-        return this.$query('servergrouplist')
+        return this.$TeamSpeak.execute('servergrouplist')
       },
       async addServerGroup(name) {
         try {
-          await this.$query('servergroupadd', {name: name})
+          await this.$TeamSpeak.execute('servergroupadd', {name: name})
 
           this.serverGroups = await this.getServerGroupList()
         } catch(err) {
@@ -34,7 +34,7 @@
       },
       async removeServerGroup(group, force) {
         try {
-          await this.$query('servergroupdel', {
+          await this.$TeamSpeak.execute('servergroupdel', {
             sgid: group.sgid,
             force: +force,
           })

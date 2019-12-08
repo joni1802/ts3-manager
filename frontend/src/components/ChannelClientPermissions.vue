@@ -67,22 +67,22 @@
     },
     methods: {
       getChannelClientPermList() {
-        return this.$query('channelclientpermlist', {
+        return this.$TeamSpeak.execute('channelclientpermlist', {
           cid: this.channelId,
           cldbid: this.clientDbId
         })
       },
       getClientDbList() {
-        return this.$fullClientDbList()
+        return this.$TeamSpeak.fullClientDBList()
       },
       getChannelList() {
-        return this.$query('channellist')
+        return this.$TeamSpeak.execute('channellist')
       },
       async savePermission(permission) {
         let {permid, permvalue} = permission
 
         try {
-          await this.$query('channelclientaddperm', {
+          await this.$TeamSpeak.execute('channelclientaddperm', {
             cid: this.channelId,
             cldbid: this.clientDbId,
             permid: permid,
@@ -102,7 +102,7 @@
         let {permid} = permission
 
         try {
-          await this.$query('channelclientdelperm', {
+          await this.$TeamSpeak.execute('channelclientdelperm', {
             cid: this.channelId,
             cldbid: this.clientDbId,
             permid: permid,

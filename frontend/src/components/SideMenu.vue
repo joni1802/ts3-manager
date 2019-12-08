@@ -104,26 +104,31 @@
               {
                 title: 'Server Group',
                 icon: 'group',
-                path: '/permissions/servergroup/6',
+                //path: '/permissions/servergroup/6',
+                path: '/permissions/servergroup/',
               },
               {
                 title: 'Client Permissions',
                 icon: 'person',
-                path: '/permissions/client/2',
+                //path: '/permissions/client/2',
+                path: '/permissions/client/',
               },
               {
                 title: 'Channel Permissions',
                 icon: 'chat_bubble',
-                path: '/permissions/channel/1',
+                //path: '/permissions/channel/1',
+                path: '/permissions/channel/',
               },
               {
                 title: 'Channel Groups',
                 icon: 'chat_bubble',
-                path: '/permissions/channelgroup/5',
+                //path: '/permissions/channelgroup/5',
+                path: '/permissions/channelgroup/',
               },
               {
                 title: 'Channel Client Permissions',
                 icon: 'chat_bubble',
+                //path: '/permissions/channel/1/client/2',
                 path: '/permissions/channel/1/client/2',
               },
             ]

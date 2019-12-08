@@ -61,18 +61,18 @@
         this.selectedClients.splice(index, 1)
       },
       getServerGroup() {
-        return this.$query('servergrouplist').then(list => list.find(group => group.sgid == this.serverGroupId))
+        return this.$TeamSpeak.execute('servergrouplist').then(list => list.find(group => group.sgid == this.serverGroupId))
       },
       getServerGroupClientList() {
-        return this.$query('servergroupclientlist', {
+        return this.$TeamSpeak.execute('servergroupclientlist', {
           sgid: this.serverGroupId
         }, ['-names'])
       },
       getClientDbList() {
-        return this.$fullClientDbList()
+        return this.$TeamSpeak.fullClientDBList()
       },
       async renameServerGroup() {
-        await this.$query('servergrouprename', {
+        await this.$TeamSpeak.execute('servergrouprename', {
           sgid: this.serverGroupId,
           name: this.serverGroup.name
         })
@@ -81,7 +81,7 @@
         let clientRemoveList = this.currentServerGroupClients.filter(client => !this.selectedClients.includes(client.cldbid))
 
         for(let client of clientRemoveList) {
-          await this.$query('servergroupdelclient', {
+          await this.$TeamSpeak.execute('servergroupdelclient', {
             sgid: this.serverGroupId,
             cldbid: client.cldbid
           })
@@ -92,7 +92,7 @@
         let clientAddList = this.serverGroupClients.filter(client => !currentClientDbIds.includes(client.cldbid))
 
         for(let client of clientAddList) {
-          await this.$query('servergroupaddclient', {
+          await this.$TeamSpeak.execute('servergroupaddclient', {
             sgid: this.serverGroupId,
             cldbid: client.cldbid
           })

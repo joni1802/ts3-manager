@@ -23,7 +23,7 @@
     methods: {
       async addBan(data) {
         try {
-          await this.$query('banadd', {
+          await this.$TeamSpeak.execute('banadd', {
             ip: data.ip,
             name: data.name,
             uid: data.uid,

@@ -57,13 +57,13 @@
         return out
       },
       getServerInfo() {
-        return this.$query('serverinfo').then(serverinfo => serverinfo[0])
+        return this.$TeamSpeak.execute('serverinfo').then(serverinfo => serverinfo[0])
       },
       getClientList() {
-        return this.$query('clientlist', {}, ['-voice', '-away'])
+        return this.$TeamSpeak.execute('clientlist', {}, ['-voice', '-away'])
       },
       getChannelList() {
-        return this.$query('channellist')
+        return this.$TeamSpeak.execute('channellist')
       },
       // Set a timeout when auto refresh is enabled to prevent a flooting ban by teamspeak
       preventFlooting() {

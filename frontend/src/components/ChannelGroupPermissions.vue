@@ -50,16 +50,16 @@
     },
     methods: {
       getChannelGroupPermList() {
-        return this.$query('channelgrouppermlist', {cgid: this.channelGroupId})
+        return this.$TeamSpeak.execute('channelgrouppermlist', {cgid: this.channelGroupId})
       },
       getChannelGroupList() {
-        return this.$query('channelgrouplist')
+        return this.$TeamSpeak.execute('channelgrouplist')
       },
       async savePermission(permission) {
         let {permid, permvalue} = permission
 
         try {
-          await this.$query('channelgroupaddperm', {
+          await this.$TeamSpeak.execute('channelgroupaddperm', {
             cgid: this.channelGroupId,
             permid: permid,
             permvalue: permvalue
@@ -78,7 +78,7 @@
         let {permid} = permission
 
         try {
-          await this.$query('channelgroupdelperm', {
+          await this.$TeamSpeak.execute('channelgroupdelperm', {
             cgid: this.channelGroupId,
             permid: permid,
           })
@@ -98,6 +98,11 @@
       async init() {
         try {
           this.channelGroups = await this.getChannelGroupList()
+
+          if(!this.channelGroupId) {
+            this.$router.replace({name: 'permissions-channelgroup', params: {cgid: this.normalChannelGroups[0].cgid}})
+          }
+
           this.permissions = await this.getChannelGroupPermList()
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})

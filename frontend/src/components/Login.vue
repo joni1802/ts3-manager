@@ -81,21 +81,21 @@ export default {
     }
   },
   methods: {
-    connect() {
+    async connect() {
       this.loading = true
 
-      this.$socket.emit('connect TeamSpeak', this.form, response => {
-        this.loading = false
+      try {
+        let response = await this.$TeamSpeak.connect(this.form)
 
-        if(response.token) {
-          this.$store.commit('isConnected', true)
-          this.$store.commit('saveToken', response.token)
-          this.$router.push({name: 'servers'})
-        } else {
-          this.$toast.error(response.error, {icon: 'error'})
-          this.$store.commit('isConnected', false)
-        }
-      })
+        this.$store.commit('isConnected', true)
+        this.$store.commit('saveToken', response.token)
+        this.$router.push({name: 'servers'})
+      } catch(err) {
+        this.$toast.error(err.message, {icon: 'error'})
+        this.$store.commit('isConnected', false)
+      }
+
+      this.loading = false
     }
   }
 }

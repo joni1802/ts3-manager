@@ -6,7 +6,8 @@ import VuetifyToast from 'vuetify-toast-snackbar'
 import store from './store'
 import router from './router'
 import socket from './socket'
-import {query, login, fullClientDbList} from './utils'
+//import {query, fullClientDbList} from './utils'
+import TeamSpeak from './api/TeamSpeak'
 import './registerServiceWorker'
 
 // More infos => https://github.com/eolant/vuetify-toast-snackbar
@@ -24,8 +25,7 @@ socket.open()
 
 // Adding instance properties which are often used in components
 Vue.prototype.$socket = socket
-Vue.prototype.$query = query
-Vue.prototype.$fullClientDbList = fullClientDbList
+Vue.prototype.$TeamSpeak = TeamSpeak
 
 // Render app
 new Vue({

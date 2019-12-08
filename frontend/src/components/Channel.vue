@@ -86,7 +86,7 @@
         let force = + this.forceDeletion
 
         try {
-          await this.$query('channeldelete', {
+          await this.$TeamSpeak.execute('channeldelete', {
             cid: cid,
             force: force
           })

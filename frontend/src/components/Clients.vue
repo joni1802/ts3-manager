@@ -97,11 +97,11 @@
         this.dialog = true
       },
       getClientDbList() {
-        return this.$fullClientDbList()
+        return this.$TeamSpeak.fullClientDBList()
       },
       async deleteClient() {
         try {
-          await this.$query('clientdbdelete', {cldbid:  this.selectedClient.cldbid})
+          await this.$TeamSpeak.execute('clientdbdelete', {cldbid:  this.selectedClient.cldbid})
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})
         }

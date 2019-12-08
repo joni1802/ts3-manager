@@ -50,10 +50,10 @@
     },
     methods: {
       getClientInfo() {
-        return this.$query('clientinfo', {clid: this.clientId}).then(clientinfo => clientinfo[0])
+        return this.$TeamSpeak.execute('clientinfo', {clid: this.clientId}).then(clientinfo => clientinfo[0])
       },
       getServergroupList() {
-        return this.$query('servergrouplist')
+        return this.$TeamSpeak.execute('servergrouplist')
       },
       save() {
         try {
@@ -100,14 +100,14 @@
         }
 
         for(let sgid of list) {
-          await this.$query(command, {
+          await this.$TeamSpeak.execute(command, {
             sgid: sgid,
             cldbid: this.client.client_database_id
           })
         }
       },
       async changeDescription() {
-        await this.$query('clientedit', {
+        await this.$TeamSpeak.execute('clientedit', {
           clid: this.clientId,
           client_description: this.description
         })

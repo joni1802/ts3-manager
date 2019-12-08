@@ -61,7 +61,7 @@ export default {
     sendData(input) {
       let {command, parameters, options} = this.preparedCommand(input)
 
-      return this.$query(command, parameters, options)
+      return this.$TeamSpeak.execute(command, parameters, options)
     },
     formatResponse(response) {
       return response.map(obj => {

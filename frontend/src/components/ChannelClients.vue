@@ -130,7 +130,7 @@
         let {clid} = this.selectedClient
 
         try {
-          await this.$query('clientkick', {
+          await this.$TeamSpeak.execute('clientkick', {
             reasonid: this.reasonid,
             reasonmsg: this.reason,
             clid: clid

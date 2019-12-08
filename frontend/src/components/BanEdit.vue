@@ -23,10 +23,10 @@
     },
     methods: {
       getBanList() {
-        return this.$query('banlist')
+        return this.$TeamSpeak.execute('banlist')
       },
       addBan(currentBan) {
-        return this.$query('banadd', {
+        return this.$TeamSpeak.execute('banadd', {
           ip: currentBan.ip,
           name: currentBan.name,
           uid: currentBan.uid,
@@ -59,7 +59,7 @@
         }
       },
       removeBan() {
-        return this.$query('bandel', {banid: this.banid})
+        return this.$TeamSpeak.execute('bandel', {banid: this.banid})
       },
       async save(data) {
         try {

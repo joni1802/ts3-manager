@@ -36,7 +36,7 @@
     },
     methods: {
       getChannelInfo() {
-        return this.$query('channelinfo', {cid: this.channelId}).then(channelinfo => channelinfo[0])
+        return this.$TeamSpeak.execute('channelinfo', {cid: this.channelId}).then(channelinfo => channelinfo[0])
       },
       detectedChanges() {
         let changes = {}
@@ -53,7 +53,7 @@
         let params = {...this.detectedChanges(), cid: this.channelId}
 
         try {
-          await this.$query('channeledit', params)
+          await this.$TeamSpeak.execute('channeledit', params)
 
           this.$toast.success('Channel updated', {icon: 'done'})
         } catch(err) {

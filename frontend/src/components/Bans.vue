@@ -101,7 +101,7 @@
     },
     methods: {
       getBanList() {
-        return this.$query('banlist')
+        return this.$TeamSpeak.execute('banlist')
       },
       toggleAll() {
         // I do not understand this method at all but it works
@@ -123,7 +123,7 @@
       async deleteBans() {
         try {
           for(let ban of this.selected) {
-            await this.$query('bandel', {banid: ban.banid})
+            await this.$TeamSpeak.execute('bandel', {banid: ban.banid})
           }
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})

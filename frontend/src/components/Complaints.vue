@@ -102,7 +102,7 @@
     },
     methods: {
       getComplainList() {
-        return this.$query('complainlist')
+        return this.$TeamSpeak.execute('complainlist')
       },
       toggleAll() {
         // I do not understand this method at all but it works
@@ -119,7 +119,7 @@
       async removeComplaints() {
         try {
           for(let complaint of this.selectedComplaints) {
-            await this.$query('complaindel', {
+            await this.$TeamSpeak.execute('complaindel', {
               tcldbid: complaint.tcldbid,
               fcldbid: complaint.fcldbid,
             })

@@ -18,7 +18,7 @@ COPY . .
 RUN npm --prefix ${BACKEND_DIR} install ${BACKEND_DIR}
 
 # download all the packages for the frontend and build app for production with minification
-RUN npm --prefix ${FRONTEND_DIR} install ./frontend && npm run build --prefix ${FRONTEND_DIR}
+RUN npm --prefix ${FRONTEND_DIR} install ${FRONTEND_DIR} && npm run build --prefix ${FRONTEND_DIR}
 
 # the webserver port
 EXPOSE ${PORT}

@@ -45,10 +45,10 @@
     },
     methods: {
       getClientPermissions() {
-        return this.$query('clientpermlist', {cldbid: this.clientDbId})
+        return this.$TeamSpeak.execute('clientpermlist', {cldbid: this.clientDbId})
       },
       getClientdblist() {
-        return this.$fullClientDbList()
+        return this.$TeamSpeak.fullClientDBList()
       },
       changeClient(cldbid) {
         this.$router.push({name: 'permissions-client', params: {cldbid: cldbid}})
@@ -57,7 +57,7 @@
         let {permid, permskip, permvalue} = permissionValues
 
         try {
-          await this.$query('clientaddperm', {
+          await this.$TeamSpeak.execute('clientaddperm', {
             cldbid: this.clientDbId,
             permid: permid,
             permskip: + permskip,
@@ -78,7 +78,7 @@
         let {permid} = permissionValues
 
         try {
-          await this.$query('clientdelperm', {
+          await this.$TeamSpeak.execute('clientdelperm', {
             cldbid: this.clientDbId,
             permid: permid
           })
@@ -95,6 +95,11 @@
       async init() {
         try {
           this.clients = await this.getClientdblist()
+
+          if(!this.clientDbId) {
+            this.$router.replace({name: 'permissions-client', params: {cldbid: this.clients[0].cldbid}})
+          }
+
           this.clientPermissions = await this.getClientPermissions()
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})

@@ -63,13 +63,13 @@
     },
     methods: {
       async createSnapshot() {
-        this.$socket.emit('snapshotcreate TeamSpeak', response => {
-          if(response.snapshot) {
-            this.saveFile(response.snapshot)
-          } else {
-            this.$toast.error(response.message)
-          }
-        })
+        try {
+          let response = await this.$TeamSpeak.createSnapshot()
+
+          this.saveFile(response.snapshot)
+        } catch(err) {
+          this.$toast.error(err.message)
+        }
       },
       generateFileName() {
         return `${new Date().toISOString()}.backup`
@@ -85,8 +85,6 @@
       async readFile(e) {
         let file = e.target.files[0]
 
-        console.log(file);
-
         if(file) {
           this.fileName = file.name
 
@@ -100,20 +98,18 @@
           }
         }
       },
-      deploySnapshot() {
-        this.$socket.emit('snapshotdeploy TeamSpeak', this.fileContent, async response => {
-          try {
-            if(response.message) throw new Error(response.message)
+      async deploySnapshot() {
+        try {
+          let response = await this.$TeamSpeak.deploySnapshot(this.fileContent)
 
-            this.$toast.success('Snapshot successfully restored')
+          this.$toast.success('Snapshot successfully restored')
 
-            await this.selectServer() // After snapshot deployment server needs to be selected again
+          await this.selectServer() // After snapshot deployment server needs to be selected again
 
-            this.clearFileSelector()
-          } catch(err) {
-            this.$toast.error(err.message)
-          }
-        })
+          this.clearFileSelector()
+        } catch(err) {
+          this.$toast.error(err.message)
+        }
       },
       clearFileSelector() {
         this.fileName = ''
@@ -121,7 +117,7 @@
         this.$refs.hiddenFileSelector.value = ''
       },
       selectServer() {
-        return this.$query('use', {sid: this.$store.state.connection.serverId})
+        return this.$TeamSpeak.execute('use', {sid: this.$store.state.connection.serverId})
       }
     }
   }

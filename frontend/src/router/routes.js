@@ -59,7 +59,7 @@ export default [
     }
   },
   {
-    path: '/permissions/client/:cldbid',
+    path: '/permissions/client/:cldbid?',
     component: () => import('@/components/ClientPermissions'),
     name: 'permissions-client',
     meta: {
@@ -112,7 +112,7 @@ export default [
     }
   },
   {
-    path: '/permissions/servergroup/:sgid',
+    path: '/permissions/servergroup/:sgid?',
     component: () => import('@/components/ServerGroupPermissions'),
     name: 'permissions-servergroup',
     meta: {
@@ -120,7 +120,7 @@ export default [
     }
   },
   {
-    path: '/permissions/channel/:cid',
+    path: '/permissions/channel/:cid?',
     component: () => import('@/components/ChannelPermissions'),
     name: 'permissions-channel',
     meta: {
@@ -151,7 +151,7 @@ export default [
     }
   },
   {
-    path: '/permissions/channelgroup/:cgid',
+    path: '/permissions/channelgroup/:cgid?',
     component: () => import('@/components/ChannelGroupPermissions'),
     name: 'permissions-channelgroup',
     meta: {
@@ -159,7 +159,7 @@ export default [
     }
   },
   {
-    path: '/permissions/channel/:cid/client/:cldbid',
+    path: '/permissions/channel/:cid?/client/:cldbid?',
     component: () => import('@/components/ChannelClientPermissions'),
     name: 'permissions-channelclient',
     meta: {

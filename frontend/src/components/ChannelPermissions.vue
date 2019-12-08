@@ -47,16 +47,16 @@
     },
     methods: {
       getChannelPermissions() {
-        return this.$query('channelpermlist', {cid: this.channelId})
+        return this.$TeamSpeak.execute('channelpermlist', {cid: this.channelId})
       },
       getChannelList() {
-        return this.$query('channellist')
+        return this.$TeamSpeak.execute('channellist')
       },
       async savePermission(permissionValues) {
         let {permid, permvalue} = permissionValues
 
         try {
-          await this.$query('channeladdperm', {
+          await this.$TeamSpeak.execute('channeladdperm', {
             cid: this.channelId,
             permid: permid,
             permvalue: permvalue
@@ -75,7 +75,7 @@
         let {permid} = permissionValues
 
         try {
-          await this.$query('channeldelperm', {
+          await this.$TeamSpeak.execute('channeldelperm', {
             cid: this.channelId,
             permid: permid
           })
@@ -95,6 +95,11 @@
       async init() {
         try {
           this.channels = await this.getChannelList()
+
+          if(!this.channelId) {
+            this.$router.replace({name: 'permissions-channel', params: {cid: this.channels[0].cid}})
+          }
+
           this.permissions = await this.getChannelPermissions()
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})

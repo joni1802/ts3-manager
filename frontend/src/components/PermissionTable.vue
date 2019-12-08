@@ -132,7 +132,7 @@
     },
     methods: {
       getPermissionlist() {
-        return this.$query('permissionlist')
+        return this.$TeamSpeak.execute('permissionlist')
       },
       editPermission(permissionValues) {
         this.editedPermission = {...permissionValues}

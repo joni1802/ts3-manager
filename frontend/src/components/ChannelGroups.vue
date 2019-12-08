@@ -21,11 +21,11 @@
     },
     methods: {
       getChannelGroupList() {
-        return this.$query('channelgrouplist')
+        return this.$TeamSpeak.execute('channelgrouplist')
       },
       async addChannelGroup(name) {
         try {
-          await this.$query('channelgroupadd', {name: name})
+          await this.$TeamSpeak.execute('channelgroupadd', {name: name})
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})
         }
@@ -38,7 +38,7 @@
       },
       async removeChannelGroup(group, force) {
         try {
-          await this.$query('channelgroupdel', {
+          await this.$TeamSpeak.execute('channelgroupdel', {
             cgid: group.cgid,
             force: +force, // unary operator converts true => 1 and false => 0
           })

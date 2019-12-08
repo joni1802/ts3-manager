@@ -67,23 +67,23 @@
     },
     methods: {
       getChannelGroup() {
-        return this.$query('channelgrouplist').then(list => list.find(group => group.cgid == this.channelGroupId)) // just double '==' cause this.$route.params.cgid is always a string
+        return this.$TeamSpeak.execute('channelgrouplist').then(list => list.find(group => group.cgid == this.channelGroupId)) // just double '==' cause this.$route.params.cgid is always a string
       },
       getChannelList() {
-        return this.$query('channellist')
+        return this.$TeamSpeak.execute('channellist')
       },
       getClientDbList() {
-        return this.$fullClientDbList()
+        return this.$TeamSpeak.fullClientDBList()
       },
       getChannelGroupClientList() {
-        return this.$query('channelgroupclientlist', {
+        return this.$TeamSpeak.execute('channelgroupclientlist', {
           cgid: this.channelGroupId,
           cid: this.selectedChannel
         })
       },
       async renameChannelGroupName() {
         try {
-          await this.$query('channelgrouprename', {
+          await this.$TeamSpeak.execute('channelgrouprename', {
             cgid: this.channelGroupId,
             name: this.channelGroupName,
           })
@@ -94,7 +94,7 @@
       async changeMembers(list, cgid) {
         for(let clientDbId of list) {
           try {
-            await this.$query('setclientchannelgroup', {
+            await this.$TeamSpeak.execute('setclientchannelgroup', {
               cgid: cgid,
               cid: this.selectedChannel,
               cldbid: clientDbId
