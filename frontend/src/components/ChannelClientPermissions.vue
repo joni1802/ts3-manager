@@ -127,6 +127,14 @@
         try {
           this.clients = await this.getClientDbList()
           this.channels = await this.getChannelList()
+
+          if(this.channelId === '0' && this.clientDbId === '0') {
+            this.$router.replace({name: 'permissions-channelclient', params: {
+              cid: this.channels[0].cid,
+              cldbid: this.clients[0].cldbid
+            }})
+          }
+
           this.permissions = await this.getChannelClientPermList()
         } catch(err) {
           this.$toast.error(err.message, {icon: 'error'})
