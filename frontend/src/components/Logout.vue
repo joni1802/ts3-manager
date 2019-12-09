@@ -8,18 +8,21 @@
       quit() {
         return this.$TeamSpeak.execute('quit')
       },
-      clearStorage() {
+      logout() {
         this.$store.dispatch('clearConnection')
+
+        this.$router.push({name: 'login'})
       }
     },
     async created() {
       try {
-        await this.quit()
-        // Clearing the local storage and redirecting to the login page is handled by the socket event "TeamSpeak connection closed"
+        this.quit()
+
+        this.logout()
       } catch(err) {
         this.$toast.error(err.message, {icon: 'error'})
 
-        this.clearStorage()
+        this.logout()
       }
     }
   }
