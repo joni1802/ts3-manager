@@ -11,7 +11,7 @@ const TeamSpeak = {}
 
 TeamSpeak.connect = params => {
   return new Promise((resolve, reject) => {
-    socket.emit('connect TeamSpeak', params, response => {
+    socket.emit('teamspeak_connect', params, response => {
       if(response.token) {
         resolve(response)
       } else {

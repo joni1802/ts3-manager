@@ -19,14 +19,14 @@ const logout = () => {
 }
 
 // When a connection error occurs logout and redirect to login page
-const handleSocketError = message => {
-  /*Vue.prototype.$toast.error(message, {
+const handleSocketError = err => {
+  Vue.prototype.$toast.error(err.message, {
     timeout: 0,
     dismissable: false,
     queueable: true, // toast is not getting overwritten
     icon: 'error_outline'
-  })*/
-  Vue.prototype.$toast.error(message)
+  })
+  Vue.prototype.$toast.error(err.message)
 
   logout()
 }
@@ -47,12 +47,9 @@ socket.on('reconnect', () => {
 })
 
 socket.on('disconnect', logout)
-
 socket.on('error', handleSocketError)
 socket.on('connect_error', handleSocketError)
-
-//socket.on('TeamSpeak connection error', handleTeamSpeakError)
-socket.on('TeamSpeak authentication error', handleTeamSpeakError)
-socket.on('TeamSpeak connection closed', logout)
+socket.on('teamspeak_error', handleTeamSpeakError)
+socket.on('teamspeak_close', logout)
 
 export default socket

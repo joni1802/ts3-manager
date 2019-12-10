@@ -80,18 +80,29 @@ export default {
       appVersion: version
     }
   },
+  computed: {
+    preparedForm() {
+      return {
+        host: this.form.host,
+        queryport: this.form.queryport,
+        protocol: this.form.ssh ? 'ssh' : 'raw',
+        username: this.form.username,
+        password: this.form.password
+      }
+    }
+  },
   methods: {
     async connect() {
       this.loading = true
 
       try {
-        let response = await this.$TeamSpeak.connect(this.form)
+        let response = await this.$TeamSpeak.connect(this.preparedForm)
 
         this.$store.commit('isConnected', true)
         this.$store.commit('saveToken', response.token)
         this.$router.push({name: 'servers'})
-      } catch(err) {
-        this.$toast.error(err.message, {icon: 'error'})
+      } catch(message) {
+        this.$toast.error(message, {icon: 'error'})
         this.$store.commit('isConnected', false)
       }
 
