@@ -63,6 +63,19 @@
 import {version} from '../../package.json'
 
 export default {
+  beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      if(!vm.$store.state.connection.token) return
+
+      vm.$socket.emit('form_autofill', vm.$store.state.connection.token, response => {
+        vm.form.host = response.host
+        vm.form.queryport = response.queryport
+        vm.form.ssh = response.protocol === 'ssh' ? true : false
+        vm.form.username = response.username
+        vm.form.password = response.password
+      })
+    })
+  },
   data() {
     return {
       valid: false,

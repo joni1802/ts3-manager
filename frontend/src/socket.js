@@ -7,13 +7,23 @@ import router from './router'
 const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
   autoConnect: false,
   query: {
-    token: store.state.connection.token
+    token: store.state.connection.connected ? store.state.connection.token : ''
   }
 })
 
-// Clears the local storage and goes to the login page
+// Clear all values in local storage and go to the login page
+// At login screen the form gets not autofilled.
 const logout = () => {
   store.dispatch('clearConnection')
+
+  router.push({name: 'login'})
+}
+
+// Clear only the connection values in local storage and go to login page.
+// At login screen the form gets autofilled.
+const resetConnection = () => {
+  store.commit('isConnected', false)
+  store.commit('setServerId', undefined)
 
   router.push({name: 'login'})
 }
@@ -27,7 +37,7 @@ const handleSocketError = err => {
     icon: 'error_outline'
   })
 
-  logout()
+  resetConnection()
 }
 
 const handleTeamSpeakError = message => {
@@ -45,10 +55,9 @@ socket.on('reconnect', () => {
   if(currentToast) currentToast.close() // Removes the error toast
 })
 
-socket.on('disconnect', logout)
+socket.on('disconnect', resetConnection)
 socket.on('error', handleSocketError)
 socket.on('connect_error', handleSocketError)
 socket.on('teamspeak_error', handleTeamSpeakError)
-socket.on('teamspeak_close', logout)
 
 export default socket

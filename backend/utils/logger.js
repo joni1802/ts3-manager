@@ -15,24 +15,7 @@ const hidePasswords = winston.format(info => {
   return info
 })
 
-// Converts the sended query object to a string to make it more readable in the logs.
-const stringifyCommand = ({command, params, options}) => {
-  let fullCommand = `${command} `
-
-  for(let [prop, value] of Object.entries(params)) {
-    fullCommand += `${prop}=${value} `
-  }
-
-  for(let value of options) {
-    fullCommand += `${value} `
-  }
-
-  return fullCommand
-}
-
 const myFormat = winston.format.printf(({level, message, label, timestamp, client}) => {
-  if(message.command) message = stringifyCommand(message)
-
   return `${timestamp} | ${client} | ${level.toUpperCase()} | ${message}`;
 });
 

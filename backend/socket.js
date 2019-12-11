@@ -59,7 +59,7 @@ socket.init = server => {
     let log = logger.child({client: ip})
     let ServerQuery = undefined
 
-    log.info('connected to socket.io')
+    log.info('Socket.io connected')
 
     // Try to reconnect to the TeamSpeak ServerQuery if a client sends a token.
     if(token) {
@@ -67,6 +67,9 @@ socket.init = server => {
         let decoded = jwt.verify(token, secret)
 
         ServerQuery = await TeamSpeak.connect(decoded)
+
+        log.info('ServerQuery reconnected')
+
         await ServerQuery.execute('use', {sid: 1})
 
         registerEvents(ServerQuery, log, socket)
@@ -77,15 +80,27 @@ socket.init = server => {
 
     // Check on every request if the TeamSpeak instance was created.
     socket.use((packet, next) => {
-      if(packet[0] === 'teamspeak_connect') return next()
+      if(packet[0] === 'teamspeak_connect' || 'form_autofill') return next()
 
       next(checkTSConnection(ServerQuery))
+    })
+
+    socket.on('form_autofill', (token, fn) => {
+      try {
+        let decoded = jwt.verify(token, secret)
+
+        fn(decoded)
+      } catch(err) {
+        fn(err.message)
+      }
     })
 
     // Connect to the ServerQuery and try to login.
     socket.on('teamspeak_connect', async (options, fn) => {
       try {
         ServerQuery = await TeamSpeak.connect(options)
+
+        log.info('ServerQuery connected')
 
         token = jwt.sign(options, secret)
 
@@ -142,7 +157,7 @@ socket.init = server => {
         try {
           await ServerQuery.execute('quit')
         } catch(err) {
-          //log.error(err.message)
+          log.error(err.message)
         }
       }
     })

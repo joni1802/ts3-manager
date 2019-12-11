@@ -23,7 +23,7 @@ const actions = {
   clearConnection({commit}) {
     commit('isConnected', false)
     commit('saveToken', '')
-    commit('setServerId', undefined)
+    commit('setServerId', null)
   }
 }
 
