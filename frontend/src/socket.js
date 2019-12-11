@@ -26,7 +26,6 @@ const handleSocketError = err => {
     queueable: true, // toast is not getting overwritten
     icon: 'error_outline'
   })
-  Vue.prototype.$toast.error(err.message)
 
   logout()
 }
