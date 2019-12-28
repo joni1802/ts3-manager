@@ -32,7 +32,8 @@
     props: {
       server: Object,
       channel: Object,
-      clients: Array
+      clients: Array,
+      queryUser: Object
     },
     data() {
       return {
@@ -87,7 +88,7 @@
       saveTextMessages(e) {
         let notification = e.detail
 
-        if(notification.invoker.clid !== 1) {
+        if(notification.invoker.clid !== this.queryUser.client_id) {
           switch(notification.targetmode) {
             case 1:
               this.$emit('privatechat', notification.invoker)
@@ -110,7 +111,7 @@
             msg: this.message
           })
 
-          this.addTextMessage(this.message, this.selectedChat.target, this.selectedChat.targetmode, 'You')
+          this.addTextMessage(this.message, this.selectedChat.target, this.selectedChat.targetmode, this.queryUser.client_nickname)
 
           this.message = ''
         } catch(err) {

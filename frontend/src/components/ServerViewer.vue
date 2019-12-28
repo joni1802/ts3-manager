@@ -12,7 +12,7 @@
               </template>
             </v-treeview>
             <v-divider></v-divider>
-            <text-messages :server="serverInfo" :channel="currentChannel" :clients="textPrivates" @closetextchat="closeTextPrivate" @privatechat="openTextPrivate"></text-messages>
+            <text-messages :queryUser="queryUser" :server="serverInfo" :channel="currentChannel" :clients="textPrivates" @closetextchat="closeTextPrivate" @privatechat="openTextPrivate"></text-messages>
           </v-card-text>
         </v-card>
       </v-flex>
