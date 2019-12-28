@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tabs v-model="selectedTab">
+    <v-tabs v-model="selectedTab" show-arrows>
       <v-tab>{{ textServerTab.name }}</v-tab>
       <v-tab>{{ textChannelTab.name }}</v-tab>
       <v-tab v-for="(textPrivate, index) in textPrivateTabs" :key="index + 2">
@@ -45,6 +45,19 @@
     },
     computed: {
       chatMessages() {
+        switch (this.selectedTab) {
+          case 0:
+            this.selectedChat = this.textServerTab
+            break;
+          case 1:
+            this.selectedChat = this.textChannelTab
+            break;
+          default:
+            if(this.textPrivateTabs.length) {
+              this.selectedChat = this.textPrivateTabs[this.selectedTab - 2]
+            }
+        }
+
         return this.messages.filter(message => message.target === this.selectedChat.target && message.targetmode === this.selectedChat.targetmode)
       },
       textServerTab() {
@@ -122,36 +135,27 @@
         if(e.keyCode === 13) this.sendMessage()
       },
       closeTextChat(chat) {
+        // Go to the next sibling if a private chat gets closed to prevent errors.
+        this.focusPreviousTab(chat)
+
         this.$emit('closetextchat', chat)
       },
       scrollBottom() {
         this.$refs.chat.$el.scrollTop = this.$refs.chat.$el.scrollHeight
+      },
+      focusPreviousTab(chat) {
+        let index = this.textPrivateTabs.map(textPrivate => textPrivate.target).indexOf(chat.target)
+
+        this.selectedTab = index + 1
       }
     },
     created() {
       this.registerTextEvents()
       this.addTextListener()
 
-      this.selectedChat = this.textServerTab
+      this.selectedTab = 0
     },
     watch: {
-      selectedTab(tab) {
-        switch (tab) {
-          case 0:
-            this.selectedChat = this.textServerTab
-            break;
-          case 1:
-            this.selectedChat = this.textChannelTab
-            break;
-          default:
-            if(this.textPrivateTabs.length) {
-              this.selectedChat = this.textPrivateTabs[tab - 2]
-            }
-        }
-      },
-      textChannelTab(chat) {
-        if(this.selectedTab === 1) this.selectedChat = chat
-      },
       chatMessages() {
         this.$nextTick(() => {
           this.scrollBottom()
