@@ -47,6 +47,7 @@ export default [
   {
     path: '/client/:cldbid/ban',
     component: () => import('@/components/ClientBan'),
+    name: 'client-ban',
     meta: {
       requiresAuth: true
     }
@@ -54,6 +55,7 @@ export default [
   {
     path: '/client/:clid/edit',
     component: () => import('@/components/ClientEdit'),
+    name: 'client-edit',
     meta: {
       requiresAuth: true
     }
@@ -190,6 +192,14 @@ export default [
       requiresAuth: true
     }
   },
+  /*{
+    path: '/test',
+    component: () => import('@/components/Test'),
+    name: 'test',
+    meta: {
+      requiresAuth: false
+    }
+  },*/
   {
     path: '*',
     component: () => import('@/components/NotFound'),

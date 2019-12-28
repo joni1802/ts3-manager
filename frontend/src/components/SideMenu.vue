@@ -20,7 +20,7 @@
             <v-icon>{{ entry.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-title>
-            {{ entry.title }}
+            {{ entry.title }} <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
           </v-list-tile-title>
         </v-list-tile>
         <v-list-group v-else value="true" :prepend-icon="entry.icon" active-class="" no-action>
@@ -66,6 +66,7 @@
             title: 'Server Viewer',
             icon: 'remove_red_eye',
             path: '/serverviewer',
+            experimental: true
           },
           {
             title: 'List All Clients',

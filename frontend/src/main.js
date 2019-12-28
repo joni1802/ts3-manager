@@ -6,7 +6,7 @@ import VuetifyToast from 'vuetify-toast-snackbar'
 import store from './store'
 import router from './router'
 import socket from './socket'
-//import {query, fullClientDbList} from './utils'
+
 import TeamSpeak from './api/TeamSpeak'
 import './registerServiceWorker'
 

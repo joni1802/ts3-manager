@@ -35,6 +35,16 @@ socket.init = server => {
 
       instance.removeAllListeners()
     })
+    instance.on('clientconnect', data => socket.emit('teamspeak-clientconnect', data))
+    instance.on('clientdisconnect', data => socket.emit('teamspeak-clientdisconnect', data))
+    instance.on('clientmoved', data => socket.emit('teamspeak-clientmoved', data))
+    instance.on('tokenused', data => socket.emit('teamspeak-tokenused', data))
+    instance.on('textmessage', data => socket.emit('teamspeak-textmessage', data))
+    instance.on('serveredit', data => socket.emit('teamspeak-serveredit', data))
+    instance.on('channeledit', data => socket.emit('teamspeak-channeledit', data))
+    instance.on('channelcreate', data => socket.emit('teamspeak-channelcreate', data))
+    instance.on('channelmoved', data => socket.emit('teamspeak-channelmoved', data))
+    instance.on('channeldelete', data => socket.emit('teamspeak-channeldelete', data))
   }
 
   // Send the response from the ServerQuery back to the frontend.
@@ -80,12 +90,12 @@ socket.init = server => {
 
     // Check on every request if the TeamSpeak instance was created.
     socket.use((packet, next) => {
-      if(packet[0] === 'teamspeak_connect' || 'form_autofill') return next()
+      if(packet[0] === 'teamspeak_connect' || 'autofillform') return next()
 
       next(checkTSConnection(ServerQuery))
     })
 
-    socket.on('form_autofill', (token, fn) => {
+    socket.on('autofillform', (token, fn) => {
       try {
         let decoded = jwt.verify(token, secret)
 
@@ -96,7 +106,7 @@ socket.init = server => {
     })
 
     // Connect to the ServerQuery and try to login.
-    socket.on('teamspeak_connect', async (options, fn) => {
+    socket.on('teamspeak-connect', async (options, fn) => {
       try {
         ServerQuery = await TeamSpeak.connect(options)
 
@@ -113,7 +123,7 @@ socket.init = server => {
     })
 
     // Send command to the ServerQuery. The parameters and options are optional.
-    socket.on('execute', async (query, fn) => {
+    socket.on('teamspeak-execute', async (query, fn) => {
       let {command, params, options} = query
 
       try {
@@ -126,7 +136,7 @@ socket.init = server => {
     })
 
     // Create a snapshot and send it back to the client.
-    socket.on('createsnapshot', async fn => {
+    socket.on('teamspeak-createsnapshot', async fn => {
       try {
         let response = await ServerQuery.createSnapshot()
 
@@ -137,12 +147,22 @@ socket.init = server => {
     })
 
     // Get the snapshot file and restore it.
-    socket.on('deploysnapshot', async (snapshot, fn) => {
+    socket.on('teamspeak-deploysnapshot', async (snapshot, fn) => {
       try {
         // (Re)encoding the sended string (snapshot) to base64.
         // This prevents crashing the sever if an invalid file is uploaded.
         let verifiedSnapshot = Buffer.from(snapshot.toString(), 'base64').toString('base64')
         let response = await ServerQuery.deploySnapshot(verifiedSnapshot)
+
+        handleResponse(response, fn)
+      } catch(err) {
+        handleError(err, fn)
+      }
+    })
+
+    socket.on('teamspeak-registerevent', async ({name, id}, fn) => {
+      try {
+        let response = await ServerQuery.registerEvent(name, id)
 
         handleResponse(response, fn)
       } catch(err) {

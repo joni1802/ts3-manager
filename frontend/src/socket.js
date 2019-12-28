@@ -58,6 +58,6 @@ socket.on('reconnect', () => {
 socket.on('disconnect', resetConnection)
 socket.on('error', handleSocketError)
 socket.on('connect_error', handleSocketError)
-socket.on('teamspeak_error', handleTeamSpeakError)
+socket.on('teamspeak-error', handleTeamSpeakError)
 
 export default socket

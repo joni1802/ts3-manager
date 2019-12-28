@@ -1,14 +1,23 @@
 <template>
   <div>
-    <v-menu offset-x :full-width="isSpacer()">
+    <v-menu offset-x>
       <template slot="activator">
-        <spacer v-if="isSpacer()" :channelName="channel.channel_name"></spacer>
-        <div v-else>
+        <v-btn flat>
           <v-icon>chat_bubble</v-icon>
-          <span>{{ channel.channel_name }}</span>
-        </div>
+          {{ channel.channel_name }}
+        </v-btn>
       </template>
       <v-list>
+        <v-list-tile @click="enterChannel">
+          <v-list-tile-action>
+            <v-icon>arrow_forward</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              Switch to Channel
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <v-list-tile :to="{name: 'channel-edit', params: {cid: channel.cid}}">
           <v-list-tile-action>
             <v-icon>edit</v-icon>
@@ -56,24 +65,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <channel-clients v-if="channel.total_clients !== '0'" :channel="channel" :clients="clients"></channel-clients>
-
-    <sub-channels v-if="channel.subchannels" :subchannels="channel.subchannels" :clients="clients"></sub-channels>
   </div>
 </template>
 <script>
   export default {
+    props: {
+      channel: Object,
+      queryUser: Object
+    },
     data() {
       return {
         deleteChannelDialog: false,
         selectedChannel: {},
         forceDeletion: false,
       }
-    },
-    props: {
-      channel: Object,
-      clients: Array
     },
     methods: {
       confirmChannelDeletion(channel) {
@@ -95,43 +100,23 @@
         }
 
         this.deleteChannelDialog = false
-
-        this.updateView()
       },
-      isSpacer() {
-        let spacer = /\[.*spacer.*\]/i
-
-        if(this.channel.pid === 0 && spacer.test(this.channel.channel_name)) return true
-
-        return false
+      moveClient() {
+        return this.$TeamSpeak.execute('clientmove', {clid: this.queryUser.client_id, cid: this.channel.cid})
       },
-      updateView() {
-        this.$eventBus.$emit('update')
-      }
-    },
-    components: {
-      SubChannels: () => import('@/components/SubChannels.vue'),
-      Spacer: () => import('@/components/Spacer'),
-      ChannelClients: () => import('@/components/ChannelClients')
+      async enterChannel() {
+        try {
+          await this.moveClient()
+        } catch(err) {
+          this.$toast.error(err.message)
+        }
+      },
     },
   }
 </script>
 
 <style scoped>
-  ul {
-    list-style: none;
-  }
-
-  li {
-    padding: 0.25rem;
-  }
-
-  span{
-    padding: 0.4rem 0.5rem;
-  }
-
-  span:hover {
-    background: #bdc3c7;
-    border-radius: 0.5rem;
+  * {
+    text-transform: none !important;
   }
 </style>

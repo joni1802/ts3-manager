@@ -67,7 +67,7 @@ export default {
     next(async vm => {
       if(!vm.$store.state.connection.token) return
 
-      vm.$socket.emit('form_autofill', vm.$store.state.connection.token, response => {
+      vm.$socket.emit('autofillform', vm.$store.state.connection.token, response => {
         vm.form.host = response.host
         vm.form.queryport = response.queryport
         vm.form.ssh = response.protocol === 'ssh' ? true : false

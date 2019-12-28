@@ -7,11 +7,12 @@ import socket from '../socket'
  * @type {Object}
  */
 
-const TeamSpeak = {}
+const TeamSpeak = Object.create(new EventTarget)
+
 
 TeamSpeak.connect = params => {
   return new Promise((resolve, reject) => {
-    socket.emit('teamspeak_connect', params, response => {
+    socket.emit('teamspeak-connect', params, response => {
       if(response.token) {
         resolve(response)
       } else {
@@ -23,7 +24,7 @@ TeamSpeak.connect = params => {
 
 TeamSpeak.execute = (command, params = {}, options = []) => {
   return new Promise((resolve, reject) => {
-    socket.emit('execute', {command, params, options}, response => {
+    socket.emit('teamspeak-execute', {command, params, options}, response => {
       // If the response is an object with an ID it is a ServerQuery error.
       if(response.id && response.id !== 0) {
 
@@ -45,7 +46,7 @@ TeamSpeak.execute = (command, params = {}, options = []) => {
 
 TeamSpeak.createSnapshot = () => {
   return new Promise((resolve, reject) => {
-    socket.emit('createsnapshot', response => {
+    socket.emit('teamspeak-createsnapshot', response => {
       if(response.snapshot) {
         resolve(response)
       } else {
@@ -57,7 +58,7 @@ TeamSpeak.createSnapshot = () => {
 
 TeamSpeak.deploySnapshot = snapshot => {
   return new Promise((resolve, reject) => {
-    socket.emit('deploysnapshot', snapshot, response => {
+    socket.emit('teamspeak-deploysnapshot', snapshot, response => {
       if(response.message) {
         reject(response)
       } else {
@@ -87,5 +88,81 @@ TeamSpeak.fullClientDBList = async () => {
 
   return fullClientDbList
 }
+
+TeamSpeak.registerEvent = (name, id = undefined) => {
+  return new Promise((resolve, reject) => {
+    socket.emit('teamspeak-registerevent', {name, id}, response => {
+      if(response.message) {
+        reject(response)
+      } else {
+        resolve(response)
+      }
+    })
+  })
+}
+
+TeamSpeak.on = (name, fn) => {
+  TeamSpeak.__proto__.addEventListener(name, fn)
+}
+
+socket.on('teamspeak-textmessage', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('textmessage', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-clientconnect', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('clientconnect', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-clientdisconnect', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('clientdisconnect', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-clientmoved', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('clientmoved', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-tokenused', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('tokenused', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-serveredit', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('serveredit', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-channeledit', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('channeledit', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-channelcreate', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('channelcreate', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-channelmoved', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('channelmoved', {
+    detail: data
+  }))
+})
+
+socket.on('teamspeak-channeldelete', data => {
+  TeamSpeak.__proto__.dispatchEvent(new CustomEvent('channeldelete', {
+    detail: data
+  }))
+})
 
 export default TeamSpeak
