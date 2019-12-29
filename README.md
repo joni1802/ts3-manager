@@ -5,7 +5,7 @@
 ## What is TS3 Manager 🤔
 The TS3 Manager is a webinterface which allows to maintain your TeamSpeak server from everywhere over a browser. If you just want to download and install it on your own server or find out more about this project, please go to the [official webpage](https://www.ts3.app). The following documentation is addressed to developers.
 
-![Screen Recording TS3 Manager Server Viewer](https://www.ts3.app/assets/img/ts3-manager-server-viewer.c57e8b5d.gif)
+![Screen Recording TS3 Manager Server Viewer](https://media.giphy.com/media/JsPf6fFxQH9D4c6QIE/source.gif)
 
 ## Developement setup 🔧
 The TS3 Manager is written in [NodeJS](https://nodejs.org). The latest LTS version of NodeJS including NPM needs to be installed.
