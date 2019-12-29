@@ -13,7 +13,7 @@ The TS3 Manager is written in [NodeJS](https://nodejs.org). The latest LTS versi
 ### Folder structure 📁
 The project is split into two directories. The frontend is handling everything what the user sees. Even the routing is handled by the frontend. The backend communicates with the TeamSpeak ServerQuery and sends the responses back to the frontend. Frontend and backend are talking to each other over websockets.
 
-![Communication Diagram](https://www.ts3.app/assets/img/diagram-small.5f1e80e7.png)
+![Communication Diagram](https://www.ts3.app/assets/img/dataflow-diagram.eeff9014.png)
 
 ### Frontend
 The frontend is written in Vue.js using the Vue-CLI. For more infos go to the [README file](./frontend/README.md) inside that directory.
