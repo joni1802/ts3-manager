@@ -2,15 +2,21 @@
 
 [![Download TS3 Manager](https://img.shields.io/sourceforge/dt/ts3-manager.svg)](https://sourceforge.net/projects/ts3-manager/files/latest/download)
 
-The TS3 Manager is a webgui where you can manage your Teamspeak3 server. The web app allows to control multiple teamspeak instances in just one interface. If you just want to download and install it on your own server, please go to the [official webpage](https://www.ts3.app).
+## What is TS3 Manager 🤔
+The TS3 Manager is a webinterface which allows to maintain your TeamSpeak server from everywhere over a browser. If you just want to download and install it on your own server or find out more about this project, please go to the [official webpage](https://www.ts3.app). The following documentation is addressed to developers.
 
-![Screenshot TS3 Manager](https://a.fsdn.com/con/app/proj/ts3-manager/screenshots/Server%20Viewer%20-blur.png/max/max/1)
+![Screen Recording TS3 Manager Server Viewer](https://www.ts3.app/assets/img/ts3-manager-server-viewer.c57e8b5d.gif)
 
-## For developers
+## Developement setup 🔧
+The TS3 Manager is written in [NodeJS](https://nodejs.org). The latest LTS version of NodeJS including NPM needs to be installed.
+
+### Folder structure 📁
 The project is split into two directories. The frontend is handling everything what the user sees. Even the routing is handled by the frontend. The backend communicates with the TeamSpeak ServerQuery and sends the responses back to the frontend. Frontend and backend are talking to each other over websockets.
 
+![Communication Diagram](https://www.ts3.app/assets/img/diagram-small.5f1e80e7.png)
+
 ### Frontend
-The frontend is written in Vue.js. For more infos go to the README file inside that directory.
+The frontend is written in Vue.js using the Vue-CLI. For more infos go to the [README file](./frontend/README.md) inside that directory.
 
 ### Backend
-The backend is written in plain NodeJS. All the nessecary information are listed in the README file there.
+The backend is written in plain NodeJS. All the nessecary information are listed in the [README file](./backend/README.md) there.
