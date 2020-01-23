@@ -52,7 +52,7 @@ socket.init = server => {
     // By default socket.io converts the object to JSON and parses it on the client side automatically to a javascript object again.
     // Sometimes the response contains properties which are undefined. These properties would be removed because JSON have no value "undefined".
     // Because of that, all undefined properties are converted to "null" before they are emittet to the ui.
-    response = JSON.stringify(response, (k, v) => v === undefined ? null : v)
+    response = JSON.stringify(response, (k, v) => v === undefined ? "" : v)
 
     fn(JSON.parse(response))
   }

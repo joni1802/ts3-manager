@@ -1,4 +1,6 @@
 import socket from '../socket'
+import store from '../store'
+import NProgress from 'nprogress'
 
 /**
  * The TeamSpeak Object sends the request to the server and finally receives the response from the ServerQuery.
@@ -9,11 +11,75 @@ import socket from '../socket'
 
 const TeamSpeak = Object.create(new EventTarget)
 
+const handleError = (error, resolve, reject) => {
+  switch (error.id) {
+    // Empty result error e.g. an empty permissionlist
+    case 1281:
+      resolve([])
+      break;
+    default:
+      reject(error)
+  }
+}
+
+let handleResponse = (response, resolve, reject) => {
+  // TeamSpeak Error or general Error
+  if ((response.id && response.id !== 0) || (!response.id && response.message)) {
+    handleError(response, resolve, reject)
+  } else {
+    resolve(response)
+  }
+}
+
+// Just for debugging the progress bar (NProgress)
+const throttleSocketConnection = time => {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
+
+// Middleware that handles the progressbar
+const setLoadingState = methods => {
+  methods.forEach(method => {
+    let next = TeamSpeak[method]
+    let timer = setTimeout(() => {
+      store.commit('isLoading', false)
+
+      NProgress.done()
+    }, 0)
+
+    TeamSpeak[method] = async (...args) => {
+      try {
+        clearTimeout(timer)
+        store.commit('isLoading', true)
+        NProgress.inc()
+
+        if (process.env.NODE_ENV === 'development') await throttleSocketConnection(500)
+
+        let response = await next(...args)
+
+        timer = setTimeout(() => {
+          store.commit('isLoading', false)
+
+          NProgress.done()
+        }, 0)
+
+        return response
+      } catch (error) {
+        NProgress.done()
+
+        throw error
+      }
+    }
+  })
+}
 
 TeamSpeak.connect = params => {
   return new Promise((resolve, reject) => {
     socket.emit('teamspeak-connect', params, response => {
-      if(response.token) {
+      if (response.token) {
         resolve(response)
       } else {
         reject(response)
@@ -22,49 +88,29 @@ TeamSpeak.connect = params => {
   })
 }
 
-TeamSpeak.execute = (command, params = {}, options = []) => {
-  return new Promise((resolve, reject) => {
-    socket.emit('teamspeak-execute', {command, params, options}, response => {
-      // If the response is an object with an ID it is a ServerQuery error.
-      if(response.id && response.id !== 0) {
+TeamSpeak.execute = (...args) => {
+  let command = args[0]
+  let params = args[1] ? args[1] : {}
+  let options = args[2] ? args[2] : []
 
-        // If it is just an empty results error return an empty array. Otherwise the code would break.
-        // This response is often received when you get e.g. an empty permissionlist.
-        if(response.id === 1281) {
-          resolve([])
-        } else {
-          reject(response)
-        }
-      } else if(!response.id && response.message) { // General Error
-        reject(response)
-      } else {
-        resolve(response)
-      }
-    })
+  return new Promise((resolve, reject) => {
+    socket.emit('teamspeak-execute', {
+      command,
+      params,
+      options
+    }, response => handleResponse(response, resolve, reject))
   })
 }
 
 TeamSpeak.createSnapshot = () => {
   return new Promise((resolve, reject) => {
-    socket.emit('teamspeak-createsnapshot', response => {
-      if(response.snapshot) {
-        resolve(response)
-      } else {
-        reject(response)
-      }
-    })
+    socket.emit('teamspeak-createsnapshot', response => handleResponse(response, resolve, reject))
   })
 }
 
 TeamSpeak.deploySnapshot = snapshot => {
   return new Promise((resolve, reject) => {
-    socket.emit('teamspeak-deploysnapshot', snapshot, response => {
-      if(response.message) {
-        reject(response)
-      } else {
-        resolve(response)
-      }
-    })
+    socket.emit('teamspeak-deploysnapshot', snapshot, response => handleResponse(response, resolve, reject))
   })
 }
 
@@ -76,13 +122,19 @@ TeamSpeak.fullClientDBList = async () => {
   let duration = 200
 
   try {
-    while((await TeamSpeak.execute('clientdblist', {start, duration})).length) {
-      fullClientDbList.push(...(await TeamSpeak.execute('clientdblist', {start, duration})))
+    while ((await TeamSpeak.execute('clientdblist', {
+        start,
+        duration
+      })).length) {
+      fullClientDbList.push(...(await TeamSpeak.execute('clientdblist', {
+        start,
+        duration
+      })))
 
       start += 200
       duration += 200
     }
-  } catch(err) {
+  } catch (err) {
     throw err
   }
 
@@ -91,13 +143,10 @@ TeamSpeak.fullClientDBList = async () => {
 
 TeamSpeak.registerEvent = (name, id = undefined) => {
   return new Promise((resolve, reject) => {
-    socket.emit('teamspeak-registerevent', {name, id}, response => {
-      if(response.message) {
-        reject(response)
-      } else {
-        resolve(response)
-      }
-    })
+    socket.emit('teamspeak-registerevent', {
+      name,
+      id
+    }, response => handleResponse(response, resolve, reject))
   })
 }
 
@@ -164,5 +213,7 @@ socket.on('teamspeak-channeldelete', data => {
     detail: data
   }))
 })
+
+setLoadingState(['execute', 'createSnapshot', 'deploySnapshot'])
 
 export default TeamSpeak

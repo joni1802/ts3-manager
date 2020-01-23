@@ -2,6 +2,8 @@ import Vue from 'vue'
 import './plugins/vuetify'
 import App from './App.vue'
 import VuetifyToast from 'vuetify-toast-snackbar'
+import 'nprogress/nprogress.css'
+import NProgress from 'nprogress'
 
 import store from './store'
 import router from './router'
@@ -9,6 +11,10 @@ import socket from './socket'
 
 import TeamSpeak from './api/TeamSpeak'
 import './registerServiceWorker'
+
+NProgress.configure({
+  showSpinner: false
+})
 
 // More infos => https://github.com/eolant/vuetify-toast-snackbar
 Vue.use(VuetifyToast, {

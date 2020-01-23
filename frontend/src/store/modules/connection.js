@@ -1,10 +1,9 @@
 import Vue from 'vue'
-import router from '../../router'
 
 const state = {
   connected: false,
   token: '',
-  serverId: null
+  serverId: null,
 }
 
 const mutations = {

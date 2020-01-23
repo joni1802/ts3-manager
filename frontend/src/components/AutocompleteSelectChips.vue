@@ -22,7 +22,7 @@
 
 <script>
 // This just a customized select element with chips and autocompletion.
-// Property "value" needs to be called otherwise v-model would no work. 
+// Property "value" needs to be called otherwise v-model would no work.
 export default {
   props: {
     value: Array, // selectedElements
