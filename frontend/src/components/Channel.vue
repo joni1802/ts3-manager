@@ -87,8 +87,6 @@ export default {
   },
   methods: {
     isSpacer(channelName) {
-
-      console.log(channelName, this.spacer.test(channelName));
       return this.spacer.test(channelName)
     },
     confirmChannelDeletion(channel) {

@@ -141,12 +141,18 @@ TeamSpeak.fullClientDBList = async () => {
   return fullClientDbList
 }
 
-TeamSpeak.registerEvent = (name, id = undefined) => {
+TeamSpeak.registerEvent = (event, id = undefined) => {
   return new Promise((resolve, reject) => {
     socket.emit('teamspeak-registerevent', {
-      name,
+      event,
       id
     }, response => handleResponse(response, resolve, reject))
+  })
+}
+
+TeamSpeak.unregisterEvent = () => {
+  return new Promise((resolve, reject) => {
+    socket.emit('teamspeak-unregisterevent', response => handleResponse(response, resolve, reject))
   })
 }
 
