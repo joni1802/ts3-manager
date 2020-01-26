@@ -9,18 +9,17 @@
     </v-tab>
   </v-tabs>
   <v-tabs-items>
-    <v-tab-item>
-      <v-list dense ref="chat" :style="{height: '20vh', overflow: 'auto'}">
-        <v-list-tile v-for="message in chatMessages">
-          <v-list-tile-avatar>
-            <v-icon>mdi-chat</v-icon>
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ message.text }}</v-list-tile-title>
-            <v-list-tile-sub-title>{{ message.timestamp }} <b>{{ message.sender }}</b></v-list-tile-sub-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
+    <v-tab-item ref="chat" :style="{height: '20vh', overflow: 'auto'}">
+      <div v-for="message in chatMessages" class="my-2">
+        <div>
+          <v-icon v-if="message.sender === queryUser.client_nickname">arrow_upward</v-icon>
+          <v-icon v-else>arrow_downward</v-icon>
+          {{ message.timestamp }} <b>{{ message.sender }}</b>
+        </div>
+        <div>
+          {{ message.text }}
+        </div>
+      </div>
     </v-tab-item>
   </v-tabs-items>
   <v-text-field :append-icon="'send'" label="Send Message" v-model="message" @click:append="sendMessage" @keyup="keyPressed">
