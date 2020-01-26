@@ -6,14 +6,6 @@ export default [{
       requiresAuth: true
     }
   },
-  // {
-  //   path: '/settings',
-  //   component: () => import('@/components/Settings'),
-  //   name: 'settings',
-  //   meta: {
-  //     requiresAuth: true
-  //   }
-  // },
   {
     path: '/console',
     component: () => import('@/components/Console'),
@@ -191,14 +183,14 @@ export default [{
       requiresAuth: true
     }
   },
-  {
-    path: '/test',
-    component: () => import('@/components/Test'),
-    name: 'test',
-    meta: {
-      requiresAuth: false
-    }
-  },
+  // {
+  //   path: '/test',
+  //   component: () => import('@/components/Test'),
+  //   name: 'test',
+  //   meta: {
+  //     requiresAuth: false
+  //   }
+  // },
   {
     path: '*',
     component: () => import('@/components/NotFound'),
