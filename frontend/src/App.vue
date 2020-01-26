@@ -11,16 +11,6 @@
 export default {
   components: {
     AppShell: () => import('@/components/AppShell')
-  },
-  computed: {
-    validPage() {
-      if (this.$route.name === 'login' || this.$route.name === '404') {
-        return false
-      } else {
-        return true
-      }
-    }
-  },
-
+  }
 }
 </script>
