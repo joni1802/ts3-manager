@@ -3,7 +3,7 @@
   <v-toolbar dense flat color="rgba(0, 0, 0, 0)">
     <v-toolbar-side-icon @click="drawer = !drawer" v-if="validPage"></v-toolbar-side-icon>
     <v-spacer></v-spacer>
-    <dark-mode></dark-mode>
+    <dark-mode-switch></dark-mode-switch>
   </v-toolbar>
 
   <nav v-if="validPage">
@@ -53,7 +53,7 @@
 <script>
 export default {
   components: {
-    DarkMode: () => import('@/components/DarkMode')
+    DarkModeSwitch: () => import('@/components/DarkModeSwitch')
   },
   data() {
     return {
@@ -154,5 +154,8 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style>
+.logo--dark {
+  filter: brightness(10);
+}
 </style>
