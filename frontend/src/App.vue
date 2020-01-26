@@ -1,6 +1,6 @@
 <template>
 <v-app :dark="$store.state.settings.darkMode">
-  <side-menu v-if="validPage"></side-menu>
+  <app-shell></app-shell>
   <v-content>
     <router-view></router-view>
   </v-content>
@@ -10,7 +10,7 @@
 <script>
 export default {
   components: {
-    SideMenu: () => import('@/components/SideMenu')
+    AppShell: () => import('@/components/AppShell')
   },
   computed: {
     validPage() {
@@ -21,5 +21,6 @@ export default {
       }
     }
   },
+
 }
 </script>

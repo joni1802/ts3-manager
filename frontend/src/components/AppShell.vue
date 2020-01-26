@@ -1,52 +1,60 @@
 <template>
-<nav>
-  <v-btn icon @click="drawer = !drawer" class="hidden-lg-and-up">
-    <v-icon>menu</v-icon>
-  </v-btn>
-  <v-navigation-drawer app v-model="drawer">
-    <v-toolbar flat class="transparent py-2">
-      <v-list>
-        <v-list-tile>
-          <v-list-tile-content>
-            <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-toolbar>
-    <v-list dense class="pt-2">
-      <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.path">
-        <v-list-tile-action>
-          <v-icon>{{ entry.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-title>
-          {{ entry.title }}
-          <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
-        </v-list-tile-title>
-      </v-list-tile>
-      <v-list-group v-else value="true" :prepend-icon="entry.icon" active-class="" no-action>
-        <template slot="activator">
+<div>
+  <v-toolbar dense flat color="rgba(0, 0, 0, 0)">
+    <v-toolbar-side-icon @click="drawer = !drawer" v-if="validPage"></v-toolbar-side-icon>
+    <v-spacer></v-spacer>
+    <dark-mode></dark-mode>
+  </v-toolbar>
+
+  <nav v-if="validPage">
+    <v-navigation-drawer app v-model="drawer">
+      <v-toolbar flat class="transparent py-2">
+        <v-list>
           <v-list-tile>
-            <v-list-tile-title>
-              {{ entry.title }}
-            </v-list-tile-title>
+            <v-list-tile-content>
+              <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
+            </v-list-tile-content>
           </v-list-tile>
-        </template>
-        <v-list-tile v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.path" :exact="true">
+        </v-list>
+      </v-toolbar>
+      <v-list dense class="pt-2">
+        <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.path">
           <v-list-tile-action>
-            <v-icon>{{ subEntry.icon }}</v-icon>
+            <v-icon>{{ entry.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-title>
-            {{ subEntry.title }}
+            {{ entry.title }}
+            <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
           </v-list-tile-title>
         </v-list-tile>
-      </v-list-group>
-    </v-list>
-  </v-navigation-drawer>
-</nav>
+        <v-list-group v-else value="true" :prepend-icon="entry.icon" active-class="" no-action>
+          <template slot="activator">
+            <v-list-tile>
+              <v-list-tile-title>
+                {{ entry.title }}
+              </v-list-tile-title>
+            </v-list-tile>
+          </template>
+          <v-list-tile v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.path" :exact="true">
+            <v-list-tile-action>
+              <v-icon>{{ subEntry.icon }}</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>
+              {{ subEntry.title }}
+            </v-list-tile-title>
+          </v-list-tile>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
+  </nav>
+</div>
 </template>
 
 <script>
 export default {
+  components: {
+    DarkMode: () => import('@/components/DarkMode')
+  },
   data() {
     return {
       mini: true,
@@ -122,15 +130,9 @@ export default {
             {
               title: 'Channel Client Permissions',
               icon: 'chat_bubble',
-              //path: '/permissions/channel/1/client/2',
               path: '/permissions/channel/0/client/0',
             },
           ]
-        },
-        {
-          title: 'Settings',
-          icon: 'settings',
-          path: '/settings'
         },
         {
           title: 'Logout',
@@ -139,12 +141,18 @@ export default {
         }
       ],
     }
+  },
+  computed: {
+    validPage() {
+      if (this.$route.name === 'login' || this.$route.name === '404') {
+        return false
+      } else {
+        return true
+      }
+    }
   }
 }
 </script>
 
-<style>
-.logo--dark {
-  filter: brightness(10);
-}
+<style lang="css" scoped>
 </style>
