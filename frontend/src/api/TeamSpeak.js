@@ -56,7 +56,7 @@ const setLoadingState = methods => {
         store.commit('isLoading', true)
         NProgress.inc()
 
-        if (process.env.NODE_ENV === 'development') await throttleSocketConnection(0)
+        if (process.env.NODE_ENV === 'development') await throttleSocketConnection(500)
 
         let response = await next(...args)
 
@@ -68,6 +68,8 @@ const setLoadingState = methods => {
 
         return response
       } catch (error) {
+        store.commit('isLoading', false)
+
         NProgress.done()
 
         throw error
