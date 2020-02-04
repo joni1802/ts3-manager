@@ -21,6 +21,14 @@ export default [{
     }
   },
   {
+    path: '/chat/:cid?',
+    component: () => import('@/components/TextMessages2'),
+    name: 'chat',
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/servers',
     component: () => import('@/components/Servers'),
     name: 'servers',
