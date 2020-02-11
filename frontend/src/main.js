@@ -23,9 +23,6 @@ Vue.use(VuetifyToast, {
 
 Vue.config.productionTip = false
 
-// Emitting events globally. See "https://alligator.io/vuejs/global-event-bus/"
-Vue.prototype.$eventBus = new Vue()
-
 // Connect to websocket server
 socket.open()
 
