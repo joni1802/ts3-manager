@@ -27,7 +27,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn flat @click="addBan" :disabled="disabledButton" color="primary">OK</v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Cancle</v-btn>
+            <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
