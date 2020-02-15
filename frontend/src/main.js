@@ -1,3 +1,9 @@
+/****************************************************
+  !!! THE ORDER OF THE IMPORTED MODULES MATTERS !!! *
+      The TeamSpeak instance needs to be imported   *
+      before the store, router and socket.          *
+ ****************************************************/
+
 import Vue from 'vue'
 import './plugins/vuetify'
 import App from './App.vue'
@@ -5,12 +11,12 @@ import VuetifyToast from 'vuetify-toast-snackbar'
 import 'nprogress/nprogress.css'
 import NProgress from 'nprogress'
 
+import TeamSpeak from './api/TeamSpeak'
+import './registerServiceWorker'
+
 import store from './store'
 import router from './router'
 import socket from './socket'
-
-import TeamSpeak from './api/TeamSpeak'
-import './registerServiceWorker'
 
 NProgress.configure({
   showSpinner: false

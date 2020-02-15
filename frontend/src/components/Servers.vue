@@ -7,7 +7,7 @@
           <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="servers" item-key="virtualserver_id" :rows-per-page-items="rowsPerPage">
             <template slot="items" slot-scope="props">
               <td>
-                <v-radio-group v-model="serverId" hide-details>
+                <v-radio-group v-model="currentServerId" hide-details>
                   <v-radio :value="props.item.virtualserver_id" :disabled="isOffline(props.item.virtualserver_status)"></v-radio>
                 </v-radio-group>
               </td>
@@ -85,7 +85,7 @@ export default {
           sortable: false
         },
       ],
-      serverId: null,
+      serverId: this.$store.state.connection.serverId,
       servers: [],
       stopDialog: false,
       selectedServer: {},
@@ -99,6 +99,16 @@ export default {
           "value": -1
         }
       ],
+    }
+  },
+  computed: {
+    currentServerId: {
+      get() {
+        return this.$store.state.connection.serverId
+      },
+      set(sid) {
+        this.$store.commit('setServerId', sid)
+      }
     }
   },
   methods: {
@@ -163,10 +173,6 @@ export default {
     getServerList() {
       return this.$TeamSpeak.execute('serverlist')
     },
-    // Selects the first available server from the list and selects its as default server
-    setServerId() {
-      this.serverId = [...this.servers].shift().virtualserver_id
-    },
     useServer() {
       return this.$TeamSpeak.execute('use', {
         sid: this.serverId
@@ -205,7 +211,6 @@ export default {
     try {
       this.servers = await this.getServerList()
 
-      this.setServerId()
       this.startUptimeCounters()
     } catch (err) {
       this.$toast.error(err.message, {
@@ -220,9 +225,7 @@ export default {
 
         this.$store.commit('setServerId', this.serverId)
       } catch (err) {
-        this.$toast.error(err.msg, {
-          icon: 'error'
-        })
+        this.$toast.error(err.msg)
       }
     }
   },

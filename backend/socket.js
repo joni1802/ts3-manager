@@ -89,10 +89,6 @@ socket.init = server => {
 
         log.info('ServerQuery reconnected')
 
-        await ServerQuery.execute('use', {
-          sid: 1
-        })
-
         registerEvents(ServerQuery, log, socket)
       } catch (err) {
         socket.emit('teamspeak_error', err.message)
