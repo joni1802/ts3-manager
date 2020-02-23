@@ -97,7 +97,7 @@ socket.init = server => {
 
     // Check on every request if the TeamSpeak instance was created.
     socket.use((packet, next) => {
-      if (packet[0] === 'teamspeak_connect' || packet[0] === 'autofillform') return next()
+      if (packet[0] === 'teamspeak-connect' || packet[0] === 'autofillform') return next()
 
       next(checkTSConnection(ServerQuery))
     })
