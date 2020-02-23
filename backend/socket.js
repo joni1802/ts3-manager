@@ -97,7 +97,7 @@ socket.init = server => {
 
     // Check on every request if the TeamSpeak instance was created.
     socket.use((packet, next) => {
-      if (packet[0] === 'teamspeak_connect' || 'autofillform') return next()
+      if (packet[0] === 'teamspeak_connect' || packet[0] === 'autofillform') return next()
 
       next(checkTSConnection(ServerQuery))
     })
@@ -199,6 +199,8 @@ socket.init = server => {
     // When the client disconnects from the server.
     // Try to quit the connection to the ServerQuery, if the client closed the connection without logging out properly.
     socket.on('disconnect', async () => {
+      log.info('Socket.io disconnected')
+
       if (ServerQuery instanceof TeamSpeak) {
         try {
           await ServerQuery.execute('quit')
