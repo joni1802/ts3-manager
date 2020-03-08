@@ -284,8 +284,10 @@ export default {
         this.serverInfo = await this.getServerInfo()
 
         if(this.$route.query.client) {
-          this.openTextPrivate(this.clientList.find(client => client.clid === this.$route.query.client))
-          // console.log(this.clientList.find(client => client.clid === this.$route.query.client));
+
+
+          // this.openTextPrivate(this.clientList.find(client => client.clid === this.$route.query.client))
+          console.log(this.clientList.find(client => client.clid === +this.$route.query.client));
         }
 
       } catch (err) {
