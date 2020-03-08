@@ -1,210 +1,216 @@
-export default [{
-    path: '/snapshot',
-    component: () => import('@/components/ServerSnapshot'),
-    name: 'snapshot',
+export default [
+  {
+    path: "/snapshot",
+    component: () => import("@/components/ServerSnapshot"),
+    name: "snapshot",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/console',
-    component: () => import('@/components/Console'),
-    name: 'console',
+    path: "/console",
+    component: () => import("@/components/Console"),
+    name: "console",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/',
+    path: "/",
     redirect: {
-      name: 'login'
+      name: "login"
     }
   },
   {
-    path: '/chat/:cid?',
-    component: () => import('@/components/TextMessages2'),
-    name: 'chat',
+    path: "/servers",
+    component: () => import("@/components/Servers"),
+    name: "servers",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/servers',
-    component: () => import('@/components/Servers'),
-    name: 'servers',
+    path: "/chat/:cid?",
+    component: () => import("@/components/TextMessages2"),
+    name: "chat",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/clients',
-    component: () => import('@/components/Clients'),
+    path: "/clients",
+    component: () => import("@/components/Clients"),
+    name: "clients",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/client/:cldbid/ban',
-    component: () => import('@/components/ClientBan'),
-    name: 'client-ban',
+    path: "/client/:cldbid/ban",
+    component: () => import("@/components/ClientBan"),
+    name: "client-ban",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/client/:clid/edit',
-    component: () => import('@/components/ClientEdit'),
-    name: 'client-edit',
+    path: "/client/:clid/edit",
+    component: () => import("@/components/ClientEdit"),
+    name: "client-edit",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/permissions/client/:cldbid?',
-    component: () => import('@/components/ClientPermissions'),
-    name: 'permissions-client',
+    path: "/permissions/client/:cldbid?",
+    component: () => import("@/components/ClientPermissions"),
+    name: "permissions-client",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/bans',
-    component: () => import('@/components/Bans'),
-    name: 'bans',
+    path: "/bans",
+    component: () => import("@/components/Bans"),
+    name: "bans",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/ban/add',
-    component: () => import('@/components/BanAdd'),
+    path: "/ban/add",
+    component: () => import("@/components/BanAdd"),
+    name: "ban-add",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/ban/:banid/edit',
-    component: () => import('@/components/BanEdit'),
-    name: 'ban-edit',
+    path: "/ban/:banid/edit",
+    component: () => import("@/components/BanEdit"),
+    name: "ban-edit",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/complaints',
-    component: () => import('@/components/Complaints'),
+    path: "/complaints",
+    component: () => import("@/components/Complaints"),
+    name: "complaints",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/servergroups',
-    component: () => import('@/components/ServerGroups'),
+    path: "/servergroups",
+    component: () => import("@/components/ServerGroups"),
+    name: "servergroups",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/servergroup/:sgid/edit',
-    component: () => import('@/components/ServerGroupEdit'),
-    name: 'servergroup-edit',
+    path: "/servergroup/:sgid/edit",
+    component: () => import("@/components/ServerGroupEdit"),
+    name: "servergroup-edit",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/permissions/servergroup/:sgid?',
-    component: () => import('@/components/ServerGroupPermissions'),
-    name: 'permissions-servergroup',
+    path: "/permissions/servergroup/:sgid?",
+    component: () => import("@/components/ServerGroupPermissions"),
+    name: "permissions-servergroup",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/permissions/channel/:cid?',
-    component: () => import('@/components/ChannelPermissions'),
-    name: 'permissions-channel',
+    path: "/permissions/channel/:cid?",
+    component: () => import("@/components/ChannelPermissions"),
+    name: "permissions-channel",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/channel/:cid/edit',
-    component: () => import('@/components/ChannelEdit'),
-    name: 'channel-edit',
+    path: "/channel/:cid/edit",
+    component: () => import("@/components/ChannelEdit"),
+    name: "channel-edit",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/channelgroups',
-    component: () => import('@/components/ChannelGroups'),
+    path: "/channelgroups",
+    component: () => import("@/components/ChannelGroups"),
+    name: "channelgroups",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/channelgroup/:cgid/edit',
-    component: () => import('@/components/ChannelGroupEdit'),
-    name: 'channelgroup-edit',
+    path: "/channelgroup/:cgid/edit",
+    component: () => import("@/components/ChannelGroupEdit"),
+    name: "channelgroup-edit",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/permissions/channelgroup/:cgid?',
-    component: () => import('@/components/ChannelGroupPermissions'),
-    name: 'permissions-channelgroup',
+    path: "/permissions/channelgroup/:cgid?",
+    component: () => import("@/components/ChannelGroupPermissions"),
+    name: "permissions-channelgroup",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/permissions/channel/:cid?/client/:cldbid?',
-    component: () => import('@/components/ChannelClientPermissions'),
-    name: 'permissions-channelclient',
+    path: "/permissions/channel/:cid?/client/:cldbid?",
+    component: () => import("@/components/ChannelClientPermissions"),
+    name: "permissions-channelclient",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/serverviewer',
-    component: () => import('@/components/ServerViewer'),
-    name: 'serverviewer',
+    path: "/serverviewer",
+    component: () => import("@/components/ServerViewer"),
+    name: "serverviewer",
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/login',
-    component: () => import('@/components/Login'),
-    name: 'login',
+    path: "/login",
+    component: () => import("@/components/Login"),
+    name: "login",
     meta: {
       requiresAuth: false
     }
   },
   {
-    path: '/logout',
-    component: () => import('@/components/Logout'),
-    name: 'logout',
+    path: "/logout",
+    component: () => import("@/components/Logout"),
+    name: "logout",
     meta: {
       requiresAuth: true
     }
   },
-  // {
-  //   path: '/test',
-  //   component: () => import('@/components/Test'),
-  //   name: 'test',
-  //   meta: {
-  //     requiresAuth: false
-  //   }
-  // },
   {
-    path: '*',
-    component: () => import('@/components/NotFound'),
-    name: '404',
+    path: "/test",
+    component: () => import("@/components/Test"),
+    name: "test",
     meta: {
       requiresAuth: false
     }
   },
-]
+  {
+    path: "*",
+    component: () => import("@/components/NotFound"),
+    name: "404",
+    meta: {
+      requiresAuth: false
+    }
+  }
+];

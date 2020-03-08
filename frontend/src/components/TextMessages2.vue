@@ -1,54 +1,97 @@
 <template>
-<v-container>
-  <v-layout>
-    <v-flex xs12>
-      <v-card :style="{height: `calc(100vh - 96px)`, position: 'relative'}" ref="yolo">
-        <v-layout wrap>
-          <v-flex xs12 md3>
-            <v-list subheader>
+<v-container fill-height>
+  <v-layout justify-center fill-height>
+    <v-flex lg10 md10 sm10 xs12>
+      <v-card>
+        <v-layout wrap justify-space-around fill-height>
+          <v-flex xs12 md3 hidden-xs-only style="height: calc(100vh - 96px); overflow-y: auto;">
+            <v-list subheader >
 
               <v-subheader>Channels</v-subheader>
               <v-list-tile v-for="channel in channelList" @click="switchTextChannel(channel.cid)" active-class="active-channel" :class="{'active-channel': channel.cid === channelId}">
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ channel.channel_name }} ({{ channel.cid }})</v-list-tile-title>
-                </v-list-tile-content>
+                <v-list-tile-avatar>
+                  <v-icon>chat_bubble</v-icon>
+                </v-list-tile-avatar>
+                  <v-badge color="red">
+                    <template slot="badge" v-if="countUnreadMessages({target: channel.cid, targetmode: 2})">
+                      {{ countUnreadMessages({target: channel.cid, targetmode: 2}) }}
+                    </template>
+                    <v-list-tile-content>
+                      <v-list-tile-title>{{ channel.channel_name }}</v-list-tile-title>
+                      <v-list-tile-sub-title>{{ channel.cid }}</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                  </v-badge>
               </v-list-tile>
 
               <v-subheader>Clients</v-subheader>
               <v-list-tile v-for="client in clientList" @click="openTextPrivate(client)">
-                <v-list-tile-content>
-                  <v-list-tile-title>{{ client.client_nickname }}</v-list-tile-title>
-                </v-list-tile-content>
+                <v-list-tile-avatar>
+                  <v-icon>fiber_manual_record</v-icon>
+                </v-list-tile-avatar>
+                  <v-badge color="red">
+                    <template slot="badge" v-if="countUnreadMessages({target: client.clid, targetmode: 1})">
+                      {{ countUnreadMessages({target: client.clid, targetmode: 1}) }}
+                    </template>
+                    <v-list-tile-content>
+                      <v-list-tile-title>{{ client.client_nickname }}</v-list-tile-title>
+                    </v-list-tile-content>
+                  </v-badge>
               </v-list-tile>
 
             </v-list>
           </v-flex>
-          <v-flex xs12 md9>
-            <v-tabs v-model="selectedTab">
-              <v-tab>{{ textServerTab.name }}</v-tab>
-              <v-tab>{{ textChannelTab.name }}</v-tab>
-              <v-tab v-for="(textPrivateTab, index) in textPrivateTabs" :key="index + 2">
-                {{ textPrivateTab.name }}
-                <v-icon @click="closeTextPrivate(textPrivateTab)">close</v-icon>
-              </v-tab>
-            </v-tabs>
-            <v-tabs-items>
-              <v-tab-item>
-                <div v-for="message in filteredTextMessages" class="my-2">
-                  <div>
-                    <v-icon v-if="message.sender === queryUser.client_nickname">arrow_upward</v-icon>
-                    <v-icon v-else>arrow_downward</v-icon>
-                    {{ message.timestamp }} <b>{{ message.sender }}</b>
-                  </div>
-                  <div>
-                    {{ message.text }}
-                  </div>
-                </div>
-              </v-tab-item>
-            </v-tabs-items>
 
-            <v-text-field>
-            </v-text-field>
+          <v-flex xs12 md8 >
+            <v-layout column fill-height>
+              <v-flex shrink>
+                <v-tabs v-model="selectedTab">
+                  <v-tab>
+                    <v-badge color="red">
+                      <template slot="badge" v-if="countUnreadMessages(textServerTab)">
+                        {{ countUnreadMessages(textServerTab) }}
+                      </template>
+                      <span>{{ textServerTab.name }}</span>
+                    </v-badge>
+                  </v-tab>
+                  <v-tab>
+                    <v-badge color="red">
+                      <template slot="badge" v-if="countUnreadMessages(textChannelTab)">
+                        {{ countUnreadMessages(textChannelTab) }}
+                      </template>
+                      <span>{{ textChannelTab.name }}</span>
+                    </v-badge>
+                  </v-tab>
+                  <v-tab v-for="(textPrivateTab, index) in textPrivateTabs" :key="index + 2">
+                    <v-badge color="red">
+                      <template slot="badge" v-if="countUnreadMessages(textPrivateTab)">
+                        {{ countUnreadMessages(textPrivateTab) }}
+                      </template>
+                      <span>{{ textPrivateTab.name }}<v-icon @click.stop="closeTextPrivate(textPrivateTab)">close</v-icon></span>
+                    </v-badge>
+                  </v-tab>
+                </v-tabs>
+              </v-flex>
+
+              <v-flex grow style="height: 50vh; overflow-y: auto;">
+                <v-tabs-items>
+                  <v-tab-item ref="chat" >
+                    <div v-for="message in filteredTextMessages" class="my-2">
+                      <div>
+                        <v-icon v-if="message.sender.clid === queryUser.client_id">arrow_upward</v-icon>
+                        <v-icon v-else>arrow_downward</v-icon>
+                        {{ new Date(message.meta.timestamp).toLocaleString() }} <b>{{ message.sender.client_nickname }}</b>
+                      </div>
+                      <div>
+                        {{ message.text }}
+                      </div>
+                    </div>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-flex>
+              <v-flex shrink>
+                <v-text-field :append-icon="'send'" label="Send Message" v-model="message" @click:append="sendMessage" @keyup="keyPressed" ></v-text-field>
+              </v-flex>
+            </v-layout>
           </v-flex>
         </v-layout>
       </v-card>
@@ -69,7 +112,9 @@ export default {
             name: 'chat',
             params: {
               cid: vm.queryUser.client_channel_id
-            }
+            },
+            // Send "openTextPrivate" from ServerViewer.vue
+            query: vm.$route.query
           })
         } else {
           await vm.moveClient(vm.queryUser.client_id, to.params.cid)
@@ -85,7 +130,6 @@ export default {
       channelList: [],
       serverInfo: {},
       queryUser: {},
-      textMessages: [],
       /**
        * The id of the currently joined channel.
        * @type {number}
@@ -97,7 +141,8 @@ export default {
        */
       textPrivateTargets: [],
       selectedTab: 0,
-      selectedChat: {}
+      selectedChat: {},
+      message: ''
     }
   },
   computed: {
@@ -139,10 +184,13 @@ export default {
           }
       }
 
-      return this.textMessages.filter(message => message.target === this.selectedChat.target && message.targetmode === this.selectedChat.targetmode)
+      return this.$store.state.chat.messages.filter(message => message.target === this.selectedChat.target && message.targetmode === this.selectedChat.targetmode)
     }
   },
   methods: {
+    countUnreadMessages({target, targetmode}) {
+      return this.$store.state.chat.messages.filter(message => message.target === target && message.targetmode === targetmode && message.meta.unread).length
+    },
     getClientList() {
       return this.$TeamSpeak.execute('clientlist')
     },
@@ -171,6 +219,9 @@ export default {
             cid
           }
         })
+
+        // Focus tab
+        this.selectedTab = 1
       } catch (err) {
         this.$toast.error(err.message)
       }
@@ -178,13 +229,53 @@ export default {
     closeTextPrivate(chat) {
       let index = this.textPrivateTargets.map(client => client.clid).indexOf(chat.target)
 
+      this.selectedTab =  1 + index
+
       this.textPrivateTargets.splice(index, 1)
     },
-    openTextPrivate(client) {
+    openTextPrivate(client, focus = true) {
       let openedTargets = this.textPrivateTargets.map(client => client.clid)
 
       // Create the chat only if it is not already open
       if (!openedTargets.includes(client.clid)) this.textPrivateTargets.push(client)
+
+      // Focus tab
+      if(focus)
+        this.selectedTab = 2 + this.textPrivateTargets.map(client => client.clid).indexOf(client.clid)
+    },
+    keyPressed(e) {
+      // On press "Enter"
+      if (e.keyCode === 13) this.sendMessage()
+    },
+    async sendMessage() {
+      try {
+        let {targetmode, target} = this.selectedChat
+        let sender = {
+          clid: this.queryUser.client_id,
+          client_nickname: this.queryUser.client_nickname
+        }
+
+        await this.$TeamSpeak.execute('sendtextmessage', {
+          targetmode: this.selectedChat.targetmode,
+          target: this.selectedChat.target,
+          msg: this.message
+        })
+
+        // targetmode = number ,  sender = {clid, client_nickname}, text = string, target = number
+        this.$store.dispatch('saveTextMessage', {
+          targetmode,
+          target,
+          sender,
+          text: this.message,
+          meta: {
+            unread: false
+          }
+        })
+
+        this.message = ''
+      } catch (err) {
+        this.$toast.error(err.message)
+      }
     },
     async init() {
       try {
@@ -192,43 +283,32 @@ export default {
         this.channelList = await this.getChannelList()
         this.serverInfo = await this.getServerInfo()
 
-        // console.log(this.channelList.find(channel => channel.cid === this.queryUser.client_channel_id));
+        if(this.$route.query.client) {
+          this.openTextPrivate(this.clientList.find(client => client.clid === this.$route.query.client))
+          // console.log(this.clientList.find(client => client.clid === this.$route.query.client));
+        }
+
       } catch (err) {
         this.$toast.error(err.message)
       }
-    }
+    },
   },
   created() {
     this.init()
   },
   watch: {
-    // channelId: {
-    //   immediate: true,
-    //   handler(cid) {
-    //     // console.log('channel id', cid);
-    //   }
-    // },
-    // textPrivateTargets(list) {
-    //   console.log(list);
-    // },
-    // selectedChat(val) {
-    //   console.log(val);
-    // }
+    selectedChat(chat) {
+      this.$store.commit("markMessageAsRead", chat)
+    },
+    "$store.state.chat.messages"(messages) {
+      this.$store.commit("markMessageAsRead", this.selectedChat)
+    }
   },
   beforeRouteUpdate(to, from, next) {
     this.channelId = +to.params.cid
-    //
-    // try {
-    //   this.serverGroupPermissions = await this.getServergroupPermissions()
-    // } catch (err) {
-    //   this.$toast.error(err.message, {
-    //     icon: 'error'
-    //   })
-    // }
-
 
     next()
-  },
+  }
 }
 </script>
 

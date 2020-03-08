@@ -69,11 +69,11 @@ import {
 export default {
   beforeRouteEnter(to, from, next) {
     next(async vm => {
-      if (!vm.$store.state.connection.token) return;
+      if (!vm.$store.state.query.token) return;
 
       vm.$socket.emit(
         "autofillform",
-        vm.$store.state.connection.token,
+        vm.$store.state.query.token,
         response => {
           vm.form.host = response.host;
           vm.form.queryport = response.queryport;
@@ -117,18 +117,13 @@ export default {
       this.loading = true;
 
       try {
-        let response = await this.$TeamSpeak.connect(this.preparedForm);
+        let {token, serverId, queryUser} = await this.$TeamSpeak.connect(this.preparedForm);
 
-        this.$store.commit("isConnected", true);
-        this.$store.commit("saveToken", response.token);
-        this.$router.push({
-          name: "servers"
-        });
+        this.$store.dispatch("saveConnection", {token, serverId, queryUser})
+
+        this.$router.push({name: "servers"});
       } catch (message) {
-        this.$toast.error(message, {
-          icon: "error"
-        });
-        this.$store.commit("isConnected", false);
+        this.$toast.error(message);
       }
 
       this.loading = false;

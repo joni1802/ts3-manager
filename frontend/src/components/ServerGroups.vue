@@ -21,7 +21,11 @@
     },
     methods: {
       getServerGroupList() {
-        return this.$TeamSpeak.execute('servergrouplist')
+        console.log('-- servergroup --');
+        return this.$TeamSpeak.execute('servergrouplist').then(list => {
+
+          return list
+        })
       },
       async addServerGroup(name) {
         try {
@@ -49,8 +53,11 @@
       }
     },
     async created() {
+      console.log('CHILD CREATED');
+
       try {
         this.serverGroups = await this.getServerGroupList()
+
       } catch(err) {
         this.$toast.error(err.message, {icon: 'error'})
       }

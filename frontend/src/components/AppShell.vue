@@ -17,10 +17,16 @@
           </v-list-tile>
         </v-list>
       </v-toolbar>
-      <v-list dense class="pt-2">
-        <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.path">
+      <v-list dense class="pt-2" subheader>
+        <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
           <v-list-tile-action>
-            <v-icon>{{ entry.icon }}</v-icon>
+            <v-badge color="red">
+              <template slot="badge" v-if="entry.title === 'Chat' && unreadMessages">
+                <span>{{ unreadMessages }}</span>
+              </template>
+              <v-icon>{{ entry.icon }}</v-icon>
+            </v-badge>
+
           </v-list-tile-action>
           <v-list-tile-title>
             {{ entry.title }}
@@ -35,7 +41,7 @@
               </v-list-tile-title>
             </v-list-tile>
           </template>
-          <v-list-tile v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.path" :exact="true">
+          <v-list-tile v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.route" :exact="true">
             <v-list-tile-action>
               <v-icon>{{ subEntry.icon }}</v-icon>
             </v-list-tile-action>
@@ -62,47 +68,52 @@ export default {
       menuEntries: [{
           title: 'Server List',
           icon: 'dns',
-          path: '/servers',
+          route: {name: 'servers'},
         },
         {
           title: 'Backup/Restore',
           icon: 'settings_backup_restore',
-          path: '/snapshot'
+          route: {name: 'snapshot'}
+        },
+        {
+          title: 'Chat',
+          icon: 'mail_outline',
+          route: {name: 'chat'}
         },
         {
           title: 'Server Viewer',
           icon: 'remove_red_eye',
-          path: '/serverviewer',
+          route: {name: 'serverviewer'}
         },
         {
           title: 'List All Clients',
           icon: 'person',
-          path: '/clients',
+          route: {name: 'clients'}
         },
         {
           title: 'Ban List',
           icon: 'not_interested',
-          path: '/bans'
+          route: {name: 'bans'}
         },
         {
           title: 'Console',
           icon: 'mdi-console',
-          path: '/console'
+          route: {name: 'console'}
         },
         {
           title: 'Complaints List',
           icon: 'warning',
-          path: '/complaints'
+          route: {name: 'complaints'}
         },
         {
           title: 'Server Groups',
           icon: 'group',
-          path: '/servergroups',
+          route: {name: 'servergroups'}
         },
         {
           title: 'Channel Groups',
           icon: 'chat_bubble',
-          path: '/channelgroups'
+          route: {name: 'channelgroups'}
         },
         {
           title: 'Permissions',
@@ -110,44 +121,54 @@ export default {
           submenu: [{
               title: 'Server Group',
               icon: 'group',
-              path: '/permissions/servergroup/',
+              route: {name: 'permissions-servergroup'}
             },
             {
               title: 'Client Permissions',
               icon: 'person',
-              path: '/permissions/client/',
+              route: {name: 'permissions-client'}
             },
             {
               title: 'Channel Permissions',
               icon: 'chat_bubble',
-              path: '/permissions/channel/',
+              route: {name: 'permissions-channel'}
             },
             {
               title: 'Channel Groups',
               icon: 'chat_bubble',
-              path: '/permissions/channelgroup/',
+              route: {name: 'permissions-channelgroup'}
             },
             {
               title: 'Channel Client Permissions',
               icon: 'chat_bubble',
-              path: '/permissions/channel/0/client/0',
+              route: {name: 'permissions-channelclient'}
             },
           ]
         },
         {
           title: 'Logout',
           icon: 'exit_to_app',
-          path: '/logout'
+          route: {name: 'logout'}
         }
       ],
     }
   },
   computed: {
+    unreadMessages() {
+      return this.$store.state.chat.messages.filter(message => message.meta.unread).length
+    },
     validPage() {
       if (this.$route.name === 'login' || this.$route.name === '404') {
         return false
       } else {
         return true
+      }
+    },
+    notServers() {
+      if(!this.$route.name === 'servers') {
+        return true
+      } else {
+        return false
       }
     }
   }

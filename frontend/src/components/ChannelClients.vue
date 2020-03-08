@@ -8,7 +8,7 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-tile @click="openPrivateChat">
+      <v-list-tile @click="openPrivateChat(client.clid)">
         <v-list-tile-action>
           <v-icon>send</v-icon>
         </v-list-tile-action>
@@ -134,10 +134,8 @@ export default {
 
       this.kickClientDialog = false
     },
-    openPrivateChat() {
-      this.$emit('privatechat', {
-        ...this.client
-      })
+    openPrivateChat(clid) {
+      this.$router.push({name: 'chat', query: {client: clid}})
     }
   }
 }

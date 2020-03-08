@@ -117,7 +117,7 @@
         this.$refs.hiddenFileSelector.value = ''
       },
       selectServer() {
-        return this.$TeamSpeak.execute('use', {sid: this.$store.state.connection.serverId})
+        return this.$TeamSpeak.execute('use', {sid: this.$store.state.query.serverId})
       }
     }
   }

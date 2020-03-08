@@ -7,14 +7,12 @@
           <v-subheader>
             <v-icon>dns</v-icon>{{ serverInfo.virtualserver_name }}
           </v-subheader>
-          <v-treeview :items="channelTree" :open="itemIDs" :style="{maxHeight: '50vh', overflow: 'auto'}">
+          <v-treeview :items="channelTree" :open="itemIDs">
             <template slot="label" slot-scope="{item}">
               <channel v-if="item.channel_name" :channel="item" :queryUser="queryUser"></channel>
-              <client v-else :client="item" :queryUser="queryUser" @privatechat="openTextPrivate"></client>
+              <client v-else :client="item" :queryUser="queryUser"></client>
             </template>
           </v-treeview>
-          <v-divider></v-divider>
-          <text-messages :queryUser="queryUser" :server="serverInfo" :channel="currentChannel" :clients="textPrivates" @closetextchat="closeTextPrivate" @privatechat="openTextPrivate"></text-messages>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -26,7 +24,6 @@ export default {
   components: {
     Channel: () => import('@/components/Channel'),
     Client: () => import('@/components/ChannelClients'),
-    TextMessages: () => import('@/components/TextMessages')
   },
   data() {
     return {
@@ -41,23 +38,6 @@ export default {
     }
   },
   methods: {
-    closeTextPrivate(chat) {
-      let index = this.textPrivates.map(tab => tab.target).indexOf(chat.target)
-
-      this.textPrivates.splice(index, 1)
-    },
-    openTextPrivate(client) {
-      let openedTargets = this.textPrivates.map(textPrivate => textPrivate.target)
-
-      // Create the chat only if it is not already open
-      if (!openedTargets.includes(client.clid)) {
-        this.textPrivates.push({
-          name: client.client_nickname,
-          target: client.clid,
-          targetmode: 1
-        })
-      }
-    },
     // Props to http://oskarhane.com/create-a-nested-array-recursively-in-javascript/
     createNestedList(list, itemID = 0) {
       let out = []
@@ -75,23 +55,6 @@ export default {
       }
 
       return out
-    },
-    async registerChannelEvent(id) {
-      try {
-        await this.$TeamSpeak.registerEvent('channel', id)
-      } catch (err) {
-        this.$toast.error(err.message)
-      }
-    },
-    registerServerNotifications() {
-      this.registerChannelEvent(0)
-    },
-    async unregisterServerNotifications() {
-      try {
-        await this.$TeamSpeak.unregisterEvent()
-      } catch (err) {
-        this.$toast.error(err.message)
-      }
     },
     addEventListeners() {
       this.$TeamSpeak.on('clientmoved', this.loadChannelTree)
@@ -181,28 +144,12 @@ export default {
       this.openAllChannels()
 
       this.addEventListeners()
-      this.registerServerNotifications()
     } catch (err) {
       this.$toast.error(err.message)
     }
   },
-  watch: {
-    currentTab(index) {
-      switch (index) {
-        case 0:
-          this.notification.textServer = 0
-          break;
-        case 1:
-          this.notification.textChannel = 0
-          break;
-        default:
-
-      }
-    }
-  },
   beforeRouteLeave(from, to, next) {
     this.removeEventListeners()
-    this.unregisterServerNotifications()
 
     next()
   }

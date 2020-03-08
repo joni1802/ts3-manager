@@ -1,50 +1,46 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import routes from './routes'
-import store from '../store'
-import NProgress from 'nprogress'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import routes from "./routes";
+import store from "../store";
+import NProgress from "nprogress";
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   routes: routes
-})
+});
 
 router.beforeEach((to, from, next) => {
-  store.commit('isLoading', true)
+  store.commit("isLoading", true);
 
-  NProgress.start()
+  NProgress.start();
 
   if (to.meta.requiresAuth) {
-    if (store.state.connection.connected) {
-      next()
+    if (store.state.query.connected) {
+      next();
     } else {
-      next({
-        name: 'login'
-      })
+      next({name: "login"});
     }
   } else {
-    if (to.name === 'login' && store.state.connection.connected) {
-      next({
-        name: 'servers'
-      })
+    if (to.name === "login" && store.state.query.connected) {
+      next({name: "servers"});
     } else {
-      next()
+      next();
     }
   }
-})
+});
 
 router.afterEach((to, from) => {
-  store.commit('isLoading', false)
+  store.commit("isLoading", false);
 
   setTimeout(() => {
     if (store.state.query.loading) {
-      NProgress.inc()
+      NProgress.inc();
     } else {
-      NProgress.done()
+      NProgress.done();
     }
-  }, 0)
-})
+  }, 0);
+});
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
-export default router
+export default router;

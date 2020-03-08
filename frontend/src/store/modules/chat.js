@@ -1,63 +1,83 @@
-import TeamSpeak from '../../api/TeamSpeak'
+import Vue from "vue";
 
 const state = {
   messages: []
-}
+};
 
 const mutations = {
   saveMessage(state, message) {
-    state.messages.push(message)
+    state.messages.push(message);
+  },
+  markMessageAsRead(state, {target, targetmode}) {
+    for (let i = 0; i < state.messages.length; i++) {
+      if (
+        state.messages[i].target === target &&
+        state.messages[i].targetmode === targetmode
+      ) {
+        state.messages[i].meta.unread = false;
+      }
+    }
   },
   removeAllMessages(state) {
-    state.messages = []
+    state.messages = [];
   }
-}
+};
 
-// const getQueryUserInfo = () => {
-//   return TeamSpeak.execute('whoami').then(list => list[0])
-// }
-//
-// const getServerInfo = () => {
-//   return TeamSpeak.execute('serverinfo').then(list => list[0])
-// }
-//
-// const createMessage = (notification, target) => {
-//   return {
-//     target,
-//     text: notification.msg,
-//     targetmode: notification.targetmode,
-//     sender: notification.invoker.client_nickname,
-//     timestamp: new Date()
-//   }
-// }
-//
-// const actions = {
-//   async handleNotification({commit}, notification) {
-//     let target = undefined
-//
-//     switch(notification.targetmode) {
-//       case 1:
-//         target = notification.invoker.clid
-//
-//         break;
-//       case 2:
-//         let queryUser = await getQueryUserInfo()
-//
-//         target = queryUser.client_channel_id
-//
-//         break;
-//       case 3:
-//         let serverInfo = await getServerInfo()
-//
-//         target = serverInfo.virtualserver_id
-//     }
-//
-//     commit('saveMessage', createMessage(notification, target))
-//   }
-// }
+const actions = {
+  async handleReceivedMessages({dispatch, rootState}, notification) {
+    try {
+      if (notification.invoker.clid !== rootState.query.queryUser.client_id) {
+        dispatch("saveTextMessage", {
+          targetmode: notification.targetmode,
+          sender: notification.invoker,
+          text: notification.msg,
+          meta: {
+            unread: true
+          }
+        });
+      }
+    } catch (err) {
+      Vue.prototype.$toast.error(err.message);
+    }
+  },
+  async saveTextMessage(
+    {commit, rootState},
+    {targetmode, sender, text, target, meta}
+  ) {
+    try {
+      if (!target) {
+        switch (targetmode) {
+          case 1:
+            target = sender.clid;
+
+            break;
+          case 2:
+            target = rootState.query.queryUser.client_channel_id;
+
+            break;
+          case 3:
+            target = rootState.query.serverId;
+        }
+      }
+
+      meta.timestamp = new Date();
+
+      commit("saveMessage", {
+        sender,
+        target,
+        targetmode,
+        text,
+        meta
+        // timestamp: new Date()
+      });
+    } catch (err) {
+      Vue.prototype.$toast.error(err.message);
+    }
+  }
+};
 
 export default {
   state,
   mutations,
-  // actions
-}
+  actions
+};
