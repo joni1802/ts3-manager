@@ -5,6 +5,7 @@ socket.init = server => {
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
   const {TeamSpeak} = require("ts3-nodejs-library");
+  let ServerQuery;
 
   const {logger} = require("./utils");
 
@@ -83,34 +84,39 @@ socket.init = server => {
     fn({message: err.message, ...err});
   };
 
-  // When the client is connected to the server.
-  io.on("connection", async socket => {
+  // Try to reconnect if a token was send by the client
+  io.use(async (socket, next) => {
     let ip = socket.client.conn.remoteAddress;
-    let queryUser = {};
     let {token, serverId} = socket.handshake.query;
     let log = logger.child({client: ip});
-    let ServerQuery;
 
-    log.info("Socket.io connected");
-
-    // Try to reconnect to the TeamSpeak ServerQuery if a client sends a token.
-    if (token && serverId) {
-      try {
+    try {
+      if (token) {
         let decoded = jwt.verify(token, secret);
 
         ServerQuery = await TeamSpeak.connect(decoded);
-        await ServerQuery.execute("use", {sid: serverId});
-        queryUser = await ServerQuery.execute("whoami").then(list => list[0]);
 
-        log.info("ServerQuery reconnected");
+        if (serverId) await ServerQuery.execute("use", {sid: serverId});
 
         registerEvents(ServerQuery, log, socket);
 
-        socket.emit("teamspeak-reconnected", queryUser);
-      } catch (err) {
-        socket.emit("teamspeak-error", err.message);
+        socket.emit("teamspeak-reconnected");
       }
+
+      return next();
+    } catch (err) {
+      console.log(err);
+      return next(new Error(err.message));
     }
+  });
+
+  // When the client is connected to the server.
+  io.on("connection", async socket => {
+    let ip = socket.client.conn.remoteAddress;
+    let token = socket.handshake.query.token;
+    let log = logger.child({client: ip});
+
+    log.info("Socket.io connected");
 
     // Check on every request if the TeamSpeak instance was created.
     socket.use((packet, next) => {
@@ -134,11 +140,6 @@ socket.init = server => {
     socket.on("teamspeak-connect", async (options, fn) => {
       try {
         ServerQuery = await TeamSpeak.connect(options);
-        serverId = await ServerQuery.execute("serverlist").then(
-          servers => servers[0].virtualserver_id
-        );
-        await ServerQuery.execute("use", {sid: serverId});
-        queryUser = await ServerQuery.execute("whoami").then(list => list[0]);
 
         log.info("ServerQuery connected");
 
@@ -146,9 +147,9 @@ socket.init = server => {
 
         registerEvents(ServerQuery, log, socket);
 
-        fn({token, serverId, queryUser});
+        fn({token});
       } catch (err) {
-        fn(err.message);
+        handleError(err, fn);
       }
     });
 

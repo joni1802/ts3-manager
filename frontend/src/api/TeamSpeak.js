@@ -175,7 +175,7 @@ TeamSpeak.registerEvent = (event, id = undefined) => {
 };
 
 TeamSpeak.registerAllEvents = () => {
-  Promise.all([
+  return Promise.all([
     TeamSpeak.registerEvent("textserver"),
     TeamSpeak.registerEvent("textchannel"),
     TeamSpeak.registerEvent("textprivate"),

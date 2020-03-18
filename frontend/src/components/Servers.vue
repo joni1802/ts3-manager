@@ -1,72 +1,78 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
-        <v-card>
-          <v-card-text>
-            <v-data-table
-              :no-data-text="
+<v-container>
+  <v-layout>
+    <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
+      <v-card>
+        <v-card-text>
+          <v-data-table :no-data-text="
                 $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
-              :headers="headers"
-              :items="servers"
-              item-key="virtualserver_id"
-              :rows-per-page-items="rowsPerPage"
-            >
-              <template slot="items" slot-scope="props">
-                <td>
-                  <v-radio-group v-model="currentServerId" hide-details>
-                    <v-radio
-                      :value="props.item.virtualserver_id"
-                      :disabled="isOffline(props.item.virtualserver_status)"
-                    ></v-radio>
-                  </v-radio-group>
-                </td>
-                <td>{{ props.item.virtualserver_name }}</td>
-                <td>{{ props.item.virtualserver_port }}</td>
-                <td>
-                  {{ props.item.virtualserver_clientsonline }}/{{
+              " :headers="headers" :items="servers" item-key="virtualserver_id" :rows-per-page-items="rowsPerPage">
+            <template slot="items" slot-scope="props">
+              <td>
+                <v-radio-group v-model="currentServerId" hide-details>
+                  <v-radio :value="props.item.virtualserver_id" :disabled="isOffline(props.item.virtualserver_status)"></v-radio>
+                </v-radio-group>
+              </td>
+              <td>{{ props.item.virtualserver_name }}</td>
+              <td>{{ props.item.virtualserver_port }}</td>
+              <td>
+                {{ props.item.virtualserver_clientsonline }}/{{
                     props.item.virtualserver_maxclients
                   }}
-                </td>
-                <td>{{ calcUptime(props.item.virtualserver_uptime) }}</td>
-                <td justify-center align-center layout px-0>
-                  <v-switch
-                    hide-details
-                    :input-value="!isOffline(props.item.virtualserver_status)"
-                    @click.stop.prevent="changeServerStatus(props.item)"
-                  ></v-switch>
-                </td>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-flex>
-    </v-layout>
-    <v-dialog v-model="stopDialog" max-width="500px">
-      <v-card>
-        <v-card-title>Stop Server</v-card-title>
-        <v-card-text>
-          Do really want to stop this virtual server instance?
+              </td>
+              <td>{{ calcUptime(props.item.virtualserver_uptime) }}</td>
+              <td justify-center align-center layout px-0>
+                <v-switch hide-details :input-value="!isOffline(props.item.virtualserver_status)" @click.stop.prevent="changeServerStatus(props.item)"></v-switch>
+              </td>
+            </template>
+          </v-data-table>
         </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat @click="stopDialog = false" color="primary">Cancel</v-btn>
-          <v-btn flat @click="stopServer" color="primary">Stop</v-btn>
-        </v-card-actions>
       </v-card>
-    </v-dialog>
-  </v-container>
+    </v-flex>
+  </v-layout>
+  <v-dialog v-model="stopDialog" max-width="500px">
+    <v-card>
+      <v-card-title>Stop Server</v-card-title>
+      <v-card-text>
+        Do really want to stop this virtual server instance?
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn flat @click="stopDialog = false" color="primary">Cancel</v-btn>
+        <v-btn flat @click="stopServer" color="primary">Stop</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</v-container>
 </template>
 
 <script>
-import { secondsToDHMS } from "@/utils";
+import {
+  secondsToDHMS
+} from "@/utils";
 
 export default {
+  beforeRouteEnter(to, from, next) {
+    next(async vm => {
+      try {
+        vm.servers = await vm.getServerList()
+
+        // Pick the first virtual server after login
+        if(from.name === "login") {
+          let onlineServer = vm.servers.find(server => server.virtualserver_status === "online")
+
+          if(onlineServer) await vm.selectServer(onlineServer.virtualserver_id)
+        }
+
+        vm.startUptimeCounters();
+      } catch(err) {
+        vm.$toast.error(err.message)
+      }
+    })
+  },
   data() {
     return {
-      headers: [
-        {
+      headers: [{
           text: "Selection",
           align: "left",
           value: "selection",
@@ -105,7 +111,6 @@ export default {
       ],
       servers: [],
       stopDialog: false,
-      selectedServer: {},
       counterIds: [],
       rowsPerPage: [
         25,
@@ -129,74 +134,58 @@ export default {
     }
   },
   methods: {
-    changeServerStatus(server) {
-      this.selectedServer = {
-        ...server
-      };
-
-      if (this.isOffline(this.selectedServer.virtualserver_status)) {
-        this.startServer();
+    async changeServerStatus(server) {
+      if(this.isOffline(server.virtualserver_status)) {
+        await this.startServer(server.virtualserver_id)
       } else {
-        this.stopDialog = true;
-      }
-    },
-    async serverAction(action) {
-      return this.$TeamSpeak.execute(action, {
-        sid: this.selectedServer.virtualserver_id
-      });
-    },
-    selectServer(sid) {
-      this.$router.push({ name: "serverviewer", params: { sid } });
-    },
-    async startServer() {
-      try {
-        await this.serverAction("serverstart");
-      } catch (err) {
-        this.$toast.error(err.msg, {
-          icon: "error"
-        });
+        await this.stopServer(server.virtualserver_id)
       }
 
       try {
         this.servers = await this.getServerList();
+      } catch(err) {
+        this.$toast.error(err.message);
+      }
 
-        this.resetUptimeCounters();
-
-        await this.useServer(this.currentServerId); // After server start you have to select the server again
+      this.resetUptimeCounters()
+    },
+    getQueryUserData() {
+      return this.$TeamSpeak.execute("whoami").then(list => list[0])
+    },
+    saveQueryUserData(data) {
+      this.$store.commit("saveUserInfo", data)
+    },
+    async startServer(sid) {
+      try {
+        await this.$TeamSpeak.execute("serverstart", {sid})
+        await this.selectServer(sid);
       } catch (err) {
-        this.$toast.error(err.msg, {
-          icon: "error"
-        });
+        this.$toast.error(err.message);
       }
     },
-    async stopServer() {
+    async stopServer(sid) {
       try {
-        await this.serverAction("serverstop");
+        await this.$TeamSpeak.execute("serverstop", {sid})
+
+        if(this.currentServerId === sid) this.$store.commit("setServerId", undefined)
       } catch (err) {
-        this.$toast.error(err.msg, {
-          icon: "error"
-        });
+        this.$toast.error(err.message);
       }
 
       this.stopDialog = false;
-
-      try {
-        this.servers = await this.getServerList();
-
-        this.resetUptimeCounters();
-      } catch (err) {
-        this.$toast.error(err.msg, {
-          icon: "error"
-        });
-      }
     },
     getServerList() {
       return this.$TeamSpeak.execute("serverlist");
     },
     useServer(sid) {
-      return this.$TeamSpeak.execute("use", {
-        sid
-      });
+      return this.$TeamSpeak.execute("use", {sid})
+    },
+    selectServer(sid) {
+      return this.useServer(sid)
+        .then(() => this.currentServerId = sid)
+        .then(() => this.$TeamSpeak.registerAllEvents())
+        .then(() => this.getQueryUserData())
+        .then(userInfo => this.saveQueryUserData(userInfo))
     },
     isOffline(status) {
       return status === "offline" ? true : false;
@@ -229,31 +218,6 @@ export default {
     resetUptimeCounters() {
       this.removeUptimeCounters();
       this.startUptimeCounters();
-    }
-  },
-  async created() {
-    try {
-      this.servers = await this.getServerList();
-
-      this.startUptimeCounters();
-    } catch (err) {
-      this.$toast.error(err.message, {
-        icon: "error"
-      });
-    }
-  },
-  watch: {
-    async currentServerId(newServerID, oldServerId) {
-      // Prevent sending the same server id twice after login
-      if (oldServerId && newServerID !== oldServerId) {
-        try {
-          await this.useServer(newServerID);
-
-          this.$store.commit("setServerId", newServerID);
-        } catch (err) {
-          this.$toast.error(err.msg);
-        }
-      }
     }
   },
   beforeRouteLeave(from, to, next) {

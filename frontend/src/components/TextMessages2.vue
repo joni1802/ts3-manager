@@ -26,7 +26,7 @@
               <v-subheader>Clients</v-subheader>
               <v-list-tile v-for="client in clientList" @click="openTextPrivate(client)">
                 <v-list-tile-avatar>
-                  <v-icon>fiber_manual_record</v-icon>
+                  <v-icon>{{ clientStatusIcon(client) }}</v-icon>
                 </v-list-tile-avatar>
                   <v-badge color="red">
                     <template slot="badge" v-if="countUnreadMessages({target: client.clid, targetmode: 1})">
@@ -72,9 +72,9 @@
                 </v-tabs>
               </v-flex>
 
-              <v-flex grow style="height: 50vh; overflow-y: auto;">
+              <v-flex ref="chat" grow style="height: 50vh; overflow-y: auto;">
                 <v-tabs-items>
-                  <v-tab-item ref="chat" >
+                  <v-tab-item>
                     <div v-for="message in filteredTextMessages" class="my-2">
                       <div>
                         <v-icon v-if="message.sender.clid === queryUser.client_id">arrow_upward</v-icon>
@@ -184,18 +184,49 @@ export default {
           }
       }
 
-      return this.$store.state.chat.messages.filter(message => message.target === this.selectedChat.target && message.targetmode === this.selectedChat.targetmode)
+      return this.$store.state.chat.messages.filter(message => {
+        return (
+          message.target === this.selectedChat.target &&
+          message.targetmode === this.selectedChat.targetmode &&
+          message.serverId === this.$store.state.query.serverId
+        )
+      })
     }
   },
   methods: {
+    clientStatusIcon(client) {
+      if (client.client_away === 1) {
+        return 'cancel_presentation'
+      } else if (client.client_output_muted === 1) {
+        return 'volume_off'
+      } else if (client.client_input_muted === 1) {
+        return 'mic_off'
+      } else {
+        return 'fiber_manual_record'
+      }
+    },
     countUnreadMessages({target, targetmode}) {
       return this.$store.state.chat.messages.filter(message => message.target === target && message.targetmode === targetmode && message.meta.unread).length
     },
     getClientList() {
-      return this.$TeamSpeak.execute('clientlist')
+      return this.$TeamSpeak.execute('clientlist', {}, ['-voice', '-away'])
+    },
+    async updateClientList(_e) {
+      try {
+        this.clientList = await this.getClientList()
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
     },
     getChannelList() {
       return this.$TeamSpeak.execute('channellist')
+    },
+    async updateChannelList() {
+      try {
+        this.channelList = await this.getChannelList()
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
     },
     getServerInfo() {
       return this.$TeamSpeak.execute('serverinfo').then(list => list[0])
@@ -243,6 +274,23 @@ export default {
       if(focus)
         this.selectedTab = 2 + this.textPrivateTargets.map(client => client.clid).indexOf(client.clid)
     },
+    scrollBottom() {
+      this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight
+    },
+    addEventListeners() {
+      this.$TeamSpeak.on("clientconnect", this.updateClientList);
+      this.$TeamSpeak.on("clientdisconnect", this.updateClientList)
+      this.$TeamSpeak.on("channeledit", this.updateChannelList)
+      this.$TeamSpeak.on("channelcreate", this.updateChannelList)
+      this.$TeamSpeak.on("channeldelete", this.updateChannelList)
+    },
+    removeEventListeners() {
+      this.$TeamSpeak.__proto__.removeEventListener("clientconnect", this.updateClientList)
+      this.$TeamSpeak.__proto__.removeEventListener("clientdisconnect", this.updateClientList)
+      this.$TeamSpeak.__proto__.removeEventListener("channeledit", this.updateChannelList)
+      this.$TeamSpeak.__proto__.removeEventListener("channelcreate", this.updateChannelList)
+      this.$TeamSpeak.__proto__.removeEventListener("channeldelete", this.updateChannelList)
+    },
     keyPressed(e) {
       // On press "Enter"
       if (e.keyCode === 13) this.sendMessage()
@@ -284,12 +332,10 @@ export default {
         this.serverInfo = await this.getServerInfo()
 
         if(this.$route.query.client) {
-
-
-          // this.openTextPrivate(this.clientList.find(client => client.clid === this.$route.query.client))
-          console.log(this.clientList.find(client => client.clid === +this.$route.query.client));
+          this.openTextPrivate(this.clientList.find(client => client.clid === +this.$route.query.client))
         }
 
+        this.addEventListeners()
       } catch (err) {
         this.$toast.error(err.message)
       }
@@ -300,14 +346,27 @@ export default {
   },
   watch: {
     selectedChat(chat) {
+      this.$nextTick(() => {
+        this.scrollBottom()
+      })
+
       this.$store.commit("markMessageAsRead", chat)
     },
     "$store.state.chat.messages"(messages) {
+      this.$nextTick(() => {
+        this.scrollBottom()
+      })
+
       this.$store.commit("markMessageAsRead", this.selectedChat)
     }
   },
   beforeRouteUpdate(to, from, next) {
     this.channelId = +to.params.cid
+
+    next()
+  },
+  beforeRouteLeave(from, to, next) {
+    this.removeEventListeners()
 
     next()
   }

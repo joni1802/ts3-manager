@@ -113,20 +113,25 @@ export default {
     }
   },
   methods: {
+    connectTeamSpeak(credentials) {
+      return this.$TeamSpeak.connect(credentials)
+    },
     async connect() {
-      this.loading = true;
+      this.loading = true
 
       try {
-        let {token, serverId, queryUser} = await this.$TeamSpeak.connect(this.preparedForm);
+        let {token} = await this.connectTeamSpeak(this.preparedForm)
 
-        this.$store.dispatch("saveConnection", {token, serverId, queryUser})
+        this.$store.commit("saveToken", token)
+        this.$store.commit("isConnected", true)
 
-        this.$router.push({name: "servers"});
-      } catch (message) {
-        this.$toast.error(message);
+        this.$router.push({name: "servers"})
+      } catch(err) {
+        console.log(err);
+        this.$toast.error(err.message)
       }
 
-      this.loading = false;
+      this.loading = false
     }
   }
 };

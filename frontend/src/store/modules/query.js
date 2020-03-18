@@ -1,6 +1,6 @@
 const state = {
   queryUser: {},
-  serverId: null,
+  serverId: undefined,
   token: "",
   loading: false,
   connected: false

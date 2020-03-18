@@ -32,24 +32,6 @@ Vue.config.productionTip = false;
 // Connect to websocket server
 socket.open();
 
-// Register global event listeners
-TeamSpeak.on("textmessage", e => {
-  store.dispatch("handleReceivedMessages", e.detail);
-});
-TeamSpeak.on("clientmoved", async e => {
-  let {client} = e.detail;
-
-  try {
-    if (client.clid === store.state.query.queryUser.client_id) {
-      let queryUser = await TeamSpeak.execute("whoami").then(list => list[0]);
-
-      store.commit("saveUserInfo", queryUser);
-    }
-  } catch (err) {
-    Vue.prototype.$toast.error(err.message);
-  }
-});
-
 // Adding instance properties which are often used in components
 Vue.prototype.$socket = socket;
 Vue.prototype.$TeamSpeak = TeamSpeak;

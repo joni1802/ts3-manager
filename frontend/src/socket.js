@@ -9,9 +9,13 @@ const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
   autoConnect: false,
   query: {
     token: store.state.query.connected ? store.state.query.token : "",
-    serverId: store.state.query.connected ? store.state.query.serverId : ""
+    serverId: store.state.query.serverId ? store.state.query.serverId : ""
   }
 });
+
+const getQueryUserInfos = () => {
+  return TeamSpeak.execute("whoami").then(list => list[0]);
+};
 
 // Clear all values in local storage and go to the login page
 // At login screen the form gets not autofilled.
@@ -55,10 +59,16 @@ socket.on("disconnect", resetConnection);
 socket.on("error", handleSocketError);
 socket.on("connect_error", handleSocketError);
 socket.on("teamspeak-error", handleTeamSpeakError);
-socket.on("teamspeak-reconnected", queryUser => {
-  store.dispatch("saveConnection", {queryUser, connected: true});
+socket.on("teamspeak-reconnected", async () => {
+  try {
+    let queryUser = await getQueryUserInfos();
 
-  TeamSpeak.registerAllEvents();
+    await TeamSpeak.registerAllEvents();
+
+    store.dispatch("saveConnection", {queryUser, connected: true});
+  } catch (err) {
+    Vue.prototype.$toast.error(err.message);
+  }
 });
 
 export default socket;

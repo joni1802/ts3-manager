@@ -4,6 +4,16 @@ const state = {
   messages: []
 };
 
+const getters = {
+  unreadMessages: (state, _getters, rootState) => {
+    return state.messages.filter(message => {
+      return (
+        message.meta.unread && message.serverId === rootState.query.serverId
+      );
+    }).length;
+  }
+};
+
 const mutations = {
   saveMessage(state, message) {
     state.messages.push(message);
@@ -29,7 +39,10 @@ const actions = {
       if (notification.invoker.clid !== rootState.query.queryUser.client_id) {
         dispatch("saveTextMessage", {
           targetmode: notification.targetmode,
-          sender: notification.invoker,
+          sender: {
+            clid: notification.invoker.clid,
+            client_nickname: notification.invoker.client_nickname
+          },
           text: notification.msg,
           meta: {
             unread: true
@@ -67,8 +80,8 @@ const actions = {
         target,
         targetmode,
         text,
-        meta
-        // timestamp: new Date()
+        meta,
+        serverId: rootState.query.serverId
       });
     } catch (err) {
       Vue.prototype.$toast.error(err.message);
@@ -78,6 +91,7 @@ const actions = {
 
 export default {
   state,
+  getters,
   mutations,
   actions
 };

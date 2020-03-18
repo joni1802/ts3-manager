@@ -21,8 +21,8 @@
         <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
           <v-list-tile-action>
             <v-badge color="red">
-              <template slot="badge" v-if="entry.title === 'Chat' && unreadMessages">
-                <span>{{ unreadMessages }}</span>
+              <template slot="badge" v-if="entry.title === 'Chat' && $store.getters.unreadMessages">
+                <span>{{ $store.getters.unreadMessages }}</span>
               </template>
               <v-icon>{{ entry.icon }}</v-icon>
             </v-badge>
@@ -154,9 +154,6 @@ export default {
     }
   },
   computed: {
-    unreadMessages() {
-      return this.$store.state.chat.messages.filter(message => message.meta.unread).length
-    },
     validPage() {
       if (this.$route.name === 'login' || this.$route.name === '404') {
         return false
