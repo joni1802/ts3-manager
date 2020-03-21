@@ -13,8 +13,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat @click="$router.go(-1)" color="primary"><v-icon>arrow_back</v-icon>Back</v-btn>
             <v-btn flat @click="save" color="primary">OK</v-btn>
+            <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>

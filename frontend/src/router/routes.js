@@ -8,6 +8,22 @@ export default [
     }
   },
   {
+    path: "/tokens",
+    component: () => import("@/components/Tokens"),
+    name: "tokens",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/token/add",
+    component: () => import("@/components/TokenAdd"),
+    name: "token-add",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/console",
     component: () => import("@/components/Console"),
     name: "console",

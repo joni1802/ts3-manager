@@ -78,6 +78,11 @@ export default {
           route: {name: 'snapshot'}
         },
         {
+          title: 'Token',
+          icon: 'mdi-key',
+          route: {name: 'tokens'}
+        },
+        {
           title: 'Chat',
           icon: 'mail_outline',
           route: {name: 'chat'}

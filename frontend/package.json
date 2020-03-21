@@ -13,6 +13,7 @@
     "register-service-worker": "^1.6.2",
     "secure-ls": "^1.2.6",
     "socket.io-client": "^2.2.0",
+    "v-clipboard": "^2.2.2",
     "vue": "^2.5.21",
     "vue-router": "^3.0.2",
     "vuetify": "^1.5.6",

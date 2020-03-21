@@ -10,6 +10,7 @@ import App from "./App.vue";
 import VuetifyToast from "vuetify-toast-snackbar";
 import "nprogress/nprogress.css";
 import NProgress from "nprogress";
+import Clipboard from "v-clipboard";
 
 import TeamSpeak from "./api/TeamSpeak";
 import "./registerServiceWorker";
@@ -21,6 +22,8 @@ import socket from "./socket";
 NProgress.configure({
   showSpinner: false
 });
+
+Vue.use(Clipboard);
 
 // More infos => https://github.com/eolant/vuetify-toast-snackbar
 Vue.use(VuetifyToast, {
