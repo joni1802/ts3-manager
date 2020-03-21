@@ -28,7 +28,7 @@ export default {
         cldbid: this.clientDbId
       }).then(clientdbinfo => {
 
-        console.log(clientdbinfo[0]);
+        
 
         return clientdbinfo[0]
       })

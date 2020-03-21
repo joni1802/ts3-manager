@@ -21,7 +21,7 @@
     },
     methods: {
       getServerGroupList() {
-        console.log('-- servergroup --');
+        
         return this.$TeamSpeak.execute('servergrouplist').then(list => {
 
           return list
@@ -53,7 +53,7 @@
       }
     },
     async created() {
-      console.log('CHILD CREATED');
+      
 
       try {
         this.serverGroups = await this.getServerGroupList()
