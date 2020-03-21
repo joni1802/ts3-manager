@@ -4,6 +4,7 @@
     <v-toolbar-side-icon @click="drawer = !drawer" v-if="validPage"></v-toolbar-side-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
+    <bell-icon></bell-icon>
   </v-toolbar>
 
   <nav v-if="validPage">
@@ -59,7 +60,8 @@
 <script>
 export default {
   components: {
-    DarkModeSwitch: () => import('@/components/DarkModeSwitch')
+    DarkModeSwitch: () => import('@/components/DarkModeSwitch'),
+    BellIcon: () => import('@/components/BellIcon')
   },
   data() {
     return {
