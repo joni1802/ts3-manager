@@ -61,7 +61,7 @@ export default {
         if(from.name === "login") {
           let onlineServer = vm.servers.find(server => server.virtualserver_status === "online")
 
-          if(onlineServer) await vm.selectServer(onlineServer.virtualserver_id)
+          if(onlineServer) await vm.$TeamSpeak.selectServer(onlineServer.virtualserver_id) // vm.selectServer(onlineServer.virtualserver_id)
         }
 
         vm.startUptimeCounters();
@@ -128,8 +128,12 @@ export default {
       get() {
         return this.$store.state.query.serverId;
       },
-      set(sid) {
-        this.$store.commit("setServerId", sid);
+      async set(sid) {
+        try {
+          await this.$TeamSpeak.selectServer(sid)
+        } catch(err) {
+          this.$toast.error(err.message)
+        }
       }
     }
   },
@@ -158,7 +162,8 @@ export default {
     async startServer(sid) {
       try {
         await this.$TeamSpeak.execute("serverstart", {sid})
-        await this.selectServer(sid);
+        await this.$TeamSpeak.selectServer(sid)
+        //await this.selectServer(sid);
       } catch (err) {
         this.$toast.error(err.message);
       }
@@ -176,16 +181,6 @@ export default {
     },
     getServerList() {
       return this.$TeamSpeak.execute("serverlist");
-    },
-    useServer(sid) {
-      return this.$TeamSpeak.execute("use", {sid})
-    },
-    selectServer(sid) {
-      return this.useServer(sid)
-        .then(() => this.currentServerId = sid)
-        .then(() => this.$TeamSpeak.registerAllEvents())
-        .then(() => this.getQueryUserData())
-        .then(userInfo => this.saveQueryUserData(userInfo))
     },
     isOffline(status) {
       return status === "offline" ? true : false;

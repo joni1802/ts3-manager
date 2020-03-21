@@ -192,6 +192,14 @@ TeamSpeak.unregisterEvent = () => {
   });
 };
 
+TeamSpeak.selectServer = sid => {
+  return TeamSpeak.execute("use", {sid})
+    .then(() => store.commit("setServerId", sid))
+    .then(() => TeamSpeak.registerAllEvents())
+    .then(() => TeamSpeak.execute("whoami"))
+    .then(userInfo => store.commit("saveUserInfo", userInfo[0]));
+};
+
 TeamSpeak.on = (name, fn) => {
   TeamSpeak.__proto__.addEventListener(name, fn);
 };
@@ -276,6 +284,6 @@ socket.on("teamspeak-channeldelete", data => {
   );
 });
 
-setLoadingState(["execute", "createSnapshot", "deploySnapshot"]);
+setLoadingState(["execute", "createSnapshot", "deploySnapshot", "useServer"]);
 
 export default TeamSpeak;

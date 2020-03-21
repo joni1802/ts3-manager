@@ -58,7 +58,7 @@ socket.on("teamspeak-reconnected", async () => {
   try {
     let queryUser = await getQueryUserInfos();
 
-    await TeamSpeak.registerAllEvents();
+    if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
 
     store.dispatch("saveConnection", {queryUser, connected: true});
   } catch (err) {

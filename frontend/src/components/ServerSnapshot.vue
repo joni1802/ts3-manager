@@ -104,7 +104,7 @@
 
           this.$toast.success('Snapshot successfully restored')
 
-          await this.selectServer() // After snapshot deployment server needs to be selected again
+          await this.$TeamSpeak.selectServer(this.$store.state.query.serverId) // After snapshot deployment server needs to be selected again
 
           this.clearFileSelector()
         } catch(err) {
@@ -115,9 +115,6 @@
         this.fileName = ''
         this.fileContent = {}
         this.$refs.hiddenFileSelector.value = ''
-      },
-      selectServer() {
-        return this.$TeamSpeak.execute('use', {sid: this.$store.state.query.serverId})
       }
     }
   }

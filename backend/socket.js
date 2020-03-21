@@ -19,7 +19,7 @@ socket.init = server => {
     instance.on("error", err => {
       logger.error(err.stack);
 
-      socket.emit("teamspeak_error", err.message);
+      socket.emit("teamspeak-error", err.message);
     });
     instance.on("flooding", () => logger.warn("Flooding"));
     instance.on("debug", data => {
