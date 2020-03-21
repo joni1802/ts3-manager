@@ -1,9 +1,9 @@
 const state = {
-  queryUser: {},
   serverId: undefined,
   token: "",
   loading: false,
-  connected: false
+  connected: false,
+  queryUser: {}
 };
 
 const mutations = {
@@ -29,10 +29,7 @@ const actions = {
     commit("isConnected", false);
     commit("saveToken", "");
     commit("setServerId", null);
-  },
-  resetConnection({commit}) {
-    commit("isConnected", false);
-    commit("setServerId", null);
+    commit("saveUserInfo", {});
   },
   saveConnection({commit}, {serverId, queryUser, token}) {
     commit("isConnected", true);

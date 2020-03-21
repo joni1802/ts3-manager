@@ -7,8 +7,9 @@ import TeamSpeak from "./api/TeamSpeak";
 // Socket connection to the backend
 const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
   autoConnect: false,
-  query: {
-    token: store.state.query.connected ? store.state.query.token : "",
+  query: store.state.query.connected && {
+    token: store.state.query.token,
+    // Send an empty string instead of null because null is converted to a string by the websocket
     serverId: store.state.query.serverId ? store.state.query.serverId : ""
   }
 });
@@ -28,7 +29,8 @@ const logout = () => {
 // Clear only the connection values in local storage and go to login page.
 // At login screen the form gets autofilled.
 const resetConnection = () => {
-  store.dispatch("resetConnection");
+  // store.dispatch("resetConnection");
+  store.commit("isConnected", false);
 
   router.push({name: "login"});
 };
@@ -38,12 +40,6 @@ const handleSocketError = err => {
   Vue.prototype.$toast.error(err.message || err);
 
   resetConnection();
-};
-
-const handleTeamSpeakError = message => {
-  Vue.prototype.$toast.error(message);
-
-  logout();
 };
 
 // Register socket.io events
@@ -58,7 +54,6 @@ socket.on("reconnect", () => {
 socket.on("disconnect", resetConnection);
 socket.on("error", handleSocketError);
 socket.on("connect_error", handleSocketError);
-socket.on("teamspeak-error", handleTeamSpeakError);
 socket.on("teamspeak-reconnected", async () => {
   try {
     let queryUser = await getQueryUserInfos();

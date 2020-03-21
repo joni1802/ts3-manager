@@ -15,15 +15,6 @@ socket.init = server => {
       ? "1234"
       : crypto.randomBytes(256).toString("base64");
 
-  // Check if the TeamSpeak object was created.
-  const checkTSConnection = instance => {
-    if (instance instanceof TeamSpeak) {
-      return;
-    } else {
-      return new Error("Something went wrong. Please login again");
-    }
-  };
-
   const registerEvents = (instance, logger, socket) => {
     instance.on("error", err => {
       logger.error(err.stack);
@@ -86,12 +77,12 @@ socket.init = server => {
 
   // Try to reconnect if a token was send by the client
   io.use(async (socket, next) => {
-    let ip = socket.client.conn.remoteAddress;
-    let {token, serverId} = socket.handshake.query;
-    let log = logger.child({client: ip});
+    if (socket.handshake.query.hasOwnProperty("token")) {
+      let {token, serverId} = socket.handshake.query;
+      let ip = socket.client.conn.remoteAddress;
+      let log = logger.child({client: ip});
 
-    try {
-      if (token) {
+      try {
         let decoded = jwt.verify(token, secret);
 
         ServerQuery = await TeamSpeak.connect(decoded);
@@ -101,13 +92,16 @@ socket.init = server => {
         registerEvents(ServerQuery, log, socket);
 
         socket.emit("teamspeak-reconnected");
-      }
 
-      return next();
-    } catch (err) {
-      console.log(err);
-      return next(new Error(err.message));
+        log.info("ServerQuery reconnected");
+
+        return next();
+      } catch (err) {
+        return next(new Error(err.message));
+      }
     }
+
+    return next();
   });
 
   // When the client is connected to the server.
@@ -117,14 +111,6 @@ socket.init = server => {
     let log = logger.child({client: ip});
 
     log.info("Socket.io connected");
-
-    // Check on every request if the TeamSpeak instance was created.
-    socket.use((packet, next) => {
-      if (packet[0] === "teamspeak-connect" || packet[0] === "autofillform")
-        return next();
-
-      next(checkTSConnection(ServerQuery));
-    });
 
     socket.on("autofillform", (token, fn) => {
       try {

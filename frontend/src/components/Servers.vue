@@ -167,7 +167,7 @@ export default {
       try {
         await this.$TeamSpeak.execute("serverstop", {sid})
 
-        if(this.currentServerId === sid) this.$store.commit("setServerId", undefined)
+        if(this.currentServerId === sid) this.$store.commit("setServerId", null)
       } catch (err) {
         this.$toast.error(err.message);
       }
