@@ -31,7 +31,7 @@ export default {
     },
     addNotificationListeners() {
       this.$TeamSpeak.on("textmessage", this.handleReceivedMessages)
-      this.$TeamSpeak.on("clientmove", this.updateQueryUserData)
+      this.$TeamSpeak.on("clientmoved", this.updateQueryUserData)
     }
   },
   created() {

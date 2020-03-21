@@ -16,6 +16,9 @@ const getters = {
 
 const mutations = {
   saveMessage(state, message) {
+    // Only the last 50 messages are stored
+    if (state.messages.length > 50) state.messages.shift();
+
     state.messages.push(message);
   },
   markMessageAsRead(state, {target, targetmode}) {
