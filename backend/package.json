@@ -1,12 +1,12 @@
 {
   "name": "ts3-manager-backend",
-  "version": "v1.4.2",
+  "version": "v1.5.0-beta",
   "private": true,
   "description": "Webserver with websockets which handels the connection to the teamspeak serverquery",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "dev": "cross-env NODE_ENV=development PORT=3000 nodemon app.js"
   },
   "author": "J.F.",
@@ -24,6 +24,7 @@
   },
   "bin": "app.js",
   "devDependencies": {
-    "cross-env": "^6.0.0"
+    "cross-env": "^6.0.0",
+    "nodemon": "^2.0.2"
   }
 }
