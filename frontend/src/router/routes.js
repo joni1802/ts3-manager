@@ -46,6 +46,14 @@ export default [
     }
   },
   {
+    path: "/server/add",
+    component: () => import("@/components/ServerAdd"),
+    name: "server-add",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/chat/:cid?",
     component: () => import("@/components/TextMessages2"),
     name: "chat",

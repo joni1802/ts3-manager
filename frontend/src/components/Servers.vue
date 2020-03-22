@@ -24,12 +24,16 @@
               <td justify-center align-center layout px-0>
                 <v-switch hide-details :input-value="!isOffline(props.item.virtualserver_status)" @click.stop.prevent="changeServerStatus(props.item)"></v-switch>
               </td>
+              <td class="justify-center layout px-0">
+                <v-icon @click="openDeleteDialog(props.item)">delete</v-icon>
+              </td>
             </template>
           </v-data-table>
         </v-card-text>
       </v-card>
     </v-flex>
   </v-layout>
+
   <v-dialog v-model="stopDialog" max-width="500px">
     <v-card>
       <v-card-title>Stop Server</v-card-title>
@@ -43,6 +47,24 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <v-dialog v-model="deleteDialog" max-width="500px">
+    <v-card>
+      <v-card-title>Delete Server</v-card-title>
+      <v-card-text>
+        Do really want to delete this virtual server instance?
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn flat @click="deleteDialog = false" color="primary">Cancel</v-btn>
+        <v-btn flat @click="deleteServer" color="primary">Delete</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <v-btn fab color="pink" fixed bottom right dark :to="{name: 'server-add'}">
+    <v-icon>add</v-icon>
+  </v-btn>
 </v-container>
 </template>
 
@@ -107,10 +129,17 @@ export default {
           align: "left",
           value: "virtualserver_status",
           sortable: false
+        },
+        {
+          text: "Actions",
+          align: "right",
+          value: "delete",
+          sortable: false
         }
       ],
       servers: [],
       stopDialog: false,
+      deleteDialog: false,
       counterIds: [],
       rowsPerPage: [
         25,
@@ -120,7 +149,8 @@ export default {
           text: "$vuetify.dataIterator.rowsPerPageAll",
           value: -1
         }
-      ]
+      ],
+      selectedServer: {}
     };
   },
   computed: {
@@ -152,6 +182,22 @@ export default {
       }
 
       this.resetUptimeCounters()
+    },
+    openDeleteDialog(server) {
+      this.selectedServer = server
+
+      this.deleteDialog = true
+    },
+    async deleteServer() {
+      try {
+        await this.$TeamSpeak.execute("serverdelete", {sid: this.selectedServer.virtualserver_id})
+
+        this.deleteDialog = false
+
+        this.servers = await this.getServerList()
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
     },
     getQueryUserData() {
       return this.$TeamSpeak.execute("whoami").then(list => list[0])
