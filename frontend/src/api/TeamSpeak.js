@@ -284,6 +284,11 @@ socket.on("teamspeak-channeldelete", data => {
   );
 });
 
-setLoadingState(["execute", "createSnapshot", "deploySnapshot", "useServer"]);
+setLoadingState([
+  "execute",
+  "createSnapshot",
+  "deploySnapshot",
+  "selectServer"
+]);
 
 export default TeamSpeak;
