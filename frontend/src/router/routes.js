@@ -46,9 +46,9 @@ export default [
     }
   },
   {
-    path: "/server/add",
-    component: () => import("@/components/ServerAdd"),
-    name: "server-add",
+    path: "/server/create",
+    component: () => import("@/components/ServerCreate"),
+    name: "server-create",
     meta: {
       requiresAuth: true
     }

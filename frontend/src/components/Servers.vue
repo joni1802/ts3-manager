@@ -62,7 +62,7 @@
     </v-card>
   </v-dialog>
 
-  <v-btn fab color="pink" fixed bottom right dark :to="{name: 'server-add'}">
+  <v-btn fab color="pink" fixed bottom right dark :to="{name: 'server-create'}">
     <v-icon>add</v-icon>
   </v-btn>
 </v-container>
