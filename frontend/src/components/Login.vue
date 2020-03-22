@@ -75,11 +75,15 @@ export default {
         "autofillform",
         vm.$store.state.query.token,
         response => {
-          vm.form.host = response.host;
-          vm.form.queryport = response.queryport;
-          vm.form.ssh = response.protocol === "ssh" ? true : false;
-          vm.form.username = response.username;
-          vm.form.password = response.password;
+          if(response.host) {
+            vm.form.host = response.host;
+            vm.form.queryport = response.queryport;
+            vm.form.ssh = response.protocol === "ssh" ? true : false;
+            vm.form.username = response.username;
+            vm.form.password = response.password;
+          } else {
+            vm.$toast.error(response)
+          }
         }
       );
     });
