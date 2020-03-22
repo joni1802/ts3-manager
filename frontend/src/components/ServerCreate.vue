@@ -18,13 +18,16 @@
                 <v-flex xs12 md4>
                   <v-text-field v-model="maxClients" label="Max. Clients" type="number" :disabled="$store.state.query.loading" :rules="[rules.required]"></v-text-field>
                 </v-flex>
+                <v-flex xs12>
+                  <token-display v-model="token"></token-display>
+                </v-flex>
               </v-layout>
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn flat @click="createServer" :disabled="!valid" color="primary">Create</v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
+            <v-btn flat @click="$router.go(-1)" color="primary">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -34,6 +37,9 @@
 
 <script>
 export default {
+  components: {
+    TokenDisplay: () => import("@/components/TokenDisplay")
+  },
   data() {
     return {
       valid: false,
@@ -44,6 +50,7 @@ export default {
       rules: {
         required: value => !!value || "Required."
       },
+      token: ""
     }
   },
   methods: {
@@ -55,13 +62,17 @@ export default {
     },
     async createServer() {
       try {
-        await this.$TeamSpeak.execute("servercreate", {
+        let [response] = await this.$TeamSpeak.execute("servercreate", {
           virtualserver_name: this.serverName,
           virtualserver_port: this.serverPort,
           virtualserver_maxclients: this.maxClients
         })
 
-        this.$router.push({name: "servers"})
+        this.token = response.token
+
+        this.$toast.success("Server successfully created")
+
+        await this.$TeamSpeak.selectServer(response.sid)
       } catch(err) {
         this.$toast.error(err.message)
       }
@@ -74,6 +85,6 @@ export default {
     } catch(err) {
       this.$toast.error(err.message)
     }
-  },
+  }
 }
 </script>

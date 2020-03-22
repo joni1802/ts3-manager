@@ -11,7 +11,7 @@
             <v-autocomplete :items="availableGroups" label="Group" v-model="selectedGroup" :disabled="typeof selectedType === 'undefined' || $store.state.query.loading"></v-autocomplete>
             <v-autocomplete :items="availableChannels" label="Channel" v-model="selectedChannel" :disabled="selectedType === 0 || typeof selectedType === 'undefined' || $store.state.query.loading"></v-autocomplete>
             <v-textarea label="Description" v-model="tokenDescription"></v-textarea>
-            <v-text-field class="mt-5" label="Generated Privilege Key" v-model="token" readonly :append-icon="token && 'mdi-content-copy'" @click:append="copyToClipboard"></v-text-field>
+            <token-display v-model="token"></token-display>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -26,6 +26,9 @@
 
 <script>
 export default {
+  components: {
+    TokenDisplay: () => import("@/components/TokenDisplay")
+  },
   data() {
     return {
       token: undefined,
@@ -73,6 +76,8 @@ export default {
           tokenid2: this.selectedType === 1 ? this.selectedChannel : 0,
           tokendescription: this.tokenDescription
         })
+
+        this.$toast.success("Token successfully created")
 
         this.token = response.token
       } catch(err) {

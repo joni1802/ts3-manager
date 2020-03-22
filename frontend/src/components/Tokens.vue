@@ -1,20 +1,27 @@
 <template>
   <v-container>
     <v-layout>
-      <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
+      <v-flex md10 xs12 offset-md1>
         <v-card>
           <v-card-text>
             <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="tokens" :rows-per-page-items="rowsPerPage">
               <template slot="items" slot-scope="props">
                 <td>{{ props.item.token }}</td>
+                <td>
+                  <v-tooltip bottom>
+                    <template slot="activator">
+                      <v-icon small @click="copyToClipboard(props.item.token)">mdi-content-copy</v-icon>
+                    </template>
+                    <span>Copy Token To Clipboard</span>
+                  </v-tooltip>
+                </td>
                 <td>{{ props.item.token_type }}</td>
                 <td>{{ props.item.token_id1 }}</td>
                 <td>{{ props.item.token_id2 }}</td>
                 <td>{{ new Date(props.item.token_created * 1000).toLocaleString() }}</td>
                 <td>{{ props.item.token_description }}</td>
-                <td>
-                  <v-icon small class="mr-2" @click="openDeleteDialog(props.item)">delete</v-icon>
-                  <v-icon small @click="copyToClipboard(props.item.token)">mdi-content-copy</v-icon>
+                <td class="justify-center layout px-0">
+                  <v-icon @click="openDeleteDialog(props.item)">delete</v-icon>
                 </td>
               </template>
             </v-data-table>
@@ -54,6 +61,7 @@ export default {
       tokens: [],
       headers: [
         {text: "Privilege Key", value: "token"},
+        {text: "", value: ""},
         {text: "Type", value: "token_type"},
         {text: "Group", value: "token_id1"},
         {text: "Channel", value: "token_id2"},
