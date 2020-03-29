@@ -4,7 +4,7 @@
     <v-toolbar-side-icon @click="drawer = !drawer" v-if="validPage"></v-toolbar-side-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
-    <bell-icon></bell-icon>
+    <bell-icon v-if="$store.state.query.connected"></bell-icon>
   </v-toolbar>
 
   <nav v-if="validPage">
