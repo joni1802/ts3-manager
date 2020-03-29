@@ -4,7 +4,7 @@
     <v-flex lg10 md10 sm10 xs12>
       <v-card>
         <v-layout wrap justify-space-around fill-height>
-          <v-flex xs12 md3 hidden-xs-only style="height: calc(100vh - 96px); overflow-y: auto;">
+          <v-flex xs12 md3 style="height: calc(100vh - 96px); overflow-y: auto;">
             <v-list subheader >
 
               <v-subheader>Channels</v-subheader>
