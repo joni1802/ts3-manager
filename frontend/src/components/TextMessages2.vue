@@ -41,7 +41,7 @@
             </v-list>
           </v-flex>
 
-          <v-flex xs12 md8 >
+          <v-flex xs12 md8 class="px-4">
             <v-layout column fill-height>
               <v-flex shrink>
                 <v-tabs v-model="selectedTab">
