@@ -16,6 +16,12 @@ const ls = new SecureLS({isCompression: false});
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
+  actions: {
+    clearStorage({dispatch, commit}) {
+      dispatch("clearConnection");
+      commit("removeAllMessages");
+    }
+  },
   modules: {
     settings,
     query,
