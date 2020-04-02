@@ -19,7 +19,7 @@ socket.init = server => {
     instance.on("error", err => {
       logger.error(err.stack);
 
-      socket.emit("teamspeak-error", err.message);
+      socket.emit("teamspeak-error", err);
     });
     instance.on("flooding", () => logger.warn("Flooding"));
     instance.on("debug", data => {
@@ -75,13 +75,16 @@ socket.init = server => {
     fn({message: err.message, ...err});
   };
 
-  // Try to reconnect if a token was send by the client
-  io.use(async (socket, next) => {
-    if (socket.handshake.query.hasOwnProperty("token")) {
-      let {token, serverId} = socket.handshake.query;
-      let ip = socket.client.conn.remoteAddress;
-      let log = logger.child({client: ip});
+  // When the client is connected to the server.
+  io.on("connection", async socket => {
+    let ip = socket.client.conn.remoteAddress;
+    let {token, serverId} = socket.handshake.query;
+    let log = logger.child({client: ip});
 
+    log.info("Socket.io connected");
+
+    // Try to reconnect if a token was send by the client
+    if (socket.handshake.query.hasOwnProperty("token")) {
       try {
         let decoded = jwt.verify(token, secret);
 
@@ -91,26 +94,15 @@ socket.init = server => {
 
         registerEvents(ServerQuery, log, socket);
 
-        socket.emit("teamspeak-reconnected");
-
         log.info("ServerQuery reconnected");
 
-        return next();
+        socket.emit("teamspeak-reconnected");
       } catch (err) {
-        return next(new Error(err.message));
+        log.error(err.message);
+
+        socket.emit("teamspeak-error", err);
       }
     }
-
-    return next();
-  });
-
-  // When the client is connected to the server.
-  io.on("connection", async socket => {
-    let ip = socket.client.conn.remoteAddress;
-    let token = socket.handshake.query.token;
-    let log = logger.child({client: ip});
-
-    log.info("Socket.io connected");
 
     socket.on("autofillform", (token, fn) => {
       try {

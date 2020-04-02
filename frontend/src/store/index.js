@@ -44,6 +44,16 @@ const store = new Vuex.Store({
         removeItem: key => ls.remove(key)
       }
     })
+    // Following is just for tesing
+    // createPersistedState({
+    //   key: "token",
+    //   paths: ["query.token"],
+    //   storage: process.env.NODE_ENV !== "development" && {
+    //     getItem: key => ls.get(key),
+    //     setItem: (key, value) => ls.set(key, value),
+    //     removeItem: key => ls.remove(key)
+    //   }
+    // })
   ]
 });
 
