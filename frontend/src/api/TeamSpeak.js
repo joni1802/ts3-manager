@@ -1,6 +1,8 @@
 import socket from "../socket";
 import store from "../store";
+import router from "../router";
 import NProgress from "nprogress";
+import Vue from "vue";
 
 /**
  * The TeamSpeak Object sends the request to the server and finally receives the response from the ServerQuery.
@@ -282,6 +284,26 @@ socket.on("teamspeak-channeldelete", data => {
       detail: data
     })
   );
+});
+
+socket.on("teamspeak-error", err => {
+  Vue.prototype.$toast.error(err.message);
+
+  store.dispatch("clearStorage");
+
+  router.push({name: "login"});
+});
+
+socket.on("teamspeak-reconnected", async () => {
+  try {
+    let queryUser = await TeamSpeak.execute("whoami").then(list => list[0]);
+
+    if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
+
+    store.dispatch("saveConnection", {queryUser, connected: true});
+  } catch (err) {
+    Vue.prototype.$toast.error(err.message);
+  }
 });
 
 setLoadingState([
