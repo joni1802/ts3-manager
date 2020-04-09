@@ -7,25 +7,15 @@
         <v-card-text>
           <v-form v-model="valid">
             <v-layout justify-space-between wrap>
-              <v-flex xs12 md6>
+              <v-flex xs6>
                 <v-text-field label="Server" placeholder="IP or Domain" v-model="form.host" :rules="[rules.required]"></v-text-field>
               </v-flex>
-              <v-flex xs12 md4>
-                <v-text-field label="Port" type="number" v-model="form.queryport" :rules="[rules.required]">
-                  <template slot="prepend">
-                    <v-tooltip bottom>
-                      <template slot="activator">
-                        <v-icon>mdi-help-circle-outline</v-icon>
-                      </template>
-                      <span>Enter the SeverQuery port of your server. The default
-                        ones are 10011 or 10022 (encrypted).</span>
-                    </v-tooltip>
-                  </template>
-                </v-text-field>
+              <v-flex xs2>
+                <v-text-field label="Port" type="number" v-model="form.queryport" :rules="[rules.required]"></v-text-field>
               </v-flex>
-              <v-flex xs12>
+              <v-flex xs3>
                 <v-checkbox v-model="form.ssh" label="SSH">
-                  <template slot="prepend">
+                  <template slot="append">
                     <v-tooltip bottom>
                       <template slot="activator">
                         <v-icon>mdi-help-circle-outline</v-icon>
@@ -41,6 +31,9 @@
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="Password" type="password" v-model="form.password" :rules="[rules.required]" name="password" browser-autocomplete="current-password"></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-checkbox label="Remember me" v-model="rememberLogin"></v-checkbox>
               </v-flex>
             </v-layout>
           </v-form>
@@ -62,9 +55,7 @@
 </template>
 
 <script>
-import {
-  version
-} from "../../package.json";
+import { version } from "../../package.json";
 
 export default {
   beforeRouteEnter(to, from, next) {
@@ -90,6 +81,7 @@ export default {
   },
   data() {
     return {
+      panel: [true],
       valid: false,
       loading: false,
       rules: {
@@ -100,20 +92,20 @@ export default {
         queryport: 10022,
         ssh: true,
         username: "",
-        password: ""
+        password: "",
+
       },
       appVersion: version
     };
   },
   computed: {
-    preparedForm() {
-      return {
-        host: this.form.host,
-        queryport: this.form.queryport,
-        protocol: this.form.ssh ? "ssh" : "raw",
-        username: this.form.username,
-        password: this.form.password
-      };
+    rememberLogin: {
+      set(value) {
+        this.$store.commit("setRememberLogin", value)
+      },
+      get() {
+        return this.$store.state.settings.rememberLogin
+      }
     }
   },
   methods: {
@@ -124,7 +116,13 @@ export default {
       this.loading = true
 
       try {
-        let {token} = await this.connectTeamSpeak(this.preparedForm)
+        let {token} = await this.connectTeamSpeak({
+          host: this.form.host,
+          queryport: this.form.queryport,
+          protocol: this.form.ssh ? "ssh" : "raw",
+          username: this.form.username,
+          password: this.form.password
+        })
 
         this.$store.commit("saveToken", token)
         this.$store.commit("isConnected", true)
@@ -137,6 +135,17 @@ export default {
 
       this.loading = false
     }
+  },
+  watch: {
+    "form.ssh"(ssh) {
+      ssh ? this.form.queryport = 10022 : this.form.queryport = 10011
+    }
   }
 };
 </script>
+
+<style>
+  .v-expansion-panel__header {
+    padding: 0 !important;
+  }
+</style>

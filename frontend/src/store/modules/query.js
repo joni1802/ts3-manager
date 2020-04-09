@@ -3,7 +3,8 @@ const state = {
   token: "",
   loading: false,
   connected: false,
-  queryUser: {}
+  queryUser: {},
+  rememberLogin: true
 };
 
 const mutations = {
@@ -25,11 +26,12 @@ const mutations = {
 };
 
 const actions = {
-  clearConnection({commit}) {
+  clearConnection({commit, rootState}) {
     commit("isConnected", false);
-    commit("saveToken", "");
     commit("setServerId", null);
     commit("saveUserInfo", {});
+
+    if (!rootState.settings.rememberLogin) commit("saveToken", "");
   },
   saveConnection({commit}, {serverId, queryUser, token}) {
     commit("isConnected", true);

@@ -16,12 +16,12 @@
     },
     async created() {
       try {
-        this.quit()
+        await this.quit()
+
+        this.logout()
       } catch(err) {
         this.$toast.error(err.message)
       }
-
-      this.logout()
     }
   }
 </script>
