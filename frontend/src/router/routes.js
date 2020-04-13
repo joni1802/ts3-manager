@@ -166,6 +166,14 @@ export default [
     }
   },
   {
+    path: "/channel/add",
+    component: () => import("@/components/ChannelAdd"),
+    name: "channel-add",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/channelgroups",
     component: () => import("@/components/ChannelGroups"),
     name: "channelgroups",

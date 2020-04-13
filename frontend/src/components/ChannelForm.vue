@@ -11,37 +11,34 @@
           <v-text-field type="password" label="Password" v-model="channelPassword" :disabled="$store.state.query.loading"></v-text-field>
           <v-text-field label="Topic" v-model="channelTopic" :disabled="$store.state.query.loading"></v-text-field>
           <v-textarea label="Description" v-model="channelDescription" :disabled="$store.state.query.loading"></v-textarea>
+          <v-expansion-panel class="elevation-0 ">
+            <v-expansion-panel-content>
+              <template slot="header">
+                <div>
+                  More Options
+                </div>
+              </template>
+                  <v-layout wrap>
+                    <v-flex xs12>
+                      <v-autocomplete :items="siblingChannelSelection" label="Sort This Channel After:" v-model="selectedSiblingChannel" :disabled="$store.state.query.loading"></v-autocomplete>
+                    </v-flex>
+                    <v-flex>
+                      <v-radio-group label="Max Users" v-model="channelUnlimitedClients">
+                        <v-radio label="Unlimited" :value="1"></v-radio>
+                        <v-radio label="Limited" :value="0"></v-radio>
+                      </v-radio-group>
+                      <v-text-field label="Number Of Clients" v-model="channelMaxClients" :disabled="!!channelUnlimitedClients"></v-text-field>
+                    </v-flex>
+                    <v-flex>
+                      <v-checkbox label="Default Channel" v-model="channelIsDefault" :disabled="!!initChannelData.channel_flag_default"></v-checkbox>
+                    </v-flex>
+                    <v-flex>
+                      <v-checkbox label="Voice Data encrypted" v-model="channelIsUnencrypted"></v-checkbox>
+                    </v-flex>
+                  </v-layout>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
         </v-card-text>
-
-        <v-expansion-panel class="elevation-0">
-          <v-expansion-panel-content>
-            <template slot="header">
-              <div>
-                More Options
-              </div>
-            </template>
-            <v-card>
-              <v-card-text>
-                <v-layout wrap>
-                  <v-flex>
-                    <v-radio-group label="Max Users" v-model="channelUnlimitedClients">
-                      <v-radio label="Unlimited" :value="1"></v-radio>
-                      <v-radio label="Limited" :value="0"></v-radio>
-                    </v-radio-group>
-                    <v-text-field label="Number Of Clients" v-model="channelMaxClients" :disabled="!!channelUnlimitedClients"></v-text-field>
-                  </v-flex>
-                  <v-flex>
-                    <v-checkbox label="Default Channel" v-model="channelIsDefault" :disabled="!!initChannelData.channel_flag_default"></v-checkbox>
-                  </v-flex>
-                  <v-flex>
-                    <v-checkbox label="Voice Data encrypted" v-model="channelIsUnencrypted"></v-checkbox>
-                  </v-flex>
-                </v-layout>
-
-              </v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -59,18 +56,43 @@
 export default {
   props: {
     title: String,
-    applyButton: Boolean,
-    channel: Object
+    applyButton: {
+      type: Boolean,
+      default: false
+    },
+    channel: {
+      type: Object,
+      // Object or array defaults must be returned froma factory function
+      // See: https://vuejs.org/v2/guide/components-props.html
+      default() {
+        return {}
+      }
+    }
   },
   data() {
     return {
       initChannelData: {},
+      channels: [],
+      parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0
     }
   },
   computed: {
+    siblingChannelSelection() {
+      return this.channels.filter(channel => {
+        return channel.pid === this.parentChannelId && channel.cid !== +this.$route.params.cid
+      }).map(channel => ({text: channel.channel_name, value: channel.cid}))
+    },
+    selectedSiblingChannel: {
+      get() {
+        return this.channel.channel_order && this.channel.channel_order
+      },
+      set(cid) {
+        this.channel.channel_order = cid
+      }
+    },
     channelName: {
       get() {
-        return this.channel.channel_name
+        return this.channel.channel_name && this.channel.channel_name
       },
       set(name) {
         this.channel.channel_name = name
@@ -78,7 +100,7 @@ export default {
     },
     channelPassword: {
       get() {
-        return this.channel.channel_password
+        return this.channel.channel_password && this.channel.channel_password
       },
       set(password) {
         this.channel.channel_password = password
@@ -86,7 +108,7 @@ export default {
     },
     channelTopic: {
       get() {
-        return this.channel.channel_topic
+        return this.channel.channel_topic && this.channel.channel_topic
       },
       set(topic) {
         this.channel.channel_topic = topic
@@ -94,7 +116,7 @@ export default {
     },
     channelDescription: {
       get() {
-        return this.channel.channel_description
+        return this.channel.channel_description && this.channel.channel_description
       },
       set(description) {
         this.channel.channel_description = description
@@ -102,7 +124,7 @@ export default {
     },
     channelUnlimitedClients: {
       get() {
-        return this.channel.channel_flag_maxclients_unlimited
+        return this.channel.channel_flag_maxclients_unlimited && this.channel.channel_flag_maxclients_unlimited
       },
       set(limited) {
         this.channel.channel_flag_maxclients_unlimited = +limited
@@ -110,7 +132,7 @@ export default {
     },
     channelMaxClients: {
       get() {
-        return this.channel.channel_maxclients
+        return this.channel.channel_maxclients && this.channel.channel_maxclients
       },
       set(number) {
         this.channel.channel_maxclients = number
@@ -118,7 +140,7 @@ export default {
     },
     channelIsUnencrypted: {
       get() {
-        return !this.channel.channel_codec_is_unencrypted
+        return this.channel.channel_codec_is_unencrypted && !this.channel.channel_codec_is_unencrypted
       },
       set(encrypted) {
         this.channel.channel_codec_is_unencrypted = +!encrypted
@@ -126,7 +148,7 @@ export default {
     },
     channelIsDefault: {
       get() {
-        return this.channel.channel_flag_default
+        return this.channel.channel_flag_default && this.channel.channel_flag_default
       },
       set(flag) {
         this.channel.channel_flag_default = +flag
@@ -134,6 +156,9 @@ export default {
     }
   },
   methods: {
+    getChannelList() {
+      return this.$TeamSpeak.execute("channellist")
+    },
     getChanges() {
       let changes = {}
 
@@ -151,6 +176,7 @@ export default {
     apply() {
       this.$emit("apply", this.getChanges())
 
+      // Save initial channel properties again because they got changed
       let unwatch = this.$watch("channel", channel => {
         this.initChannelData = {...channel}
 
@@ -158,7 +184,8 @@ export default {
       })
     }
   },
-  created() {
+  async created() {
+    // Save initial channel properties to only submit the changes when hitting save.
     let unwatch = this.$watch("channel", channel => {
       if(channel) {
         this.initChannelData = {...this.channel}
@@ -168,6 +195,12 @@ export default {
         if(unwatch) unwatch()
       }
     }, {immediate: true})
-  }
+
+    try {
+      this.channels = await this.getChannelList()
+    } catch(err) {
+      this.$toast.error(err.message)
+    }
+  },
 }
 </script>
