@@ -1,7 +1,7 @@
 <template>
 <v-container>
   <v-layout>
-    <v-flex md6 sm8 xs12 offset-md3 offset-sm2>
+    <v-flex lg6 md8 sm10 xs12 offset-lg3 offset-md2 offset-sm1>
       <v-card>
         <v-card-title>
           {{ title }}
@@ -20,19 +20,26 @@
               </template>
                   <v-layout wrap>
                     <v-flex xs12>
-                      <v-autocomplete :items="siblingChannelSelection" label="Sort This Channel After:" v-model="selectedSiblingChannel" :disabled="$store.state.query.loading"></v-autocomplete>
+                      <v-autocomplete :items="siblingChannelSelection" label="Sort This Channel After" v-model="selectedSiblingChannel" :disabled="$store.state.query.loading"></v-autocomplete>
                     </v-flex>
-                    <v-flex>
+                    <v-flex md4>
                       <v-radio-group label="Max Users" v-model="channelUnlimitedClients">
                         <v-radio label="Unlimited" :value="1"></v-radio>
                         <v-radio label="Limited" :value="0"></v-radio>
                       </v-radio-group>
                       <v-text-field label="Number Of Clients" v-model="channelMaxClients" :disabled="!!channelUnlimitedClients"></v-text-field>
                     </v-flex>
-                    <v-flex>
+                    <v-flex md4>
+                      <v-radio-group label="Channel Type" v-model="channelType">
+                        <v-radio label="Temporary" value="temporary"></v-radio>
+                        <v-radio label="Permanent" value="permanent"></v-radio>
+                        <v-radio label="Semi-Permanent" value="semi-permanent"></v-radio>
+                      </v-radio-group>
+                    </v-flex>
+                    <v-flex md4>
                       <v-checkbox label="Default Channel" v-model="channelIsDefault" :disabled="!!initChannelData.channel_flag_default"></v-checkbox>
                     </v-flex>
-                    <v-flex>
+                    <v-flex md4>
                       <v-checkbox label="Voice Data encrypted" v-model="channelIsUnencrypted"></v-checkbox>
                     </v-flex>
                   </v-layout>
@@ -42,9 +49,9 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="okay" :disabled="this.$store.state.query.loading" color="primary">OK</v-btn>
+          <v-btn flat @click="save" :disabled="this.$store.state.query.loading" color="primary">OK</v-btn>
           <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
-          <v-btn flat @click="apply" :disabled="this.$store.state.query.loading" color="primary" :class="{'d-none': !applyButton}">Apply</v-btn>
+          <v-btn flat @click="save" :disabled="this.$store.state.query.loading" color="primary" :class="{'d-none': !applyButton}">Apply</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -62,7 +69,7 @@ export default {
     },
     channel: {
       type: Object,
-      // Object or array defaults must be returned froma factory function
+      // Object or array defaults must be returned from a factory function
       // See: https://vuejs.org/v2/guide/components-props.html
       default() {
         return {}
@@ -73,7 +80,7 @@ export default {
     return {
       initChannelData: {},
       channels: [],
-      parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0
+      parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0,
     }
   },
   computed: {
@@ -130,6 +137,29 @@ export default {
         this.channel.channel_flag_maxclients_unlimited = +limited
       }
     },
+    channelType: {
+      get() {
+        if(this.channel.channel_flag_permanent) {
+          return "permanent"
+        } else if(this.channel.channel_flag_semi_permanent) {
+          return "semi-permanent"
+        } else {
+          return "temporary"
+        }
+      },
+      set(type) {
+        if(type === "permanent") {
+          this.channel.channel_flag_semi_permanent = 0
+          this.channel.channel_flag_permanent = 1
+        } else if(type === "semi-permanent") {
+          this.channel.channel_flag_semi_permanent = 1
+          this.channel.channel_flag_permanent = 0
+        } else {
+          this.channel.channel_flag_semi_permanent = 0
+          this.channel.channel_flag_permanent = 0
+        }
+      }
+    },
     channelMaxClients: {
       get() {
         return this.channel.channel_maxclients && this.channel.channel_maxclients
@@ -170,18 +200,17 @@ export default {
 
       return changes
     },
-    okay() {
-      this.$emit("okay", this.getChanges())
-    },
-    apply() {
-      this.$emit("apply", this.getChanges())
+    save(e) {
+      this.$emit("save", this.getChanges(), e)
 
-      // Save initial channel properties again because they got changed
-      let unwatch = this.$watch("channel", channel => {
-        this.initChannelData = {...channel}
+      if(e.target.textContent.toLowerCase() === "apply") {
+        // Save initial channel properties again because they got changed
+        let unwatch = this.$watch("channel", channel => {
+          this.initChannelData = {...channel}
 
-        unwatch()
-      })
+          unwatch()
+        })
+      }
     }
   },
   async created() {
@@ -201,6 +230,6 @@ export default {
     } catch(err) {
       this.$toast.error(err.message)
     }
-  },
+  }
 }
 </script>
