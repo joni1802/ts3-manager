@@ -20,7 +20,7 @@
               </template>
                   <v-layout wrap>
                     <v-flex xs12>
-                      <v-autocomplete :items="siblingChannelSelection" label="Sort This Channel After" v-model="selectedSiblingChannel" :disabled="$store.state.query.loading"></v-autocomplete>
+                      <v-autocomplete :items="channelOrderSelection" label="Sort This Channel After" v-model="selectedChannelOrder" :disabled="$store.state.query.loading"></v-autocomplete>
                     </v-flex>
                     <v-flex md4>
                       <v-radio-group label="Max Users" v-model="channelUnlimitedClients">
@@ -81,15 +81,32 @@ export default {
       initChannelData: {},
       channels: [],
       parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0,
+      serverInfo: {}
     }
   },
   computed: {
-    siblingChannelSelection() {
-      return this.channels.filter(channel => {
+    channelOrderSelection() {
+      let rootChannelName = {}
+      let siblingChannels = this.channels.filter(channel => {
         return channel.pid === this.parentChannelId && channel.cid !== +this.$route.params.cid
       }).map(channel => ({text: channel.channel_name, value: channel.cid}))
+
+      // If the current channel is a sub channel
+      if(this.parentChannelId !== 0) {
+        let rootChannel = this.channels.find(channel => channel.cid === this.parentChannelId)
+
+        rootChannelName = rootChannel && rootChannel.channel_name
+        // siblingChannels.unshift({text: parentChannel && parentChannel.channel_name, value: 0})
+      } else {
+        rootChannelName = this.serverInfo.virtualserver_name
+        // siblingChannels.unshift({text: this.serverInfo.virtualserver_name, value: 0})
+      }
+
+      siblingChannels.unshift({text: rootChannelName, value: 0})
+
+      return siblingChannels
     },
-    selectedSiblingChannel: {
+    selectedChannelOrder: {
       get() {
         return this.channel.channel_order && this.channel.channel_order
       },
@@ -186,6 +203,9 @@ export default {
     }
   },
   methods: {
+    getServerInfo() {
+      return this.$TeamSpeak.execute("serverinfo").then(arr => arr.pop())
+    },
     getChannelList() {
       return this.$TeamSpeak.execute("channellist")
     },
@@ -227,6 +247,7 @@ export default {
 
     try {
       this.channels = await this.getChannelList()
+      this.serverInfo = await this.getServerInfo()
     } catch(err) {
       this.$toast.error(err.message)
     }

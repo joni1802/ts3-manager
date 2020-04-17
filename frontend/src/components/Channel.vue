@@ -39,6 +39,16 @@
           </v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
+      <v-list-tile :to="{name: 'channel-add', query: {pid: channel.cid}}">
+        <v-list-tile-action>
+          <v-icon>add</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>
+            Create Sub-Channel
+          </v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
       <v-list-tile @click="confirmChannelDeletion(channel)">
         <v-list-tile-action>
           <v-icon>delete</v-icon>

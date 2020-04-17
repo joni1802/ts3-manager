@@ -13,7 +13,7 @@ export default {
     },
     async save(channelProps) {
       try {
-        await this.createChannel(channelProps)
+        await this.createChannel({...channelProps, cpid: +this.$route.query.pid})
 
         this.$router.go(-1)
       } catch(err) {
