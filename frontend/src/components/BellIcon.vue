@@ -22,7 +22,7 @@
         </v-list-tile>
       </v-list>
       <v-divider></v-divider>
-      <v-list>
+      <v-list v-if="showNotifications">
         <v-list-tile v-if="!countNotifications">
           <v-list-tile-content>
             <v-list-tile-title>No Notifications</v-list-tile-title>
@@ -48,7 +48,6 @@ import {version} from "../../package.json";
 export default {
   data() {
     return {
-      showNotifications: true,
       currentTSMVersion: version,
       latestTSMVersion: undefined,
       latestTSMRelease: {}, // latest TS3 Manager release
@@ -60,6 +59,14 @@ export default {
   computed: {
     countNotifications() {
       return this.notifications.length
+    },
+    showNotifications: {
+      get() {
+        return this.$store.state.settings.notifications
+      },
+      set(status) {
+        this.$store.commit("setNotifications", status)
+      }
     }
   },
   methods : {
@@ -111,33 +118,39 @@ export default {
     },
     createNotification({link = "", title, icon = "mdi-information"}) {
       this.notifications.push({link, title, icon})
+    },
+    async init() {
+      try {
+        this.latestTSMRelease = await this.getLatestTSMRelease()
+        this.latestTSMVersion = this.latestTSMRelease.name
+        this.currentTeamSpeakVersion = await this.getCurrentTeamSpeakVersion()
+        this.latestTeamSpeakVersion = await this.getLatestTeamSpeakVersion()
+
+        if(this.updateAvailable(this.currentTSMVersion, this.latestTSMVersion)) {
+          this.createNotification({
+            link: "https://www.ts3.app/releases",
+            title: `New TS3-Manager <b>${(() => this.latestTSMRelease.name)()}</b> Is Out Now`,
+            icon: "mdi-update"
+          })
+        }
+
+        if(this.updateAvailable(this.currentTeamSpeakVersion, this.latestTeamSpeakVersion)) {
+          this.createNotification({
+            title: `New TeamSpeak Server Version <b>${(() => this.latestTeamSpeakVersion)()}</b> Available`,
+            icon: "mdi-update"
+          })
+        }
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
     }
   },
-  async created() {
-    try {
-      this.latestTSMRelease = await this.getLatestTSMRelease()
-      this.latestTSMVersion = this.latestTSMRelease.name
-      this.currentTeamSpeakVersion = await this.getCurrentTeamSpeakVersion()
-      this.latestTeamSpeakVersion = await this.getLatestTeamSpeakVersion()
-
-      if(this.updateAvailable(this.currentTSMVersion, this.latestTSMVersion)) {
-        this.createNotification({
-          link: "https://www.ts3.app/releases",
-          title: `New TS3-Manager <b>${(() => this.latestTSMRelease.name)()}</b> Is Out Now`,
-          icon: "mdi-update"
-        })
+  watch: {
+    showNotifications: {
+      immediate: true,
+      handler(enabled) {
+        enabled ? this.init() : this.notifications = []
       }
-
-      if(this.updateAvailable(this.currentTeamSpeakVersion, this.latestTeamSpeakVersion)) {
-        this.createNotification({
-          title: `New TeamSpeak Server Version <b>${(() => this.latestTeamSpeakVersion)()}</b> Available`,
-          icon: "mdi-update"
-        })
-      }
-
-
-    } catch(err) {
-      this.$toast.error(err.message)
     }
   }
 }
