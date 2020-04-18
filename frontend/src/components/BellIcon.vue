@@ -136,6 +136,7 @@ export default {
 
         if(this.updateAvailable(this.currentTeamSpeakVersion, this.latestTeamSpeakVersion)) {
           this.createNotification({
+            link: `http://files.teamspeak-services.com/releases/server/${(() => this.latestTeamSpeakVersion)()}`,
             title: `New TeamSpeak Server Version <b>${(() => this.latestTeamSpeakVersion)()}</b> Available`,
             icon: "mdi-update"
           })
