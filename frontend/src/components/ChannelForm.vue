@@ -187,7 +187,9 @@ export default {
     },
     channelIsUnencrypted: {
       get() {
-        return this.channel.channel_codec_is_unencrypted && !this.channel.channel_codec_is_unencrypted
+        return typeof this.channel.channel_codec_is_unencrypted !== "undefined"
+          ? !!!this.channel.channel_codec_is_unencrypted
+          : false
       },
       set(encrypted) {
         this.channel.channel_codec_is_unencrypted = +!encrypted
