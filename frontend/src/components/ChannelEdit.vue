@@ -1,128 +1,106 @@
 <template>
-<v-container>
-  <v-layout>
-    <v-flex md6 sm8 xs12 offset-md3 offset-sm2>
+  <div>
+    <channel-form :applyButton="true" title="Channel Edit" :channel="channel" @save="save"></channel-form>
+
+    <v-dialog v-model="temporaryChannelWarning" max-width="500px">
       <v-card>
         <v-card-title>
-          Channel Edit
+          Temporary Channel
         </v-card-title>
         <v-card-text>
-          <v-text-field label="Name" v-model="channelName" :disabled="$store.state.query.loading"></v-text-field>
-          <v-text-field type="password" label="Password" v-model="channelPassword" :disabled="$store.state.query.loading"></v-text-field>
-          <v-text-field label="Topic" v-model="channelTopic" :disabled="$store.state.query.loading"></v-text-field>
-          <v-textarea label="Description" v-model="channelDescription" :disabled="$store.state.query.loading"></v-textarea>
+          If there are no clients inside the channel and you change it to temporary, the channel will be deleted.
+          Do you want to continue?
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="save" :disabled="this.$store.state.query.loading" color="primary">OK</v-btn>
-          <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
-          <v-btn flat @click="save" :disabled="this.$store.state.query.loading" color="primary">Apply</v-btn>
+          <v-btn flat color="primary" @click="saveAndLeave">Yes</v-btn>
+          <v-btn flat color="primary" @click="temporaryChannelWarning = false">No</v-btn>
         </v-card-actions>
       </v-card>
-    </v-flex>
-  </v-layout>
-</v-container>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
 export default {
+  components: {
+    ChannelForm: () => import('@/components/ChannelForm')
+  },
   data() {
     return {
       channelId: this.$route.params.cid,
       channel: {},
-      channelCopy: {}
+      temporaryChannelWarning: false,
+      pendingChanges: null
     }
   },
-  computed: {
-    channelName: {
-      get() {
-        return this.channel.channel_name
-      },
-      set(name) {
-        this.channel.channel_name = name
-      }
-    },
-    channelPassword: {
-      get() {
-        return this.channel.channel_password
-      },
-      set(password) {
-        this.channel.channel_password = password
-      }
-    },
-    channelTopic: {
-      get() {
-        return this.channel.channel_topic
-      },
-      set(topic) {
-        this.channel.channel_topic = topic
-      }
-    },
-    channelDescription: {
-      get() {
-        return this.channel.channel_description
-      },
-      set(description) {
-        this.channel.channel_description = description
-      }
-    },
-  },
   methods: {
-    getChanges() {
-      let changes = {}
-
-      for (let prop in this.channel) {
-        if (this.channel[prop] !== this.channelCopy[prop]) {
-          changes[prop] = this.channel[prop]
-        }
-      }
-
-      return changes
-    },
     getChannelInfo() {
       return this.$TeamSpeak.execute('channelinfo', {
         cid: this.channelId
       }).then(channelinfo => channelinfo[0])
     },
-    async save(e) {
+    channelIsTemporary(channelProps) {
+      let newChannelProps = {...this.channel, ...channelProps}
+
+      if (
+        newChannelProps.channel_flag_permanent === 0 &&
+        newChannelProps.channel_flag_semi_permanent === 0
+      ) {
+        return true
+      } else {
+        return false
+      }
+    },
+    editChannel(channelProps) {
+      return Object.keys(channelProps).length && this.$TeamSpeak.execute('channeledit', {
+        cid: this.channelId,
+        ...channelProps
+      })
+    },
+    async save(channelProps, e) {
       try {
-        let channelProps = {}
-        let changes = this.getChanges()
+        if(this.channelIsTemporary(channelProps)) {
+          this.temporaryChannelWarning = true
 
-        if (Object.keys(changes).length) {
-          channelProps = {
-            cid: this.channelId,
-            ...changes
+          this.pendingChanges = channelProps
+        } else {
+          switch(e.target.textContent.toLowerCase()) {
+            case "apply":
+              await this.editChannel(channelProps)
+
+              this.init()
+
+              break;
+            case "ok":
+              await this.editChannel(channelProps)
+
+              this.$router.go(-1)
           }
-
-          await this.$TeamSpeak.execute('channeledit', channelProps)
         }
-      } catch (err) {
+      } catch(err) {
         this.$toast.error(err.message)
       }
+    },
+    async saveAndLeave() {
+      try {
+        await this.editChannel(this.pendingChanges)
 
-      switch (e.target.textContent) {
-        case 'OK':
-          this.$router.go(-1)
-          break;
-        case 'Apply':
-          this.init()
+        this.$router.go(-1)
+      } catch(err) {
+        this.$toast.error(err.message)
       }
     },
     async init() {
       try {
         this.channel = await this.getChannelInfo()
-
-        this.channelCopy = {
-          ...this.channel
-        }
       } catch (err) {
         this.$toast.error(err.message)
       }
     }
   },
-  async created() {
+  created() {
     this.init()
-  },
+  }
 }
 </script>

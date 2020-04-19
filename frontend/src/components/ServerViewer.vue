@@ -17,6 +17,10 @@
       </v-card>
     </v-flex>
   </v-layout>
+
+  <v-btn fab color="pink" fixed bottom right dark :to="{name: 'channel-add'}">
+    <v-icon>add</v-icon>
+  </v-btn>
 </v-container>
 </template>
 <script>

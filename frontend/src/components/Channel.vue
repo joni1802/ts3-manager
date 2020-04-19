@@ -19,7 +19,7 @@
           </v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
-      <v-list-tile :to="{name: 'channel-edit', params: {cid: channel.cid}}">
+      <v-list-tile :to="{name: 'channel-edit', params: {cid: channel.cid}, query: {pid: channel.pid}}">
         <v-list-tile-action>
           <v-icon>edit</v-icon>
         </v-list-tile-action>
@@ -36,6 +36,16 @@
         <v-list-tile-content>
           <v-list-tile-title>
             Channel Permissions
+          </v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      <v-list-tile :to="{name: 'channel-add', query: {pid: channel.cid}}">
+        <v-list-tile-action>
+          <v-icon>add</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>
+            Create Sub-Channel
           </v-list-tile-title>
         </v-list-tile-content>
       </v-list-tile>
