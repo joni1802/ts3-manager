@@ -71,6 +71,8 @@ export default {
   },
   methods : {
     getCurrentTeamSpeakVersion() {
+      // Command "serverinfo" would not work here, because after login the
+      // returned object does not contain the property "virtualserver_version"
       return this.$TeamSpeak.execute("version")
         .then(version => version[0].version)
     },
