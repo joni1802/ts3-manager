@@ -70,12 +70,9 @@ export default {
     }
   },
   methods : {
-    getServerInfo() {
-      return this.$TeamSpeak.execute("serverinfo").then(arr => arr[0])
-    },
     getCurrentTeamSpeakVersion() {
-      return this.getServerInfo()
-        .then(server => server.virtualserver_version)
+      return this.$TeamSpeak.execute("version")
+        .then(version => version[0].version)
     },
     getTeamSpeakVersions() {
       return fetch("http://files.teamspeak-services.com/releases/server/")
