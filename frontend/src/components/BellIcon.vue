@@ -48,6 +48,13 @@ import {version} from "../../package.json";
 export default {
   data() {
     return {
+      URL: {
+        teamSpeak: ["https://files.teamspeak-services.com/releases/server/"],
+        ts3Manager: [
+          "https://api.github.com/repos/joni1802/ts3-manager/tags",
+          "https://www.ts3.app/releases"
+        ]
+      },
       currentTSMVersion: version,
       latestTSMVersion: undefined,
       latestTSMRelease: {}, // latest TS3 Manager release
@@ -77,7 +84,7 @@ export default {
         .then(version => version[0].version)
     },
     getTeamSpeakVersions() {
-      return fetch("http://files.teamspeak-services.com/releases/server/")
+      return fetch(this.URL.teamSpeak[0])
         .then(res => res.text())
         .then(text => {
           let parser = new DOMParser()
@@ -97,7 +104,7 @@ export default {
         })
     },
     getLatestTSMRelease() {
-      return fetch("https://api.github.com/repos/joni1802/ts3-manager/tags")
+      return fetch(this.URL.ts3Manager[0])
         .then(res => res.json())
         .then(data => data[0])
     },
@@ -127,7 +134,7 @@ export default {
 
         if(this.updateAvailable(this.currentTSMVersion, this.latestTSMVersion)) {
           this.createNotification({
-            link: "https://www.ts3.app/releases",
+            link: this.URL.ts3Manager[1],
             title: `New TS3-Manager <b>${(() => this.latestTSMRelease.name)()}</b> Is Out Now`,
             icon: "mdi-update"
           })
@@ -135,7 +142,7 @@ export default {
 
         if(this.updateAvailable(this.currentTeamSpeakVersion, this.latestTeamSpeakVersion)) {
           this.createNotification({
-            link: `http://files.teamspeak-services.com/releases/server/${(() => this.latestTeamSpeakVersion)()}`,
+            link: `${this.URL.teamSpeak[0]}${(() => this.latestTeamSpeakVersion)()}`,
             title: `New TeamSpeak Server Version <b>${(() => this.latestTeamSpeakVersion)()}</b> Available`,
             icon: "mdi-update"
           })
