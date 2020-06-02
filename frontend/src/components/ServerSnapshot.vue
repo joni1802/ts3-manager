@@ -66,7 +66,7 @@
         try {
           let response = await this.$TeamSpeak.createSnapshot()
 
-          this.saveFile(response.snapshot)
+          this.saveFile(response[0].data)
         } catch(err) {
           this.$toast.error(err.message)
         }

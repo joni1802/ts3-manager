@@ -147,7 +147,7 @@ socket.init = server => {
     // Create a snapshot and send it back to the client.
     socket.on("teamspeak-createsnapshot", async fn => {
       try {
-        let response = await ServerQuery.createSnapshot();
+        let response = await ServerQuery.execute('serversnapshotcreate');
 
         handleResponse(response, fn);
       } catch (err) {
