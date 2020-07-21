@@ -55,7 +55,7 @@ export default [
   },
   {
     path: "/chat/:cid?",
-    component: () => import("@/components/TextMessages2"),
+    component: () => import("@/components/TextMessages"),
     name: "chat",
     meta: {
       requiresAuth: true
