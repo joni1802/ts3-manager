@@ -18,11 +18,9 @@
 </template>
 
 <script>
-import PermissionTable from '@/components/PermissionTable'
-
 export default {
   components: {
-    PermissionTable
+    PermissionTable: () => import('@/components/PermissionTable')
   },
   data() {
     return {

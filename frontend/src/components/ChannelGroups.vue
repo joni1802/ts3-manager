@@ -3,11 +3,9 @@
 </template>
 
 <script>
-  import GroupList from '@/components/GroupList'
-
   export default {
     components: {
-      GroupList
+      GroupList: () => import('@/components/GroupList')
     },
     data() {
       return {

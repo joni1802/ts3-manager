@@ -15,11 +15,9 @@
 </template>
 
 <script>
-import PermissionTable from '@/components/PermissionTable.vue'
-
 export default {
   components: {
-    PermissionTable
+    PermissionTable: () => import('@/components/PermissionTable.vue')
   },
   data() {
     return {

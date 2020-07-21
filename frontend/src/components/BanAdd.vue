@@ -3,11 +3,9 @@
 </template>
 
 <script>
-import BanForm from '@/components/BanForm'
-
 export default {
   components: {
-    BanForm
+    BanForm: () => import('@/components/BanForm')
   },
   data() {
     return {
