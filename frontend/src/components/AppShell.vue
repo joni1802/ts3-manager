@@ -34,7 +34,7 @@
             <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
           </v-list-tile-title>
         </v-list-tile>
-        <v-list-group v-else value="true" :prepend-icon="entry.icon" active-class="" no-action>
+        <v-list-group v-else :prepend-icon="entry.icon" active-class="" no-action>
           <template slot="activator">
             <v-list-tile>
               <v-list-tile-title>
