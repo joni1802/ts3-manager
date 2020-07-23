@@ -113,6 +113,11 @@ export default {
           route: {name: 'complaints'}
         },
         {
+          title: 'Server Log',
+          icon: 'mdi-file-document-outline',
+          route: {name: 'logs'}
+        },
+        {
           title: 'Server Groups',
           icon: 'group',
           route: {name: 'servergroups'}

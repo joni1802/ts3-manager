@@ -214,6 +214,14 @@ export default [
     }
   },
   {
+    path: "/logs",
+    component: () => import("@/components/ServerLogs"),
+    name: "logs",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/login",
     component: () => import("@/components/Login"),
     name: "login",
