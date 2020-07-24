@@ -18,31 +18,35 @@
                   More Options
                 </div>
               </template>
-                  <v-layout wrap>
-                    <v-flex xs12>
-                      <v-autocomplete :items="channelOrderSelection" label="Sort This Channel After" v-model="selectedChannelOrder" :disabled="$store.state.query.loading"></v-autocomplete>
-                    </v-flex>
-                    <v-flex md4>
-                      <v-radio-group label="Max Users" v-model="channelUnlimitedClients">
-                        <v-radio label="Unlimited" :value="1"></v-radio>
-                        <v-radio label="Limited" :value="0"></v-radio>
-                      </v-radio-group>
-                      <v-text-field label="Number Of Clients" v-model="channelMaxClients" :disabled="!!channelUnlimitedClients"></v-text-field>
-                    </v-flex>
-                    <v-flex md4>
-                      <v-radio-group label="Channel Type" v-model="channelType">
-                        <v-radio label="Temporary" value="temporary"></v-radio>
-                        <v-radio label="Permanent" value="permanent"></v-radio>
-                        <v-radio label="Semi-Permanent" value="semi-permanent"></v-radio>
-                      </v-radio-group>
-                    </v-flex>
-                    <v-flex md4>
-                      <v-checkbox label="Default Channel" v-model="channelIsDefault" :disabled="!!initChannelData.channel_flag_default"></v-checkbox>
-                    </v-flex>
-                    <v-flex md4>
-                      <v-checkbox label="Voice Data encrypted" v-model="channelIsUnencrypted"></v-checkbox>
-                    </v-flex>
-                  </v-layout>
+                <v-card color="grey lighten-5">
+                  <v-card-text>
+                    <v-layout wrap>
+                      <v-flex xs12>
+                        <v-autocomplete :items="channelOrderSelection" label="Sort This Channel After" v-model="selectedChannelOrder" :disabled="$store.state.query.loading"></v-autocomplete>
+                      </v-flex>
+                      <v-flex md4>
+                        <v-radio-group label="Max Users" v-model="channelUnlimitedClients">
+                          <v-radio label="Unlimited" :value="1"></v-radio>
+                          <v-radio label="Limited" :value="0"></v-radio>
+                        </v-radio-group>
+                        <v-text-field label="Number Of Clients" v-model="channelMaxClients" :disabled="!!channelUnlimitedClients"></v-text-field>
+                      </v-flex>
+                      <v-flex md4>
+                        <v-radio-group label="Channel Type" v-model="channelType">
+                          <v-radio label="Temporary" value="temporary"></v-radio>
+                          <v-radio label="Permanent" value="permanent"></v-radio>
+                          <v-radio label="Semi-Permanent" value="semi-permanent"></v-radio>
+                        </v-radio-group>
+                      </v-flex>
+                      <v-flex md4>
+                        <v-checkbox label="Default Channel" v-model="channelIsDefault" :disabled="!!initChannelData.channel_flag_default"></v-checkbox>
+                      </v-flex>
+                      <v-flex md4>
+                        <v-checkbox label="Voice Data encrypted" v-model="channelIsUnencrypted"></v-checkbox>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                </v-card>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-card-text>
