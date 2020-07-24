@@ -114,9 +114,98 @@
               </v-expansion-panel-content>
               <v-expansion-panel-content>
                 <template slot="header">
-                  <div></div>
+                  <div>Transfers</div>
                 </template>
-
+                <v-card color="grey lighten-5">
+                  <v-card-title>Upload</v-card-title>
+                  <v-card-text>
+                    <v-text-field
+                    label="Bandwidth Limit"
+                    v-model="serverInfo.virtualserver_max_upload_total_bandwidth"
+                    :disabled="$store.state.query.loading"
+                    >
+                      <template slot="append">
+                        <div>Byte/s</div>
+                      </template>
+                    </v-text-field>
+                    <v-text-field
+                    label="Upload Quota"
+                    v-model="serverInfo.virtualserver_upload_quota"
+                    :disabled="$store.state.query.loading"
+                    >
+                      <template slot="append">
+                        <div>MiB</div>
+                      </template>
+                    </v-text-field>
+                  </v-card-text>
+                </v-card>
+                <v-card color="grey lighten-5" class="mt-2">
+                  <v-card-title>Download</v-card-title>
+                  <v-card-text>
+                    <v-text-field
+                    label="Bandwidth Limit"
+                    v-model="serverInfo.virtualserver_max_download_total_bandwidth"
+                    :disabled="$store.state.query.loading"
+                    >
+                      <template slot="append">
+                        <div>Byte/s</div>
+                      </template>
+                    </v-text-field>
+                    <v-text-field
+                    label="Download Quota"
+                    v-model="serverInfo.virtualserver_download_quota"
+                    :disabled="$store.state.query.loading"
+                    >
+                      <template slot="append">
+                        <div>MiB</div>
+                      </template>
+                    </v-text-field>
+                  </v-card-text>
+                </v-card>
+              </v-expansion-panel-content>
+              <v-expansion-panel-content>
+                <template slot="header">
+                  <div>Anti-Flood</div>
+                </template>
+                <v-card color="grey lighten-5">
+                  <v-card-text>
+                    <v-text-field
+                      label="Reduced point per tick"
+                      v-model="serverInfo.virtualserver_antiflood_points_tick_reduce"
+                      :disabled="$store.state.query.loading"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Points needed to block commands"
+                      v-model="serverInfo.virtualserver_antiflood_points_needed_command_block"
+                      :disabled="$store.state.query.loading"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Points needed to block IP"
+                      v-model="serverInfo.virtualserver_antiflood_points_needed_ip_block"
+                      :disabled="$store.state.query.loading"
+                    ></v-text-field>
+                  </v-card-text>
+                </v-card>
+              </v-expansion-panel-content>
+              <v-expansion-panel-content>
+                <template slot="header">
+                  <div>Security</div>
+                </template>
+                <v-card color="grey lighten-5">
+                  <v-card-text>
+                    <v-text-field
+                      label="Needed Security Level"
+                      v-model="serverInfo.virtualserver_needed_identity_security_level"
+                      :disabled="$store.state.query.loading"
+                      type="number"
+                    ></v-text-field>
+                    <v-select
+                      label="Channel voice data encrypption"
+                      v-model="serverInfo.virtualserver_codec_encryption_mode"
+                      :items="encryptionModes"
+                    ></v-select>
+                  </v-card-text>
+                </v-card>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-card-text>
@@ -148,6 +237,11 @@ export default {
         {text: "Do not adjust", value: 0},
         {text: "Adjust but ignore aspect ratio", value: 1},
         {text: "Adjust and keep aspect ratio", value: 2}
+      ],
+      encryptionModes: [
+        {text: "Configure per Channel", value: 0},
+        {text: "Globally Off", value: 1},
+        {text: "Globally On", value: 2},
       ]
     }
   },
@@ -161,7 +255,7 @@ export default {
       this.serverInfo = await this.getServerInfo()
       this.serverInfoCopy = {...this.serverInfo}
 
-      console.log('message mode', this.serverInfoCopy.virtualserver_hostmessage_mode);
+      console.log('global channel encryption', this.serverInfoCopy.virtualserver_codec_encryption_mode);
     } catch(err) {
       this.$toast.error(err.message)
     }
