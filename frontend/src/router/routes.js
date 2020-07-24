@@ -54,6 +54,14 @@ export default [
     }
   },
   {
+    path: "/server/edit",
+    component: () => import("@/components/ServerEdit"),
+    name: "server-edit",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/chat/:cid?",
     component: () => import("@/components/TextMessages"),
     name: "chat",

@@ -25,7 +25,8 @@
                 <v-switch hide-details :input-value="!isOffline(props.item.virtualserver_status)" @click.stop.prevent="changeServerStatus(props.item)"></v-switch>
               </td>
               <td class="justify-center layout px-0">
-                <v-icon @click="openDeleteDialog(props.item)">delete</v-icon>
+                <v-icon small class="mr-2" @click="$router.push({name: 'server-edit'})">edit</v-icon>
+                <v-icon small @click="openDeleteDialog(props.item)">delete</v-icon>
               </td>
             </template>
           </v-data-table>
