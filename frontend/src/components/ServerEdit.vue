@@ -207,6 +207,132 @@
                   </v-card-text>
                 </v-card>
               </v-expansion-panel-content>
+              <v-expansion-panel-content>
+                <template slot="header">
+                  <div>Misc</div>
+                </template>
+                <v-card color="grey lighten-5">
+                  <v-card-title>Default Groups</v-card-title>
+                  <v-card-text>
+                    <v-autocomplete
+                      :items="serverGroups"
+                      item-text="name"
+                      item-value="sgid"
+                      v-model="serverInfo.virtualserver_default_server_group"
+                      label="Server Group"
+                      :disabled="$store.state.query.loading"
+                    >
+                      <template slot="selection" slot-scope="{item}">
+                        <div>{{ item.name }} ({{ item.sgid }})</div>
+                      </template>
+                      <template slot="item" slot-scope="{item}">
+                        <div>{{ item.name }} ({{ item.sgid }})</div>
+                      </template>
+                    </v-autocomplete>
+                    <v-autocomplete
+                      :items="channelGroups"
+                      item-text="name"
+                      item-value="cgid"
+                      v-model="serverInfo.virtualserver_default_channel_group"
+                      label="Channel Group"
+                      :disabled="$store.state.query.loading"
+                    >
+                      <template slot="selection" slot-scope="{item}">
+                        <div>{{ item.name }} ({{ item.cgid }})</div>
+                      </template>
+                      <template slot="item" slot-scope="{item}">
+                        <div>{{ item.name }} ({{ item.cgid }})</div>
+                      </template>
+                    </v-autocomplete>
+                    <v-autocomplete
+                      :items="channelGroups"
+                      item-text="name"
+                      item-value="cgid"
+                      v-model="serverInfo.virtualserver_default_channel_admin_group"
+                      label="Channel Admin Group"
+                      :disabled="$store.state.query.loading"
+                    >
+                      <template slot="selection" slot-scope="{item}">
+                        <div>{{ item.name }} ({{ item.cgid }})</div>
+                      </template>
+                      <template slot="item" slot-scope="{item}">
+                        <div>{{ item.name }} ({{ item.cgid }})</div>
+                      </template>
+                    </v-autocomplete>
+                  </v-card-text>
+                </v-card>
+                <v-card color="grey lighten-5" class="mt-2">
+                  <v-card-title>Complain</v-card-title>
+                  <v-card-text>
+                    <v-layout justify-space-between wrap>
+                      <v-flex xs5 md3>
+                        <v-text-field
+                          label="Autoban Count"
+                          :disabled="$store.state.query.loading"
+                          v-model="serverInfo.virtualserver_complain_autoban_count"
+                          type="number"
+                        ></v-text-field>
+                      </v-flex>
+                      <v-flex xs5 md3>
+                        <v-text-field
+                          label="Autoban Time"
+                          :disabled="$store.state.query.loading"
+                          v-model="serverInfo.virtualserver_complain_autoban_time"
+                          type="number"
+                        >
+                          <template slot="append">
+                            <div>sec</div>
+                          </template>
+                        </v-text-field>
+                      </v-flex>
+                      <v-flex xs5 md3>
+                        <v-text-field
+                          label="Remove Time"
+                          :disabled="$store.state.query.loading"
+                          v-model="serverInfo.virtualserver_complain_remove_time"
+                          type="number"
+                        >
+                          <template slot="append">
+                            <div>sec</div>
+                          </template>
+                        </v-text-field>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                </v-card>
+                <v-card color="grey lighten-5" class="my-2">
+                  <v-card-text>
+                    <v-text-field
+                      label="Min clients in channel before silence"
+                      :disabled="$store.state.query.loading"
+                      v-model="serverInfo.virtualserver_min_clients_in_channel_before_forced_silence"
+                      type="number"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Priority Speaker dim modificator"
+                      :disabled="$store.state.query.loading"
+                      v-model="serverInfo.virtualserver_priority_speaker_dimm_modificator"
+                      type="number"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Delete delay for temporary channel"
+                      :disabled="$store.state.query.loading"
+                      v-model="serverInfo.virtualserver_channel_temp_delete_delay_default"
+                      type="number"
+                    ></v-text-field>
+                    <v-text-field
+                      label="Phonetic Name"
+                      :disabled="$store.state.query.loading"
+                      v-model="serverInfo.virtualserver_name_phonetic"
+                    ></v-text-field>
+                    <v-checkbox
+                      label="Enable reporting to serverlist"
+                      v-model="weblistEnabled"
+                    ></v-checkbox>
+                  </v-card-text>
+                </v-card>
+              </v-expansion-panel-content>
+
             </v-expansion-panel>
           </v-card-text>
           <v-card-actions>
@@ -242,22 +368,50 @@ export default {
         {text: "Configure per Channel", value: 0},
         {text: "Globally Off", value: 1},
         {text: "Globally On", value: 2},
-      ]
+      ],
+      serverGroups: [],
+      channelGroups: []
+    }
+  },
+  computed: {
+    weblistEnabled: {
+      get() {
+        return this.serverInfo.virtualserver_weblist_enabled ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_weblist_enabled = bool ? 1 : 0
+      }
     }
   },
   methods: {
     getServerInfo() {
       return this.$TeamSpeak.execute("serverinfo").then(arr => arr[0])
+    },
+    getServerGroupList() {
+      return this.$TeamSpeak.execute("servergrouplist")
+        .then(groups => groups.filter(group => group.type === 1))
+    },
+    getChannelGroupList() {
+      return this.$TeamSpeak.execute("channelgrouplist")
+        .then(groups => groups.filter(group => group.type === 1))
     }
   },
   async created() {
     try {
       this.serverInfo = await this.getServerInfo()
       this.serverInfoCopy = {...this.serverInfo}
+      this.serverGroups = await this.getServerGroupList()
+      this.channelGroups = await this.getChannelGroupList()
 
-      console.log('global channel encryption', this.serverInfoCopy.virtualserver_codec_encryption_mode);
+
+      console.log('reporting', this.serverInfoCopy.virtualserver_weblist_enabled);
     } catch(err) {
       this.$toast.error(err.message)
+    }
+  },
+  watch: {
+    'serverInfo.virtualserver_weblist_enabled'(val) {
+      console.log(val);
     }
   }
 }
