@@ -1,6 +1,6 @@
 {
   "name": "ts3-manager-frontend",
-  "version": "v1.6.1",
+  "version": "v1.7.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
