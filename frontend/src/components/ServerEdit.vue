@@ -120,18 +120,20 @@
                   <v-card-title>Upload</v-card-title>
                   <v-card-text>
                     <v-text-field
-                    label="Bandwidth Limit"
-                    v-model="serverInfo.virtualserver_max_upload_total_bandwidth"
-                    :disabled="$store.state.query.loading"
+                      label="Bandwidth Limit"
+                      v-model="serverInfo.virtualserver_max_upload_total_bandwidth"
+                      :disabled="$store.state.query.loading"
+                      type="number"
                     >
                       <template slot="append">
                         <div>Byte/s</div>
                       </template>
                     </v-text-field>
                     <v-text-field
-                    label="Upload Quota"
-                    v-model="serverInfo.virtualserver_upload_quota"
-                    :disabled="$store.state.query.loading"
+                      label="Upload Quota"
+                      v-model="serverInfo.virtualserver_upload_quota"
+                      :disabled="$store.state.query.loading"
+                      type="number"
                     >
                       <template slot="append">
                         <div>MiB</div>
@@ -139,22 +141,24 @@
                     </v-text-field>
                   </v-card-text>
                 </v-card>
-                <v-card color="grey lighten-5" class="mt-2">
+                <v-card color="grey lighten-5" class="my-2">
                   <v-card-title>Download</v-card-title>
                   <v-card-text>
                     <v-text-field
-                    label="Bandwidth Limit"
-                    v-model="serverInfo.virtualserver_max_download_total_bandwidth"
-                    :disabled="$store.state.query.loading"
+                      label="Bandwidth Limit"
+                      v-model="serverInfo.virtualserver_max_download_total_bandwidth"
+                      :disabled="$store.state.query.loading"
+                      type="number"
                     >
                       <template slot="append">
                         <div>Byte/s</div>
                       </template>
                     </v-text-field>
                     <v-text-field
-                    label="Download Quota"
-                    v-model="serverInfo.virtualserver_download_quota"
-                    :disabled="$store.state.query.loading"
+                      label="Download Quota"
+                      v-model="serverInfo.virtualserver_download_quota"
+                      :disabled="$store.state.query.loading"
+                      type="number"
                     >
                       <template slot="append">
                         <div>MiB</div>
@@ -167,22 +171,25 @@
                 <template slot="header">
                   <div>Anti-Flood</div>
                 </template>
-                <v-card color="grey lighten-5">
+                <v-card color="grey lighten-5" class="mb-2">
                   <v-card-text>
                     <v-text-field
                       label="Reduced point per tick"
                       v-model="serverInfo.virtualserver_antiflood_points_tick_reduce"
                       :disabled="$store.state.query.loading"
+                      type="number"
                     ></v-text-field>
                     <v-text-field
                       label="Points needed to block commands"
                       v-model="serverInfo.virtualserver_antiflood_points_needed_command_block"
                       :disabled="$store.state.query.loading"
+                      type="number"
                     ></v-text-field>
                     <v-text-field
                       label="Points needed to block IP"
                       v-model="serverInfo.virtualserver_antiflood_points_needed_ip_block"
                       :disabled="$store.state.query.loading"
+                      type="number"
                     ></v-text-field>
                   </v-card-text>
                 </v-card>
@@ -191,7 +198,7 @@
                 <template slot="header">
                   <div>Security</div>
                 </template>
-                <v-card color="grey lighten-5">
+                <v-card color="grey lighten-5" class="mb-2">
                   <v-card-text>
                     <v-text-field
                       label="Needed Security Level"
@@ -332,14 +339,47 @@
                   </v-card-text>
                 </v-card>
               </v-expansion-panel-content>
-
+              <v-expansion-panel-content>
+                <template slot="header">
+                  <div>Logs</div>
+                </template>
+                <v-card color="grey lighten-5" class="mb-2">
+                  <v-card-title>Enable Logging For</v-card-title>
+                  <v-card-text>
+                    <v-checkbox label="Clients" v-model="logClient"
+                    ></v-checkbox>
+                    <v-checkbox label="Channel" v-model="logChannel"
+                    ></v-checkbox>
+                    <v-checkbox label="Server" v-model="logServer"
+                    ></v-checkbox>
+                    <v-checkbox label="ServerQuery" v-model="logQuery"
+                    ></v-checkbox>
+                    <v-checkbox label="Permissions" v-model="logPermissions"
+                    ></v-checkbox>
+                    <v-checkbox label="File transfer" v-model="logFileTransfer"
+                    ></v-checkbox>
+                  </v-card-text>
+                </v-card>
+              </v-expansion-panel-content>
             </v-expansion-panel>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat :disabled="this.$store.state.query.loading" color="primary">OK</v-btn>
+            <v-btn
+              flat
+              :disabled="this.$store.state.query.loading"
+              color="primary"
+              @click="saveChanges"
+            >OK
+            </v-btn>
             <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
-            <v-btn flat :disabled="this.$store.state.query.loading" color="primary">Apply</v-btn>
+            <v-btn
+              flat
+              :disabled="this.$store.state.query.loading"
+              color="primary"
+              @click="applyChanges"
+            >Apply
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -381,6 +421,54 @@ export default {
       set(bool) {
         this.serverInfo.virtualserver_weblist_enabled = bool ? 1 : 0
       }
+    },
+    logClient: {
+      get() {
+        return this.serverInfo.virtualserver_log_client ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_log_client = bool ? 1 : 0
+      }
+    },
+    logQuery: {
+      get() {
+        return this.serverInfo.virtualserver_log_query ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_log_query = bool ? 1 : 0
+      }
+    },
+    logChannel: {
+      get() {
+        return this.serverInfo.virtualserver_log_channel ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_log_channel = bool ? 1 : 0
+      }
+    },
+    logPermissions: {
+      get() {
+        return this.serverInfo.virtualserver_log_permissions ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_log_permissions = bool ? 1 : 0
+      }
+    },
+    logServer: {
+      get() {
+        return this.serverInfo.virtualserver_log_server ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_log_server = bool ? 1 : 0
+      }
+    },
+    logFileTransfer: {
+      get() {
+        return this.serverInfo.virtualserver_log_filetransfer ? true : false
+      },
+      set(bool) {
+        this.serverInfo.virtualserver_log_filetransfer = bool ? 1 : 0
+      }
     }
   },
   methods: {
@@ -394,28 +482,52 @@ export default {
     getChannelGroupList() {
       return this.$TeamSpeak.execute("channelgrouplist")
         .then(groups => groups.filter(group => group.type === 1))
+    },
+    getChanges() {
+      let changes = {}
+
+      for (let prop in this.serverInfo) {
+        if (this.serverInfo[prop] !== this.serverInfoCopy[prop]) {
+          changes[prop] = this.serverInfo[prop]
+        }
+      }
+
+      return changes
+    },
+    serverEdit() {
+      return this.$TeamSpeak.execute("serveredit", this.getChanges())
+    },
+    async saveChanges() {
+      try {
+        await this.serverEdit()
+
+        this.$router.go(-1)
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
+    },
+    async applyChanges() {
+      try {
+        await this.serverEdit()
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
+
+      this.init()
+    },
+    async init() {
+      try {
+        this.serverInfo = await this.getServerInfo()
+        this.serverInfoCopy = {...this.serverInfo}
+        this.serverGroups = await this.getServerGroupList()
+        this.channelGroups = await this.getChannelGroupList()
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
     }
   },
-  async created() {
-    try {
-      this.serverInfo = await this.getServerInfo()
-      this.serverInfoCopy = {...this.serverInfo}
-      this.serverGroups = await this.getServerGroupList()
-      this.channelGroups = await this.getChannelGroupList()
-
-
-      console.log('reporting', this.serverInfoCopy.virtualserver_weblist_enabled);
-    } catch(err) {
-      this.$toast.error(err.message)
-    }
-  },
-  watch: {
-    'serverInfo.virtualserver_weblist_enabled'(val) {
-      console.log(val);
-    }
+  created() {
+    this.init()
   }
 }
 </script>
-
-<style lang="css" scoped>
-</style>
