@@ -12,6 +12,6 @@ The TS3 Manager is a webinterface that allows you to maintain your TeamSpeak ser
 ![Screen Recording TS3 Manager Server Viewer](https://media.giphy.com/media/WpgWEaI3G5U1C0ORRu/source.gif)
 
 ## To The Docs 📃
-- How to use the Docker image? 🐳 [www.ts3.app/guide/Installation.html#docker](https://www.ts3.app/guide/Installation.html#docker)
+- How to use the Docker image? 🐳 [www.ts3.app/guide/Installation.html#docker](https://www.ts3.app/guide/installation.html#docker)
 - How to use the executable? 💾 [www.ts3.app/guide/installation.html](https://www.ts3.app/guide/installation.html)
 - Want to compile it yourself or contribute to the project? 🐱‍💻 [www.ts3.app/guide/Developers.html](https://www.ts3.app/guide/Developers.html)
