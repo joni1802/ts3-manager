@@ -3,6 +3,7 @@
       The TeamSpeak instance needs to be imported   *
       before the store, router and socket.          *
  ****************************************************/
+import "./assets/css/style.css"
 
 import Vue from "vue";
 import "./plugins/vuetify";

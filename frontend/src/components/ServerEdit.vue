@@ -44,7 +44,7 @@
                 <template slot="header">
                   <div>Host</div>
                 </template>
-                <v-card color="grey lighten-5">
+                <v-card class="card-border">
                   <v-card-title>Host Message</v-card-title>
                   <v-card-text>
                     <v-text-field
@@ -59,7 +59,7 @@
                     ></v-select>
                   </v-card-text>
                 </v-card>
-                <v-card color="grey lighten-5" class="mt-2">
+                <v-card class="mt-2 card-border">
                   <v-card-title>Host Banner</v-card-title>
                   <v-card-text>
                     <v-text-field
@@ -91,7 +91,7 @@
                     </v-layout>
                   </v-card-text>
                 </v-card>
-                <v-card color="grey lighten-5" class="my-2">
+                <v-card class="my-2 card-border">
                   <v-card-title>Host Button</v-card-title>
                   <v-card-text>
                     <v-text-field
@@ -116,7 +116,7 @@
                 <template slot="header">
                   <div>Transfers</div>
                 </template>
-                <v-card color="grey lighten-5">
+                <v-card class="card-border">
                   <v-card-title>Upload</v-card-title>
                   <v-card-text>
                     <v-text-field
@@ -141,7 +141,7 @@
                     </v-text-field>
                   </v-card-text>
                 </v-card>
-                <v-card color="grey lighten-5" class="my-2">
+                <v-card class="my-2 card-border">
                   <v-card-title>Download</v-card-title>
                   <v-card-text>
                     <v-text-field
@@ -171,7 +171,7 @@
                 <template slot="header">
                   <div>Anti-Flood</div>
                 </template>
-                <v-card color="grey lighten-5" class="mb-2">
+                <v-card class="mb-2 card-border">
                   <v-card-text>
                     <v-text-field
                       label="Reduced point per tick"
@@ -198,7 +198,7 @@
                 <template slot="header">
                   <div>Security</div>
                 </template>
-                <v-card color="grey lighten-5" class="mb-2">
+                <v-card class="mb-2 card-border">
                   <v-card-text>
                     <v-text-field
                       label="Needed Security Level"
@@ -218,7 +218,7 @@
                 <template slot="header">
                   <div>Misc</div>
                 </template>
-                <v-card color="grey lighten-5">
+                <v-card class="card-border">
                   <v-card-title>Default Groups</v-card-title>
                   <v-card-text>
                     <v-autocomplete
@@ -268,7 +268,7 @@
                     </v-autocomplete>
                   </v-card-text>
                 </v-card>
-                <v-card color="grey lighten-5" class="mt-2">
+                <v-card class="mt-2 card-border">
                   <v-card-title>Complain</v-card-title>
                   <v-card-text>
                     <v-layout justify-space-between wrap>
@@ -307,7 +307,7 @@
                     </v-layout>
                   </v-card-text>
                 </v-card>
-                <v-card color="grey lighten-5" class="my-2">
+                <v-card class="my-2 card-border">
                   <v-card-text>
                     <v-text-field
                       label="Min clients in channel before silence"
@@ -343,7 +343,7 @@
                 <template slot="header">
                   <div>Logs</div>
                 </template>
-                <v-card color="grey lighten-5" class="mb-2">
+                <v-card class="mb-2 card-border">
                   <v-card-title>Enable Logging For</v-card-title>
                   <v-card-text>
                     <v-checkbox label="Clients" v-model="logClient"

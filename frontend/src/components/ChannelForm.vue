@@ -18,7 +18,7 @@
                   More Options
                 </div>
               </template>
-                <v-card color="grey lighten-5">
+                <v-card class="card-border">
                   <v-card-text>
                     <v-layout wrap>
                       <v-flex xs12>
