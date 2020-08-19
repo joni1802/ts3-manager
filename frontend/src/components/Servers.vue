@@ -173,7 +173,7 @@ export default {
       if(this.isOffline(server.virtualserver_status)) {
         await this.startServer(server.virtualserver_id)
       } else {
-        await this.stopServer(server.virtualserver_id)
+        this.openStopDialog(server)
       }
 
       try {
@@ -183,6 +183,11 @@ export default {
       }
 
       this.resetUptimeCounters()
+    },
+    openStopDialog(server) {
+      this.selectedServer = server
+
+      this.stopDialog = true
     },
     openDeleteDialog(server) {
       this.selectedServer = server
@@ -215,16 +220,18 @@ export default {
         this.$toast.error(err.message);
       }
     },
-    async stopServer(sid) {
+    async stopServer() {
       try {
-        await this.$TeamSpeak.execute("serverstop", {sid})
+        await this.$TeamSpeak.execute("serverstop", {sid: this.selectedServer.virtualserver_id})
 
-        if(this.currentServerId === sid) this.$store.commit("setServerId", null)
+        this.stopDialog = false;
+
+        this.servers = await this.getServerList()
+
+        if(this.currentServerId === this.selectedServer.virtualserver_id) this.$store.commit("setServerId", null)
       } catch (err) {
         this.$toast.error(err.message);
       }
-
-      this.stopDialog = false;
     },
     getServerList() {
       return this.$TeamSpeak.execute("serverlist");
