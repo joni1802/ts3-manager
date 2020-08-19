@@ -57,9 +57,8 @@ export default {
     return {
       logs: [],
       rowsPerPage: [
-        100,
-        150,
-        200,
+        50,
+        75,
         {
           "text": "$vuetify.dataIterator.rowsPerPageAll",
           "value": -1
