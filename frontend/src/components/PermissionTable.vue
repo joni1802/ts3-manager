@@ -49,8 +49,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="savePermission" color="primary">Save</v-btn>
-        <v-btn flat @click="dialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="savePermission" color="primary">Save</v-btn>
+        <v-btn text @click="dialog = false" color="primary">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,8 +62,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="removePermission" color="primary">Yes</v-btn>
-        <v-btn flat @click="deleteDialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="removePermission" color="primary">Yes</v-btn>
+        <v-btn text @click="deleteDialog = false" color="primary">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -366,15 +366,15 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              flat
+              text
               :disabled="this.$store.state.query.loading"
               color="primary"
               @click="saveChanges"
             >OK
             </v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
+            <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
             <v-btn
-              flat
+              text
               :disabled="this.$store.state.query.loading"
               color="primary"
               @click="applyChanges"

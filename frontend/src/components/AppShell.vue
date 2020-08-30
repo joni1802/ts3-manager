@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-toolbar dense flat color="rgba(0, 0, 0, 0)">
+  <v-toolbar dense text color="rgba(0, 0, 0, 0)">
     <v-toolbar-side-icon @click="drawer = !drawer" v-if="validPage"></v-toolbar-side-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
@@ -9,7 +9,7 @@
 
   <nav v-if="validPage">
     <v-navigation-drawer app v-model="drawer">
-      <v-toolbar flat class="transparent py-2">
+      <v-toolbar text class="transparent py-2">
         <v-list>
           <v-list-tile>
             <v-list-tile-content>
@@ -35,7 +35,7 @@
           </v-list-tile-title>
         </v-list-tile>
         <v-list-group v-else :prepend-icon="entry.icon" active-class="" no-action>
-          <template slot="activator">
+          <template v-slot:activator>
             <v-list-tile>
               <v-list-tile-title>
                 {{ entry.title }}

@@ -1,12 +1,12 @@
 <template>
   <v-menu offset-y :close-on-content-click="false">
-    <template slot="activator">
-      <v-btn icon>
-        <v-badge color="red">
-          <template slot="badge" v-if="countNotifications">
+    <template #activator="{on}">
+      <v-btn icon v-on="on">
+        <v-badge color="red" :value="countNotifications">
+          <template #badge v-if="countNotifications">
             <span>{{ countNotifications }}</span>
           </template>
-            <v-icon>mdi-bell</v-icon>
+          <v-icon>mdi-bell</v-icon>
         </v-badge>
       </v-btn>
     </template>

@@ -2,7 +2,7 @@
 <div>
   <v-menu offset-x>
     <template slot="activator">
-      <v-btn flat>
+      <v-btn text>
         <v-icon>{{ statusIcon }}</v-icon>
         {{ client.client_nickname }} <i v-if="client.clid === queryUser.client_id">(You)</i>
       </v-btn>
@@ -69,8 +69,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="kickClientDialog = false" color="primary">Cancel</v-btn>
-        <v-btn flat @click="kick" color="primary">OK</v-btn>
+        <v-btn text @click="kickClientDialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="kick" color="primary">OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

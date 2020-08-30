@@ -37,8 +37,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="removeDialog = false">Abort</v-btn>
-            <v-btn flat color="primary" @click="removeGroup">Delete Group</v-btn>
+            <v-btn text color="primary" @click="removeDialog = false">Abort</v-btn>
+            <v-btn text color="primary" @click="removeGroup">Delete Group</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -52,8 +52,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="addGroup">Add</v-btn>
-            <v-btn flat color="primary" @click="addDialog = false">Cancel</v-btn>
+            <v-btn text color="primary" @click="addGroup">Add</v-btn>
+            <v-btn text color="primary" @click="addDialog = false">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

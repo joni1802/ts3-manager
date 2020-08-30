@@ -10,7 +10,7 @@
             </div>
           </v-card-title>
           <v-card-actions>
-            <v-btn flat color="blue" @click="createSnapshot">
+            <v-btn text color="blue" @click="createSnapshot">
               Create Snapshot
               <v-icon right>
                 mdi-file-download-outline
@@ -31,7 +31,7 @@
                 <v-text-field label="Select Backup File" @click="selectFile" v-model="fileName" prepend-icon="attach_file"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md5>
-                <v-btn flat color="red" :disabled="filePicked" @click="deploySnapshot">
+                <v-btn text color="red" :disabled="filePicked" @click="deploySnapshot">
                   Deploy Snapshot
                   <v-icon right>
                     mdi-file-upload-outline

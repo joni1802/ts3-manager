@@ -1,9 +1,9 @@
 <template>
 <v-app :dark="$store.state.settings.darkMode">
   <app-shell></app-shell>
-  <v-content>
+  <v-main>
     <router-view></router-view>
-  </v-content>
+  </v-main>
 </v-app>
 </template>
 

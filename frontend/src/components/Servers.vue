@@ -43,8 +43,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="stopDialog = false" color="primary">Cancel</v-btn>
-        <v-btn flat @click="stopServer" color="primary">Stop</v-btn>
+        <v-btn text @click="stopDialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="stopServer" color="primary">Stop</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -57,8 +57,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="deleteDialog = false" color="primary">Cancel</v-btn>
-        <v-btn flat @click="deleteServer" color="primary">Delete</v-btn>
+        <v-btn text @click="deleteDialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="deleteServer" color="primary">Delete</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

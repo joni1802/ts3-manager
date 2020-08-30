@@ -3,7 +3,7 @@
   <v-menu offset-x style="width: 100%">
     <template slot="activator">
       <spacer v-if="isSpacer(channel.channel_name)" :channelName="channel.channel_name"></spacer>
-      <v-btn flat v-else>
+      <v-btn text v-else>
         <v-icon>chat_bubble</v-icon>
         {{ channel.channel_name }}
       </v-btn>
@@ -71,8 +71,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="deleteChannel" color="primary">Yes</v-btn>
-        <v-btn flat @click="deleteChannelDialog = false" color="primary">No</v-btn>
+        <v-btn text @click="deleteChannel" color="primary">Yes</v-btn>
+        <v-btn text @click="deleteChannelDialog = false" color="primary">No</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

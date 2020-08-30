@@ -6,8 +6,8 @@
 import "./assets/css/style.css"
 
 import Vue from "vue";
-import "./plugins/vuetify";
 import App from "./App.vue";
+import vuetify from "./plugins/vuetify";
 import VuetifyToast from "vuetify-toast-snackbar";
 import "nprogress/nprogress.css";
 import NProgress from "nprogress";
@@ -44,5 +44,6 @@ Vue.prototype.$TeamSpeak = TeamSpeak;
 new Vue({
   render: h => h(App),
   router,
-  store
+  store,
+  vuetify
 }).$mount("#app");

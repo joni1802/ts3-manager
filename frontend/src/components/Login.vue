@@ -17,8 +17,8 @@
                 <v-checkbox v-model="form.ssh" label="SSH">
                   <template slot="append">
                     <v-tooltip bottom>
-                      <template slot="activator">
-                        <v-icon>mdi-help-circle-outline</v-icon>
+                      <template #activator="{on}">
+                        <v-icon v-on="on">mdi-help-circle-outline</v-icon>
                       </template>
                       <span>If SSH is checked (default), the connection to the
                         ServerQuery is encrypted.</span>
@@ -27,10 +27,10 @@
                 </v-checkbox>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Name" v-model="form.username" :rules="[rules.required]" placeholder="e.g. serveradmin" name="username" browser-autocomplete="username"></v-text-field>
+                <v-text-field label="Name" v-model="form.username" :rules="[rules.required]" placeholder="e.g. serveradmin" name="username" autocomplete="username"></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Password" type="password" v-model="form.password" :rules="[rules.required]" name="password" browser-autocomplete="current-password"></v-text-field>
+                <v-text-field label="Password" type="password" v-model="form.password" :rules="[rules.required]" name="password" autocomplete="current-password"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-checkbox label="Remember me" v-model="rememberLogin"></v-checkbox>
@@ -40,7 +40,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat color="primary" :disabled="!valid" @click="connect" :loading="loading">
+          <v-btn text color="primary" :disabled="!valid" @click="connect" :loading="loading">
             <v-icon>arrow_forward</v-icon>Connect
             <template slot="loader">
               <span>Connecting...</span>

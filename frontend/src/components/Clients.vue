@@ -56,8 +56,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="dialog = false" color="primary">No</v-btn>
-          <v-btn flat @click="deleteClient" color="primary">Yes</v-btn>
+          <v-btn text @click="dialog = false" color="primary">No</v-btn>
+          <v-btn text @click="deleteClient" color="primary">Yes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

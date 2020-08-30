@@ -26,8 +26,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat @click="createServer" :disabled="!valid" color="primary">Create</v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Close</v-btn>
+            <v-btn text @click="createServer" :disabled="!valid" color="primary">Create</v-btn>
+            <v-btn text @click="$router.go(-1)" color="primary">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
