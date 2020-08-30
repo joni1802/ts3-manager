@@ -21,8 +21,8 @@
       <v-list dense class="pt-2" subheader>
         <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
           <v-list-tile-action>
-            <v-badge color="red">
-              <template slot="badge" v-if="entry.title === 'Chat' && $store.getters.unreadMessages">
+            <v-badge color="red" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
+              <template #badge>
                 <span>{{ $store.getters.unreadMessages }}</span>
               </template>
               <v-icon>{{ entry.icon }}</v-icon>
