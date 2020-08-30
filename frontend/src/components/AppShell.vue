@@ -7,47 +7,49 @@
     <bell-icon v-if="$store.state.query.connected"></bell-icon>
   </v-app-bar>
 
-  <v-navigation-drawer app v-model="drawer" v-if="validPage">
-    <v-toolbar text class="transparent py-2">
-      <v-list>
-        <v-list-item>
-          <v-list-item-content>
-            <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-toolbar>
-    <v-list dense class="pt-2" subheader>
+  <v-navigation-drawer app v-model="drawer" v-if="validPage" width="300">
+    <v-list-item>
+      <v-list-item-content>
+        <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
+      </v-list-item-content>
+    </v-list-item>
+
+    <v-list dense class="pt-2" subheader nav>
       <v-list-item v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
-        <v-list-item-action>
+        <v-list-item-icon>
           <v-badge color="red" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
             <template #badge>
               <span>{{ $store.getters.unreadMessages }}</span>
             </template>
             <v-icon>{{ entry.icon }}</v-icon>
           </v-badge>
-
-        </v-list-item-action>
-        <v-list-item-title>
-          {{ entry.title }}
-          <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
-        </v-list-item-title>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ entry.title }}
+            <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
+          </v-list-item-title>
+        </v-list-item-content>
       </v-list-item>
-      <v-list-group v-else :prepend-icon="entry.icon" active-class="" no-action>
-        <template v-slot:activator>
+      <v-list-group v-else active-class="" no-action :prepend-icon="entry.icon">
+        <template #activator>
           <v-list-item>
-            <v-list-item-title>
-              {{ entry.title }}
-            </v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ entry.title }}
+              </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </template>
         <v-list-item v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.route" :exact="true">
-          <v-list-item-action>
+          <v-list-item-icon>
             <v-icon>{{ subEntry.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-title>
-            {{ subEntry.title }}
-          </v-list-item-title>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ subEntry.title }}
+            </v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
       </v-list-group>
     </v-list>

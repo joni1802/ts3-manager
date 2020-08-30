@@ -36,8 +36,6 @@ export default {
   },
   created() {
     this.addNotificationListeners()
-
-    console.log(this.$vuetify.application);
   },
   watch: {
     "$store.getters.unreadMessages": {
