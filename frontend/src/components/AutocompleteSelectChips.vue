@@ -9,13 +9,13 @@
       </span>
     </template>
     <template slot="item" slot-scope="{item, tile}">
-      <v-list-tile-action>
+      <v-list-item-action>
         <v-checkbox v-model="tile.props.value"></v-checkbox>
-      </v-list-tile-action>
-      <v-list-tile-content>
+      </v-list-item-action>
+      <v-list-item-content>
         <span>{{ item.text }}</span>
         <span v-if="item.uid" class="grey--text caption">{{ item.uid }}</span>
-      </v-list-tile-content>
+      </v-list-item-content>
     </template>
   </v-autocomplete>
 </template>

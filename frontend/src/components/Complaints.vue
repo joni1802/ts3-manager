@@ -35,21 +35,21 @@
                       </v-btn>
                     </template>
                     <v-list>
-                      <v-list-tile :to="`/client/${props.item.tcldbid}/ban`">
-                        <v-list-tile-title>
+                      <v-list-item :to="`/client/${props.item.tcldbid}/ban`">
+                        <v-list-item-title>
                           Ban <b>{{ props.item.tname }}</b>
-                        </v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile :to="`/client/${props.item.fcldbid}/ban`">
-                        <v-list-tile-title>
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item :to="`/client/${props.item.fcldbid}/ban`">
+                        <v-list-item-title>
                           Ban <b>{{ props.item.fname }}</b>
-                        </v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile @click="openDialog([props.item])">
-                        <v-list-tile-title>
+                        </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openDialog([props.item])">
+                        <v-list-item-title>
                           Remove
-                        </v-list-tile-title>
-                      </v-list-tile>
+                        </v-list-item-title>
+                      </v-list-item>
                     </v-list>
                   </v-menu>
                 </td>

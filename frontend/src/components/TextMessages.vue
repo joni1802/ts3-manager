@@ -8,35 +8,35 @@
             <v-list subheader >
 
               <v-subheader>Channels</v-subheader>
-              <v-list-tile v-for="channel in channelList" @click="switchTextChannel(channel.cid)" active-class="active-channel" :class="{'active-channel': channel.cid === channelId}">
-                <v-list-tile-avatar>
+              <v-list-item v-for="channel in channelList" @click="switchTextChannel(channel.cid)" active-class="active-channel" :class="{'active-channel': channel.cid === channelId}">
+                <v-list-item-avatar>
                   <v-icon>chat_bubble</v-icon>
-                </v-list-tile-avatar>
+                </v-list-item-avatar>
                   <v-badge color="red" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
                     <template #badge>
                       {{ countUnreadMessages({target: channel.cid, targetmode: 2}) }}
                     </template>
-                    <v-list-tile-content>
-                      <v-list-tile-title>{{ channel.channel_name }}</v-list-tile-title>
-                      <v-list-tile-sub-title>{{ channel.cid }}</v-list-tile-sub-title>
-                    </v-list-tile-content>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ channel.channel_name }}</v-list-item-title>
+                      <v-list-item-sub-title>{{ channel.cid }}</v-list-item-sub-title>
+                    </v-list-item-content>
                   </v-badge>
-              </v-list-tile>
+              </v-list-item>
 
               <v-subheader>Clients</v-subheader>
-              <v-list-tile v-for="client in clientList" @click="openTextPrivate(client)">
-                <v-list-tile-avatar>
+              <v-list-item v-for="client in clientList" @click="openTextPrivate(client)">
+                <v-list-item-avatar>
                   <v-icon>{{ clientStatusIcon(client) }}</v-icon>
-                </v-list-tile-avatar>
+                </v-list-item-avatar>
                   <v-badge color="red" :value="countUnreadMessages({target: client.clid, targetmode: 1})">
                     <template #badge>
                       {{ countUnreadMessages({target: client.clid, targetmode: 1}) }}
                     </template>
-                    <v-list-tile-content>
-                      <v-list-tile-title>{{ client.client_nickname }}</v-list-tile-title>
-                    </v-list-tile-content>
+                    <v-list-item-content>
+                      <v-list-item-title>{{ client.client_nickname }}</v-list-item-title>
+                    </v-list-item-content>
                   </v-badge>
-              </v-list-tile>
+              </v-list-item>
 
             </v-list>
           </v-flex>

@@ -8,56 +8,56 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-tile @click="openPrivateChat(client.clid)">
-        <v-list-tile-action>
+      <v-list-item @click="openPrivateChat(client.clid)">
+        <v-list-item-action>
           <v-icon>send</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Open Text Chat
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'client-edit', params: {clid: client.clid}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'client-edit', params: {clid: client.clid}}">
+        <v-list-item-action>
           <v-icon>edit</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Edit Client
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="openKickDialog(4)">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item @click="openKickDialog(4)">
+        <v-list-item-action>
           <v-icon>forward</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Kick Client from Channel
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="openKickDialog(5)">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item @click="openKickDialog(5)">
+        <v-list-item-action>
           <v-icon>forward</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Kick Client from Server
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'client-ban', params: {cldbid: client.client_database_id}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'client-ban', params: {cldbid: client.client_database_id}}">
+        <v-list-item-action>
           <v-icon>not_interested</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Ban Client
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
   </v-menu>
 

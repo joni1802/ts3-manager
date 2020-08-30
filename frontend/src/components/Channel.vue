@@ -9,56 +9,56 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-tile @click="enterChannel">
-        <v-list-tile-action>
+      <v-list-item @click="enterChannel">
+        <v-list-item-action>
           <v-icon>arrow_forward</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Switch to Channel
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'channel-edit', params: {cid: channel.cid}, query: {pid: channel.pid}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'channel-edit', params: {cid: channel.cid}, query: {pid: channel.pid}}">
+        <v-list-item-action>
           <v-icon>edit</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Edit Channel
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'permissions-channel', params: {cid: channel.cid}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'permissions-channel', params: {cid: channel.cid}}">
+        <v-list-item-action>
           <v-icon>verified_user</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Channel Permissions
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'channel-add', query: {pid: channel.cid}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'channel-add', query: {pid: channel.cid}}">
+        <v-list-item-action>
           <v-icon>add</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Create Sub-Channel
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="confirmChannelDeletion(channel)">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item @click="confirmChannelDeletion(channel)">
+        <v-list-item-action>
           <v-icon>delete</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Delete Channel
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
   </v-menu>
 

@@ -28,16 +28,16 @@
                     </v-btn>
                   </template>
                   <v-list>
-                    <v-list-tile :to="`/client/${props.item.cldbid}/ban`">
-                      <v-list-tile-title>
+                    <v-list-item :to="`/client/${props.item.cldbid}/ban`">
+                      <v-list-item-title>
                         Ban Client
-                      </v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="openDialog(props.item)">
-                      <v-list-tile-title>
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="openDialog(props.item)">
+                      <v-list-item-title>
                         Delete Client
-                      </v-list-tile-title>
-                    </v-list-tile>
+                      </v-list-item-title>
+                    </v-list-item>
                   </v-list>
                 </v-menu>
               </td>

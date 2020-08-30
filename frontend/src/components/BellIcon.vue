@@ -12,30 +12,30 @@
     </template>
     <v-card>
       <v-list>
-        <v-list-tile>
-          <v-list-tile-action>
+        <v-list-item>
+          <v-list-item-action>
             <v-switch v-model="showNotifications"></v-switch>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title>Enable Notifications</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Enable Notifications</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
       <v-divider></v-divider>
       <v-list v-if="showNotifications">
-        <v-list-tile v-if="!countNotifications">
-          <v-list-tile-content>
-            <v-list-tile-title>No Notifications</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile v-for="notification in notifications" :href="notification.link" target="_blank">
-          <v-list-tile-action>
+        <v-list-item v-if="!countNotifications">
+          <v-list-item-content>
+            <v-list-item-title>No Notifications</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-for="notification in notifications" :href="notification.link" target="_blank">
+          <v-list-item-action>
             <v-icon>{{ notification.icon }}</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-html="notification.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title v-html="notification.title"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-card>
   </v-menu>
