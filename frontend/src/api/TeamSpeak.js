@@ -4,6 +4,9 @@ import router from "../router";
 import NProgress from "nprogress";
 import Vue from "vue";
 
+// Polyfill for EventTarget because Safari has no constructor for it
+import EventTarget from '@ungap/event-target'
+
 /**
  * The TeamSpeak Object sends the request to the server and finally receives the response from the ServerQuery.
  * To keep things simple it uses the same naming as the TeamSpeak class from the TS3-NodeJS-Library which is used on the server side.
