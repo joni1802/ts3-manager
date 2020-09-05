@@ -4,7 +4,7 @@
       <v-flex lg6 md8 sm8 xs12>
         <v-card>
           <v-card-title>
-            Edit Client
+            Add Token
           </v-card-title>
           <v-card-text>
             <v-select :items="tokenTypes" label="Type" v-model="selectedType" :disabled="$store.state.query.loading"></v-select>
