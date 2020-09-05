@@ -3,12 +3,12 @@
     <v-layout justify-center>
       <v-flex lg6 md8 sm8 xs12>
         <v-card>
-          <v-card-title primary-title>
-            <div>
-              <span class="grey--text">Backup</span><br>
-              <span>Download a backup file which contains all the necessary data to restore the virtual server</span>
-            </div>
+          <v-card-title>
+            Backup
           </v-card-title>
+          <v-card-text>
+            Download a backup file which contains all the necessary data to restore the virtual server
+          </v-card-text>
           <v-card-actions>
             <v-btn text color="blue" @click="createSnapshot">
               Create Snapshot
@@ -18,12 +18,12 @@
             </v-btn>
           </v-card-actions>
           <v-divider></v-divider>
-          <v-card-title primary-title>
-            <div>
-              <span class="grey--text">Restore</span><br>
-              <span>Upload a backup file to restore the virtual server</span>
-            </div>
+          <v-card-title>
+            Restore
           </v-card-title>
+          <v-card-text>
+            Upload a backup file to restore the virtual server
+          </v-card-text>
           <v-card-actions>
             <v-layout justify-space-between wrap>
               <v-flex xs12 sm12 md6>
