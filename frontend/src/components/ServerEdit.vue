@@ -39,329 +39,343 @@
               v-model="serverInfo.virtualserver_welcomemessage"
               :disabled="$store.state.query.loading"
             ></v-textarea>
-            <v-expansion-panel class="elevation-0">
-              <v-expansion-panel-content>
-                <template slot="header">
-                  <div>Host</div>
-                </template>
-                <v-card class="card-border">
-                  <v-card-title>Host Message</v-card-title>
-                  <v-card-text>
-                    <v-text-field
-                      label="Message"
-                      v-model="serverInfo.virtualserver_hostmessage"
-                      :disabled="$store.state.query.loading"
-                    ></v-text-field>
-                    <v-select
-                      label="Message Mode"
-                      v-model="serverInfo.virtualserver_hostmessage_mode"
-                      :items="messageModes"
-                    ></v-select>
-                  </v-card-text>
-                </v-card>
-                <v-card class="mt-2 card-border">
-                  <v-card-title>Host Banner</v-card-title>
-                  <v-card-text>
-                    <v-text-field
-                      label="Banner Gfx URL"
-                      v-model="serverInfo.virtualserver_hostbanner_gfx_url"
-                      :disabled="$store.state.query.loading"
-                    ></v-text-field>
-                    <v-text-field
-                      label="URL"
-                      v-model="serverInfo.virtualserver_hostbanner_url"
-                      :disabled="$store.state.query.loading"
-                    ></v-text-field>
-                    <v-layout justify-space-between>
-                      <v-flex xs4>
-                        <v-text-field
-                          label="Gfx Interval"
-                          v-model="serverInfo.virtualserver_hostbanner_gfx_interval"
-                          type="number"
-                          :disabled="$store.state.query.loading"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs6>
-                        <v-select
-                          label="Resize"
-                          :items="bannerModes"
-                          v-model="serverInfo.virtualserver_hostbanner_mode"
-                        ></v-select>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                </v-card>
-                <v-card class="my-2 card-border">
-                  <v-card-title>Host Button</v-card-title>
-                  <v-card-text>
-                    <v-text-field
-                      label="Tooltip"
-                      v-model="serverInfo.virtualserver_hostbutton_tooltip"
-                      :disabled="$store.state.query.loading"
-                    ></v-text-field>
-                    <v-text-field
-                      label="URL"
-                      v-model="serverInfo.virtualserver_hostbutton_url"
-                      :disabled="$store.state.query.loading"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Icon URL"
-                      v-model="serverInfo.virtualserver_hostbutton_gfx_url"
-                      :disabled="$store.state.query.loading"
-                    ></v-text-field>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template slot="header">
-                  <div>Transfers</div>
-                </template>
-                <v-card class="card-border">
-                  <v-card-title>Upload</v-card-title>
-                  <v-card-text>
-                    <v-text-field
-                      label="Bandwidth Limit"
-                      v-model="serverInfo.virtualserver_max_upload_total_bandwidth"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    >
-                      <template slot="append">
-                        <div>Byte/s</div>
-                      </template>
-                    </v-text-field>
-                    <v-text-field
-                      label="Upload Quota"
-                      v-model="serverInfo.virtualserver_upload_quota"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    >
-                      <template slot="append">
-                        <div>MiB</div>
-                      </template>
-                    </v-text-field>
-                  </v-card-text>
-                </v-card>
-                <v-card class="my-2 card-border">
-                  <v-card-title>Download</v-card-title>
-                  <v-card-text>
-                    <v-text-field
-                      label="Bandwidth Limit"
-                      v-model="serverInfo.virtualserver_max_download_total_bandwidth"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    >
-                      <template slot="append">
-                        <div>Byte/s</div>
-                      </template>
-                    </v-text-field>
-                    <v-text-field
-                      label="Download Quota"
-                      v-model="serverInfo.virtualserver_download_quota"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    >
-                      <template slot="append">
-                        <div>MiB</div>
-                      </template>
-                    </v-text-field>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template slot="header">
-                  <div>Anti-Flood</div>
-                </template>
-                <v-card class="mb-2 card-border">
-                  <v-card-text>
-                    <v-text-field
-                      label="Reduced point per tick"
-                      v-model="serverInfo.virtualserver_antiflood_points_tick_reduce"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Points needed to block commands"
-                      v-model="serverInfo.virtualserver_antiflood_points_needed_command_block"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Points needed to block IP"
-                      v-model="serverInfo.virtualserver_antiflood_points_needed_ip_block"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    ></v-text-field>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template slot="header">
-                  <div>Security</div>
-                </template>
-                <v-card class="mb-2 card-border">
-                  <v-card-text>
-                    <v-text-field
-                      label="Needed Security Level"
-                      v-model="serverInfo.virtualserver_needed_identity_security_level"
-                      :disabled="$store.state.query.loading"
-                      type="number"
-                    ></v-text-field>
-                    <v-select
-                      label="Channel voice data encrypption"
-                      v-model="serverInfo.virtualserver_codec_encryption_mode"
-                      :items="encryptionModes"
-                    ></v-select>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template slot="header">
-                  <div>Misc</div>
-                </template>
-                <v-card class="card-border">
-                  <v-card-title>Default Groups</v-card-title>
-                  <v-card-text>
-                    <v-autocomplete
-                      :items="serverGroups"
-                      item-text="name"
-                      item-value="sgid"
-                      v-model="serverInfo.virtualserver_default_server_group"
-                      label="Server Group"
-                      :disabled="$store.state.query.loading"
-                    >
-                      <template slot="selection" slot-scope="{item}">
-                        <div>{{ item.name }} ({{ item.sgid }})</div>
-                      </template>
-                      <template slot="item" slot-scope="{item}">
-                        <div>{{ item.name }} ({{ item.sgid }})</div>
-                      </template>
-                    </v-autocomplete>
-                    <v-autocomplete
-                      :items="channelGroups"
-                      item-text="name"
-                      item-value="cgid"
-                      v-model="serverInfo.virtualserver_default_channel_group"
-                      label="Channel Group"
-                      :disabled="$store.state.query.loading"
-                    >
-                      <template slot="selection" slot-scope="{item}">
-                        <div>{{ item.name }} ({{ item.cgid }})</div>
-                      </template>
-                      <template slot="item" slot-scope="{item}">
-                        <div>{{ item.name }} ({{ item.cgid }})</div>
-                      </template>
-                    </v-autocomplete>
-                    <v-autocomplete
-                      :items="channelGroups"
-                      item-text="name"
-                      item-value="cgid"
-                      v-model="serverInfo.virtualserver_default_channel_admin_group"
-                      label="Channel Admin Group"
-                      :disabled="$store.state.query.loading"
-                    >
-                      <template slot="selection" slot-scope="{item}">
-                        <div>{{ item.name }} ({{ item.cgid }})</div>
-                      </template>
-                      <template slot="item" slot-scope="{item}">
-                        <div>{{ item.name }} ({{ item.cgid }})</div>
-                      </template>
-                    </v-autocomplete>
-                  </v-card-text>
-                </v-card>
-                <v-card class="mt-2 card-border">
-                  <v-card-title>Complain</v-card-title>
-                  <v-card-text>
-                    <v-layout justify-space-between wrap>
-                      <v-flex xs5 md3>
-                        <v-text-field
-                          label="Autoban Count"
-                          :disabled="$store.state.query.loading"
-                          v-model="serverInfo.virtualserver_complain_autoban_count"
-                          type="number"
-                        ></v-text-field>
-                      </v-flex>
-                      <v-flex xs5 md3>
-                        <v-text-field
-                          label="Autoban Time"
-                          :disabled="$store.state.query.loading"
-                          v-model="serverInfo.virtualserver_complain_autoban_time"
-                          type="number"
-                        >
-                          <template slot="append">
-                            <div>sec</div>
-                          </template>
-                        </v-text-field>
-                      </v-flex>
-                      <v-flex xs5 md3>
-                        <v-text-field
-                          label="Remove Time"
-                          :disabled="$store.state.query.loading"
-                          v-model="serverInfo.virtualserver_complain_remove_time"
-                          type="number"
-                        >
-                          <template slot="append">
-                            <div>sec</div>
-                          </template>
-                        </v-text-field>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                </v-card>
-                <v-card class="my-2 card-border">
-                  <v-card-text>
-                    <v-text-field
-                      label="Min clients in channel before silence"
-                      :disabled="$store.state.query.loading"
-                      v-model="serverInfo.virtualserver_min_clients_in_channel_before_forced_silence"
-                      type="number"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Priority Speaker dim modificator"
-                      :disabled="$store.state.query.loading"
-                      v-model="serverInfo.virtualserver_priority_speaker_dimm_modificator"
-                      type="number"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Delete delay for temporary channel"
-                      :disabled="$store.state.query.loading"
-                      v-model="serverInfo.virtualserver_channel_temp_delete_delay_default"
-                      type="number"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Phonetic Name"
-                      :disabled="$store.state.query.loading"
-                      v-model="serverInfo.virtualserver_name_phonetic"
-                    ></v-text-field>
-                    <v-checkbox
-                      label="Enable reporting to serverlist"
-                      v-model="weblistEnabled"
-                    ></v-checkbox>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template slot="header">
-                  <div>Logs</div>
-                </template>
-                <v-card class="mb-2 card-border">
-                  <v-card-title>Enable Logging For</v-card-title>
-                  <v-card-text>
-                    <v-checkbox label="Clients" v-model="logClient"
-                    ></v-checkbox>
-                    <v-checkbox label="Channel" v-model="logChannel"
-                    ></v-checkbox>
-                    <v-checkbox label="Server" v-model="logServer"
-                    ></v-checkbox>
-                    <v-checkbox label="ServerQuery" v-model="logQuery"
-                    ></v-checkbox>
-                    <v-checkbox label="Permissions" v-model="logPermissions"
-                    ></v-checkbox>
-                    <v-checkbox label="File transfer" v-model="logFileTransfer"
-                    ></v-checkbox>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
+
+
+            <v-expansion-panels accordion flat>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Host
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-card>
+                    <v-card-subtitle>Host Message</v-card-subtitle>
+                    <v-card-text>
+                      <v-text-field
+                        label="Message"
+                        v-model="serverInfo.virtualserver_hostmessage"
+                        :disabled="$store.state.query.loading"
+                      ></v-text-field>
+                      <v-select
+                        label="Message Mode"
+                        v-model="serverInfo.virtualserver_hostmessage_mode"
+                        :items="messageModes"
+                      ></v-select>
+                    </v-card-text>
+                  </v-card>
+                  <v-card class="mt-2 ">
+                    <v-card-subtitle>Host Banner</v-card-subtitle>
+                    <v-card-text>
+                      <v-text-field
+                        label="Banner Gfx URL"
+                        v-model="serverInfo.virtualserver_hostbanner_gfx_url"
+                        :disabled="$store.state.query.loading"
+                      ></v-text-field>
+                      <v-text-field
+                        label="URL"
+                        v-model="serverInfo.virtualserver_hostbanner_url"
+                        :disabled="$store.state.query.loading"
+                      ></v-text-field>
+                      <v-layout justify-space-between>
+                        <v-flex xs4>
+                          <v-text-field
+                            label="Gfx Interval"
+                            v-model="serverInfo.virtualserver_hostbanner_gfx_interval"
+                            type="number"
+                            :disabled="$store.state.query.loading"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs6>
+                          <v-select
+                            label="Resize"
+                            :items="bannerModes"
+                            v-model="serverInfo.virtualserver_hostbanner_mode"
+                          ></v-select>
+                        </v-flex>
+                      </v-layout>
+                    </v-card-text>
+                  </v-card>
+                  <v-card class="my-2 ">
+                    <v-card-subtitle>Host Button</v-card-subtitle>
+                    <v-card-text>
+                      <v-text-field
+                        label="Tooltip"
+                        v-model="serverInfo.virtualserver_hostbutton_tooltip"
+                        :disabled="$store.state.query.loading"
+                      ></v-text-field>
+                      <v-text-field
+                        label="URL"
+                        v-model="serverInfo.virtualserver_hostbutton_url"
+                        :disabled="$store.state.query.loading"
+                      ></v-text-field>
+                      <v-text-field
+                        label="Icon URL"
+                        v-model="serverInfo.virtualserver_hostbutton_gfx_url"
+                        :disabled="$store.state.query.loading"
+                      ></v-text-field>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Transfers
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-card class="">
+                    <v-card-subtitle>Upload</v-card-subtitle>
+                    <v-card-text>
+                      <v-text-field
+                        label="Bandwidth Limit"
+                        v-model="serverInfo.virtualserver_max_upload_total_bandwidth"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      >
+                        <template slot="append">
+                          <div>Byte/s</div>
+                        </template>
+                      </v-text-field>
+                      <v-text-field
+                        label="Upload Quota"
+                        v-model="serverInfo.virtualserver_upload_quota"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      >
+                        <template slot="append">
+                          <div>MiB</div>
+                        </template>
+                      </v-text-field>
+                    </v-card-text>
+                  </v-card>
+                  <v-card class="my-2 ">
+                    <v-card-subtitle>Download</v-card-subtitle>
+                    <v-card-text>
+                      <v-text-field
+                        label="Bandwidth Limit"
+                        v-model="serverInfo.virtualserver_max_download_total_bandwidth"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      >
+                        <template slot="append">
+                          <div>Byte/s</div>
+                        </template>
+                      </v-text-field>
+                      <v-text-field
+                        label="Download Quota"
+                        v-model="serverInfo.virtualserver_download_quota"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      >
+                        <template slot="append">
+                          <div>MiB</div>
+                        </template>
+                      </v-text-field>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Anti-Flood
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-card class="mb-2 ">
+                    <v-card-text>
+                      <v-text-field
+                        label="Reduced point per tick"
+                        v-model="serverInfo.virtualserver_antiflood_points_tick_reduce"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      ></v-text-field>
+                      <v-text-field
+                        label="Points needed to block commands"
+                        v-model="serverInfo.virtualserver_antiflood_points_needed_command_block"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      ></v-text-field>
+                      <v-text-field
+                        label="Points needed to block IP"
+                        v-model="serverInfo.virtualserver_antiflood_points_needed_ip_block"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      ></v-text-field>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Security
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-card class="mb-2 ">
+                    <v-card-text>
+                      <v-text-field
+                        label="Needed Security Level"
+                        v-model="serverInfo.virtualserver_needed_identity_security_level"
+                        :disabled="$store.state.query.loading"
+                        type="number"
+                      ></v-text-field>
+                      <v-select
+                        label="Channel voice data encrypption"
+                        v-model="serverInfo.virtualserver_codec_encryption_mode"
+                        :items="encryptionModes"
+                      ></v-select>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Misc
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-card class="">
+                    <v-card-subtitle>Default Groups</v-card-subtitle>
+                    <v-card-text>
+                      <v-autocomplete
+                        :items="serverGroups"
+                        item-text="name"
+                        item-value="sgid"
+                        v-model="serverInfo.virtualserver_default_server_group"
+                        label="Server Group"
+                        :disabled="$store.state.query.loading"
+                      >
+                        <template slot="selection" slot-scope="{item}">
+                          <div>{{ item.name }} ({{ item.sgid }})</div>
+                        </template>
+                        <template slot="item" slot-scope="{item}">
+                          <div>{{ item.name }} ({{ item.sgid }})</div>
+                        </template>
+                      </v-autocomplete>
+                      <v-autocomplete
+                        :items="channelGroups"
+                        item-text="name"
+                        item-value="cgid"
+                        v-model="serverInfo.virtualserver_default_channel_group"
+                        label="Channel Group"
+                        :disabled="$store.state.query.loading"
+                      >
+                        <template slot="selection" slot-scope="{item}">
+                          <div>{{ item.name }} ({{ item.cgid }})</div>
+                        </template>
+                        <template slot="item" slot-scope="{item}">
+                          <div>{{ item.name }} ({{ item.cgid }})</div>
+                        </template>
+                      </v-autocomplete>
+                      <v-autocomplete
+                        :items="channelGroups"
+                        item-text="name"
+                        item-value="cgid"
+                        v-model="serverInfo.virtualserver_default_channel_admin_group"
+                        label="Channel Admin Group"
+                        :disabled="$store.state.query.loading"
+                      >
+                        <template slot="selection" slot-scope="{item}">
+                          <div>{{ item.name }} ({{ item.cgid }})</div>
+                        </template>
+                        <template slot="item" slot-scope="{item}">
+                          <div>{{ item.name }} ({{ item.cgid }})</div>
+                        </template>
+                      </v-autocomplete>
+                    </v-card-text>
+                  </v-card>
+                  <v-card class="mt-2 ">
+                    <v-card-subtitle>Complain</v-card-subtitle>
+                    <v-card-text>
+                      <v-layout justify-space-between wrap>
+                        <v-flex xs5 md3>
+                          <v-text-field
+                            label="Autoban Count"
+                            :disabled="$store.state.query.loading"
+                            v-model="serverInfo.virtualserver_complain_autoban_count"
+                            type="number"
+                          ></v-text-field>
+                        </v-flex>
+                        <v-flex xs5 md3>
+                          <v-text-field
+                            label="Autoban Time"
+                            :disabled="$store.state.query.loading"
+                            v-model="serverInfo.virtualserver_complain_autoban_time"
+                            type="number"
+                          >
+                            <template slot="append">
+                              <div>sec</div>
+                            </template>
+                          </v-text-field>
+                        </v-flex>
+                        <v-flex xs5 md3>
+                          <v-text-field
+                            label="Remove Time"
+                            :disabled="$store.state.query.loading"
+                            v-model="serverInfo.virtualserver_complain_remove_time"
+                            type="number"
+                          >
+                            <template slot="append">
+                              <div>sec</div>
+                            </template>
+                          </v-text-field>
+                        </v-flex>
+                      </v-layout>
+                    </v-card-text>
+                  </v-card>
+                  <v-card class="my-2 ">
+                    <v-card-text>
+                      <v-text-field
+                        label="Min clients in channel before silence"
+                        :disabled="$store.state.query.loading"
+                        v-model="serverInfo.virtualserver_min_clients_in_channel_before_forced_silence"
+                        type="number"
+                      ></v-text-field>
+                      <v-text-field
+                        label="Priority Speaker dim modificator"
+                        :disabled="$store.state.query.loading"
+                        v-model="serverInfo.virtualserver_priority_speaker_dimm_modificator"
+                        type="number"
+                      ></v-text-field>
+                      <v-text-field
+                        label="Delete delay for temporary channel"
+                        :disabled="$store.state.query.loading"
+                        v-model="serverInfo.virtualserver_channel_temp_delete_delay_default"
+                        type="number"
+                      ></v-text-field>
+                      <v-text-field
+                        label="Phonetic Name"
+                        :disabled="$store.state.query.loading"
+                        v-model="serverInfo.virtualserver_name_phonetic"
+                      ></v-text-field>
+                      <v-checkbox
+                        label="Enable reporting to serverlist"
+                        v-model="weblistEnabled"
+                      ></v-checkbox>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Logs
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-card class="mb-2 ">
+                    <v-card-subtitle>Enable Logging For</v-card-subtitle>
+                    <v-card-text>
+                      <v-checkbox label="Clients" v-model="logClient"
+                      ></v-checkbox>
+                      <v-checkbox label="Channel" v-model="logChannel"
+                      ></v-checkbox>
+                      <v-checkbox label="Server" v-model="logServer"
+                      ></v-checkbox>
+                      <v-checkbox label="ServerQuery" v-model="logQuery"
+                      ></v-checkbox>
+                      <v-checkbox label="Permissions" v-model="logPermissions"
+                      ></v-checkbox>
+                      <v-checkbox label="File transfer" v-model="logFileTransfer"
+                      ></v-checkbox>
+                    </v-card-text>
+                  </v-card>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
