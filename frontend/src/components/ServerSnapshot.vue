@@ -68,7 +68,7 @@
 
           this.saveFile(response[0].data)
         } catch(err) {
-          this.$toast.error(err.message)
+          this.$toasted.error(err.message)
         }
       },
       generateFileName() {
@@ -94,7 +94,7 @@
 
             this.fileContent = new Blob([text])
           } catch(err) {
-            this.$toast.error(err.message)
+            this.$toasted.error(err.message)
           }
         }
       },
@@ -102,13 +102,13 @@
         try {
           let response = await this.$TeamSpeak.deploySnapshot(this.fileContent)
 
-          this.$toast.success('Snapshot successfully restored')
+          this.$toasted.success('Snapshot successfully restored')
 
           await this.$TeamSpeak.selectServer(this.$store.state.query.serverId) // After snapshot deployment server needs to be selected again
 
           this.clearFileSelector()
         } catch(err) {
-          this.$toast.error(err.message)
+          this.$toasted.error(err.message)
         }
       },
       clearFileSelector() {

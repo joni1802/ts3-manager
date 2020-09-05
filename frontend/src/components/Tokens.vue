@@ -95,7 +95,7 @@ export default {
 
         this.dialog = false
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.init()
@@ -103,13 +103,13 @@ export default {
     copyToClipboard(token) {
       this.$clipboard(token)
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toasted.info("Token Copied To Clipboard")
     },
     async init() {
       try {
         this.tokens = await this.getTokenList()
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

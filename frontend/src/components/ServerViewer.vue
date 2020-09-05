@@ -117,7 +117,7 @@ export default {
 
         this.currentChannel = this.getCurrentChannel(this.channelList, this.queryUser)
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async loadChannelTree() {
@@ -129,7 +129,7 @@ export default {
 
         this.openAllChannels()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.updateCurrentChannel()
@@ -149,7 +149,7 @@ export default {
 
       this.addEventListeners()
     } catch (err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   },
   beforeRouteLeave(from, to, next) {

@@ -66,7 +66,7 @@ export default {
     copyToClipboard() {
       this.$clipboard(this.token)
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toasted.info("Token Copied To Clipboard")
     },
     async createToken() {
       try {
@@ -77,11 +77,11 @@ export default {
           tokendescription: this.tokenDescription
         })
 
-        this.$toast.success("Token successfully created")
+        this.$toasted.success("Token successfully created")
 
         this.token = response.token
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     getServerGroupList() {
@@ -110,7 +110,7 @@ export default {
           this.selectedChannel = this.channels[0].cid
         }
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   }

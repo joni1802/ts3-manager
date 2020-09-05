@@ -149,7 +149,7 @@ export default {
           })
         }
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -159,7 +159,7 @@ export default {
       try {
         this.banlist = await this.getBanList()
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -169,7 +169,7 @@ export default {
     try {
       this.banlist = await this.getBanList()
     } catch (err) {
-      this.$toast.error(err.message, {
+      this.$toasted.error(err.message, {
         icon: 'error'
       })
     }

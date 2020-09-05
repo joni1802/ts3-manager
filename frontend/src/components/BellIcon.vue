@@ -148,7 +148,7 @@ export default {
           })
         }
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

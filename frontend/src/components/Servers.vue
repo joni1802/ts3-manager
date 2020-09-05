@@ -188,7 +188,7 @@ export default {
           await this.$TeamSpeak.selectServer(sid)
           this.queryUser = await this.getQueryUserData()
         } catch(err) {
-          this.$toast.error(err.message)
+          this.$toasted.error(err.message)
         }
       }
     },
@@ -204,7 +204,7 @@ export default {
       try {
         this.servers = await this.getServerList();
       } catch(err) {
-        this.$toast.error(err.message);
+        this.$toasted.error(err.message);
       }
 
       this.resetUptimeCounters()
@@ -227,7 +227,7 @@ export default {
 
         this.servers = await this.getServerList()
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     getQueryUserData() {
@@ -240,7 +240,7 @@ export default {
 
         this.queryUser = await this.getQueryUserData()
       } catch (err) {
-        this.$toast.error(err.message);
+        this.$toasted.error(err.message);
       }
     },
     async stopServer() {
@@ -253,7 +253,7 @@ export default {
 
         if(this.currentServerId === this.selectedServer.virtualserver_id) this.$store.commit("setServerId", null)
       } catch (err) {
-        this.$toast.error(err.message);
+        this.$toasted.error(err.message);
       }
     },
     getServerList() {
@@ -296,7 +296,7 @@ export default {
     try {
       this.queryUser = await this.getQueryUserData()
     } catch(err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   },
   beforeRouteLeave(from, to, next) {

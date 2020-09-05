@@ -26,7 +26,7 @@ export default {
           this.$store.commit("saveUserInfo", queryUser);
         }
       } catch (err) {
-        this.$toast.error(err.message);
+        this.$toasted.error(err.message);
       }
     },
     addNotificationListeners() {

@@ -129,7 +129,7 @@ export default {
           clid: this.client.clid
         })
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.kickClientDialog = false

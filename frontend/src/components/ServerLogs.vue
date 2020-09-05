@@ -187,7 +187,7 @@ export default {
     try {
       this.logs = await this.getServerLogs()
     } catch(err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   }
 }

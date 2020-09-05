@@ -96,7 +96,7 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -104,7 +104,7 @@ export default {
       try {
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -121,7 +121,7 @@ export default {
           permid: permid,
         })
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -129,7 +129,7 @@ export default {
       try {
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -169,7 +169,7 @@ export default {
 
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }

@@ -118,7 +118,7 @@ export default {
           force: force
         })
       } catch (err) {
-        this.$toast.error(err.message, {
+        this.$toasted.error(err.message, {
           icon: 'error'
         })
       }
@@ -135,7 +135,7 @@ export default {
       try {
         await this.moveClient()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
   },

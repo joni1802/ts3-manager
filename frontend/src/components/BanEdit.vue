@@ -42,7 +42,7 @@ export default {
         await this.addBan(data)
         await this.removeBan()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.$router.go(-1)
@@ -54,7 +54,7 @@ export default {
 
         this.$set(this.ban, 'time', this.ban.duration)
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

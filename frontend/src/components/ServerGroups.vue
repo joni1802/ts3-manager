@@ -31,7 +31,7 @@
 
           this.serverGroups = await this.getServerGroupList()
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message, {icon: 'error'})
         }
       },
       async removeServerGroup(group, force) {
@@ -43,7 +43,7 @@
 
           this.serverGroups = await this.getServerGroupList()
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message, {icon: 'error'})
         }
       },
       editServerGroup(group) {
@@ -57,7 +57,7 @@
         this.serverGroups = await this.getServerGroupList()
 
       } catch(err) {
-        this.$toast.error(err.message, {icon: 'error'})
+        this.$toasted.error(err.message, {icon: 'error'})
       }
     }
   };

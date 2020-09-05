@@ -118,7 +118,7 @@ export default {
         await this.removeMembers()
         await this.addMembers()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       switch (e.target.textContent) {
@@ -137,7 +137,7 @@ export default {
 
         this.currentServerGroupClients = [...this.serverGroupClients]
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

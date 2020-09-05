@@ -130,7 +130,7 @@ export default {
         this.$router.push({name: "servers"})
       } catch(err) {
 
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.loading = false

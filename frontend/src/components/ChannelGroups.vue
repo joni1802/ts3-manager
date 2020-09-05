@@ -25,13 +25,13 @@
         try {
           await this.$TeamSpeak.execute('channelgroupadd', {name: name})
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message, {icon: 'error'})
         }
 
         try {
           this.channelGroups = await this.getChannelGroupList()
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message, {icon: 'error'})
         }
       },
       async removeChannelGroup(group, force) {
@@ -41,13 +41,13 @@
             force: +force, // unary operator converts true => 1 and false => 0
           })
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message, {icon: 'error'})
         }
 
         try {
           this.channelGroups = await this.getChannelGroupList()
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message, {icon: 'error'})
         }
       },
       editChannelGroup(group) {
@@ -58,7 +58,7 @@
       try {
         this.channelGroups = await this.getChannelGroupList()
       } catch(err) {
-        this.$toast.error(err.message, {icon: 'error'})
+        this.$toasted.error(err.message, {icon: 'error'})
       }
     }
   }

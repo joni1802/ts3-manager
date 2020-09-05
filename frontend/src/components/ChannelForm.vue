@@ -255,7 +255,7 @@ export default {
       this.channels = await this.getChannelList()
       this.serverInfo = await this.getServerInfo()
     } catch(err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   }
 }

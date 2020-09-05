@@ -18,7 +18,7 @@ export default {
     copyToClipboard() {
       this.$clipboard(this.value)
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toasted.info("Token Copied To Clipboard")
     },
   }
 }

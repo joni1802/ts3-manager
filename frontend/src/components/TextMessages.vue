@@ -215,7 +215,7 @@ export default {
       try {
         this.clientList = await this.getClientList()
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     getChannelList() {
@@ -225,7 +225,7 @@ export default {
       try {
         this.channelList = await this.getChannelList()
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     getServerInfo() {
@@ -254,7 +254,7 @@ export default {
         // Focus tab
         this.selectedTab = 1
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     closeTextPrivate(chat) {
@@ -322,7 +322,7 @@ export default {
 
         this.message = ''
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async init() {
@@ -337,7 +337,7 @@ export default {
 
         this.addEventListeners()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
   },
