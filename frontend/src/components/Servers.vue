@@ -134,7 +134,7 @@ export default {
           sortable: false
         },
         {
-          text: "",
+          text: "Select",
           align: "start",
           value: "selected_sid",
           sortable: false
