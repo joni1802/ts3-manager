@@ -4,25 +4,35 @@
       <v-flex md10 xs12 offset-md1>
         <v-card>
           <v-card-text>
-            <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="tokens" :rows-per-page-items="rowsPerPage">
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.token }}</td>
-                <td>
-                  <v-tooltip bottom>
-                    <template slot="activator">
-                      <v-icon small @click="copyToClipboard(props.item.token)">mdi-content-copy</v-icon>
-                    </template>
-                    <span>Copy Token To Clipboard</span>
-                  </v-tooltip>
-                </td>
-                <td>{{ props.item.token_type }}</td>
-                <td>{{ props.item.token_id1 }}</td>
-                <td>{{ props.item.token_id2 }}</td>
-                <td>{{ new Date(props.item.token_created * 1000).toLocaleString() }}</td>
-                <td>{{ props.item.token_description }}</td>
-                <td class="justify-center layout px-0">
-                  <v-icon @click="openDeleteDialog(props.item)">delete</v-icon>
-                </td>
+            <v-data-table
+              :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+              :headers="headers"
+              :items="tokens"
+              :footer-props="{'items-per-page-options': rowsPerPage}"
+            >
+              <template #item.actions="{ item }">
+                <v-menu>
+                  <template #activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="openDeleteDialog(item)">
+                      <v-list-item-title>
+                        Delete Token
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="copyToClipboard(item.token)">
+                      <v-list-item-title>
+                        Copy Token
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </template>
+              <template #item.token_created="{ item }">
+                {{ new Date(item.token_created * 1000).toLocaleString() }}
               </template>
             </v-data-table>
           </v-card-text>
@@ -60,14 +70,13 @@ export default {
       dialog: false,
       tokens: [],
       headers: [
+        {text: "", value: "actions", align: 'start', sortable: false},
         {text: "Privilege Key", value: "token"},
-        {text: "", value: ""},
         {text: "Type", value: "token_type"},
         {text: "Group", value: "token_id1"},
         {text: "Channel", value: "token_id2"},
         {text: "Created", value: "token_created"},
         {text: "Description", value: "token_description"},
-        {text: "Action", value: "delete", align: 'right', sortable: false},
       ],
       rowsPerPage: [
         25,
