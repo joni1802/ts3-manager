@@ -8,11 +8,11 @@
   </v-app-bar>
 
   <v-navigation-drawer app v-model="drawer" v-if="validPage" width="300">
-    <v-list-item>
+    <!-- <v-list-item>
       <v-list-item-content>
         <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
       </v-list-item-content>
-    </v-list-item>
+    </v-list-item> -->
 
     <v-list dense class="pt-2" subheader nav>
       <v-list-item v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
