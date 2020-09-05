@@ -4,32 +4,63 @@
     <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
       <v-card>
         <v-card-text>
-          <v-data-table :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              " :headers="headers" :items="servers" item-key="virtualserver_id" :rows-per-page-items="rowsPerPage">
-            <template slot="items" slot-scope="props">
-              <td>
-                <v-radio-group v-model="currentServerId" hide-details>
-                  <v-radio :value="props.item.virtualserver_id" :disabled="isOffline(props.item.virtualserver_status)"></v-radio>
-                </v-radio-group>
-              </td>
-              <td>{{ props.item.virtualserver_name }}</td>
-              <td>{{ props.item.virtualserver_port }}</td>
-              <td>
-                {{ props.item.virtualserver_clientsonline }}/{{
-                    props.item.virtualserver_maxclients
-                  }}
-              </td>
-              <td>{{ calcUptime(props.item.virtualserver_uptime) }}</td>
-              <td justify-center align-center layout px-0>
-                <v-switch hide-details :input-value="!isOffline(props.item.virtualserver_status)" @click.stop.prevent="changeServerStatus(props.item)"></v-switch>
-              </td>
-              <td class="justify-center layout px-0">
-                <v-icon small class="mr-2" @click="$router.push({name: 'server-edit'})">edit</v-icon>
-                <v-icon small @click="openDeleteDialog(props.item)">delete</v-icon>
-              </td>
+          <v-data-table
+            :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+            :headers="headers"
+            :items="servers"
+            item-key="virtualserver_id"
+            :footer-props="{'items-per-page-options': rowsPerPage}"
+          >
+          <!-- show-select
+          single-select v-model="selectedServer" -->
+            <template #item.actions="{ item }">
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item :to="{name: 'server-edit'}" :disabled="isOffline(item.virtualserver_status)">
+                    <v-list-item-title>
+                      Edit Server
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="openDeleteDialog(item)">
+                    <v-list-item-title>
+                      Delete Server
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+            <template #item.selected_sid="{ item }">
+              <v-radio-group v-model="joinedServerId">
+                <v-radio
+                  :value="item.virtualserver_id"
+                  :disabled="item.virtualserver_status === 'offline'"
+                >
+                </v-radio>
+              </v-radio-group>
+            </template>
+            <template #item.virtualserver_clientsonline_maxclients="{ item }">
+              {{ item.virtualserver_clientsonline }}/{{ item.virtualserver_maxclients }}
+            </template>
+            <template #item.virtualserver_uptime="{ item }">
+              {{ calcUptime(item.virtualserver_uptime) }}
+            </template>
+            <template #item.virtualserver_status="{ item }">
+              <!-- <v-switch v-model="onlineServerIds" :value="item.virtualserver_id"></v-switch> -->
+              <v-switch
+                :input-value="!isOffline(item.virtualserver_status)"
+                readonly
+                @click="changeServerStatus(item)"
+              >
+              <!-- @click.native.stop="changeServerStatus(item)" -->
+              </v-switch>
             </template>
           </v-data-table>
+
         </v-card-text>
       </v-card>
     </v-flex>
@@ -95,48 +126,44 @@ export default {
   },
   data() {
     return {
-      headers: [{
-          text: "Selection",
-          align: "left",
-          value: "selection",
+      headers: [
+        {
+          text: "",
+          align: "start",
+          value: "actions",
+          sortable: false
+        },
+        {
+          text: "",
+          align: "start",
+          value: "selected_sid",
           sortable: false
         },
         {
           text: "Name",
-          align: "left",
           value: "virtualserver_name",
           sortable: false
         },
         {
           text: "Port",
-          align: "left",
           value: "virtualserver_port",
           sortable: false
         },
         {
           text: "Clients",
-          align: "left",
           value: "virtualserver_clientsonline_maxclients",
           sortable: false
         },
         {
           text: "Uptime (d:h:m:s)",
-          align: "left",
           value: "virtualserver_uptime",
           sortable: false
         },
         {
           text: "Status",
-          align: "left",
           value: "virtualserver_status",
           sortable: false
         },
-        {
-          text: "Actions",
-          align: "right",
-          value: "delete",
-          sortable: false
-        }
       ],
       servers: [],
       stopDialog: false,
@@ -146,27 +173,25 @@ export default {
         25,
         50,
         75,
-        {
-          text: "$vuetify.dataIterator.rowsPerPageAll",
-          value: -1
-        }
+        -1
       ],
-      selectedServer: {}
-    };
+      queryUser: {},
+    }
   },
   computed: {
-    currentServerId: {
+    joinedServerId: {
       get() {
-        return this.$store.state.query.serverId;
+        return this.queryUser.virtualserver_id
       },
       async set(sid) {
         try {
           await this.$TeamSpeak.selectServer(sid)
+          this.queryUser = await this.getQueryUserData()
         } catch(err) {
           this.$toast.error(err.message)
         }
       }
-    }
+    },
   },
   methods: {
     async changeServerStatus(server) {
@@ -208,14 +233,12 @@ export default {
     getQueryUserData() {
       return this.$TeamSpeak.execute("whoami").then(list => list[0])
     },
-    saveQueryUserData(data) {
-      this.$store.commit("saveUserInfo", data)
-    },
     async startServer(sid) {
       try {
         await this.$TeamSpeak.execute("serverstart", {sid})
         await this.$TeamSpeak.selectServer(sid)
-        //await this.selectServer(sid);
+
+        this.queryUser = await this.getQueryUserData()
       } catch (err) {
         this.$toast.error(err.message);
       }
@@ -267,6 +290,13 @@ export default {
     resetUptimeCounters() {
       this.removeUptimeCounters();
       this.startUptimeCounters();
+    }
+  },
+  async created() {
+    try {
+      this.queryUser = await this.getQueryUserData()
+    } catch(err) {
+      this.$toast.error(err.message)
     }
   },
   beforeRouteLeave(from, to, next) {

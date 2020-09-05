@@ -8,7 +8,7 @@ import "./assets/css/style.css"
 import Vue from "vue";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
-import VuetifyToast from "vuetify-toast-snackbar";
+import VuetifyToast from "vuetify-toast-snackbar-ng";
 import "nprogress/nprogress.css";
 import NProgress from "nprogress";
 import Clipboard from "v-clipboard";
