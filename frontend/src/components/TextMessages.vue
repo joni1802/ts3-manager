@@ -1,27 +1,33 @@
 <template>
 <v-container fill-height>
   <v-layout justify-center fill-height>
-    <v-flex lg10 md10 sm10 xs12>
+    <v-flex xl10 lg12 md12 sm10 xs12>
       <v-card>
         <v-layout wrap justify-space-around fill-height>
-          <v-flex xs12 md3 style="height: calc(100vh - 96px); overflow-y: auto;">
+          <v-flex xs12 md3>
             <v-list subheader >
-
               <v-subheader>Channels</v-subheader>
-              <v-list-item v-for="channel in channelList" @click="switchTextChannel(channel.cid)" active-class="active-channel" :class="{'active-channel': channel.cid === channelId}">
-                <v-list-item-avatar>
-                  <v-icon>chat_bubble</v-icon>
-                </v-list-item-avatar>
-                  <v-badge color="red" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
-                    <template #badge>
-                      {{ countUnreadMessages({target: channel.cid, targetmode: 2}) }}
-                    </template>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ channel.channel_name }}</v-list-item-title>
-                      <v-list-item-sub-title>{{ channel.cid }}</v-list-item-sub-title>
-                    </v-list-item-content>
-                  </v-badge>
-              </v-list-item>
+              <v-list-item-group v-model="selectedChannelItem">
+                <v-list-item
+                  v-for="channel in channelList"
+                  :key="channel.cid"
+                  @click="switchTextChannel(channel.cid)"
+
+                >
+                  <v-list-item-avatar>
+                    <v-icon>chat_bubble</v-icon>
+                  </v-list-item-avatar>
+                    <v-badge color="red" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
+                      <template #badge>
+                        {{ countUnreadMessages({target: channel.cid, targetmode: 2}) }}
+                      </template>
+                      <v-list-item-content>
+                        <v-list-item-title>{{ channel.channel_name }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ channel.cid }}</v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-badge>
+                </v-list-item>
+              </v-list-item-group>
 
               <v-subheader>Clients</v-subheader>
               <v-list-item v-for="client in clientList" @click="openTextPrivate(client)">
@@ -41,10 +47,12 @@
             </v-list>
           </v-flex>
 
-          <v-flex xs12 md8 class="px-4">
+          <v-flex xs12 md8 class="d-none d-md-flex">
             <v-layout column fill-height>
               <v-flex shrink>
                 <v-tabs v-model="selectedTab">
+
+                  <!-- Currently used server text messages (not closeable)-->
                   <v-tab>
                     <v-badge color="red" :value="countUnreadMessages(textServerTab)">
                       <template #badge>
@@ -53,6 +61,8 @@
                       <span>{{ textServerTab.name }}</span>
                     </v-badge>
                   </v-tab>
+
+                  <!-- Currently joined channel text messages (not closeable)-->
                   <v-tab>
                     <v-badge color="red" :value="countUnreadMessages(textChannelTab)">
                       <template #badge>
@@ -61,6 +71,8 @@
                       <span>{{ textChannelTab.name }}</span>
                     </v-badge>
                   </v-tab>
+
+                  <!-- Private client text messages (closeable) -->
                   <v-tab v-for="(textPrivateTab, index) in textPrivateTabs" :key="index + 2">
                     <v-badge color="red" :value="countUnreadMessages(textPrivateTab)">
                       <template #badge>
@@ -73,9 +85,14 @@
               </v-flex>
 
               <v-flex ref="chat" grow style="height: 50vh; overflow-y: auto;">
-                <v-tabs-items>
-                  <v-tab-item>
-                    <div v-for="message in filteredTextMessages" class="my-2">
+                <v-tabs-items v-model="selectedTab">
+
+                  <!-- Server text message history -->
+                  <v-tab-item
+                    :transition="false"
+                    :reverse-transition="false"
+                  >
+                    <div v-for="message in serverTextMessages">
                       <div>
                         <v-icon v-if="message.sender.clid === queryUser.client_id">arrow_upward</v-icon>
                         <v-icon v-else>arrow_downward</v-icon>
@@ -86,6 +103,44 @@
                       </div>
                     </div>
                   </v-tab-item>
+
+                  <!-- Channel text message history -->
+                  <v-tab-item
+                    :transition="false"
+                    :reverse-transition="false"
+                  >
+                    <div v-for="message in channelTextMessages">
+                      <div>
+                        <v-icon v-if="message.sender.clid === queryUser.client_id">arrow_upward</v-icon>
+                        <v-icon v-else>arrow_downward</v-icon>
+                        {{ new Date(message.meta.timestamp).toLocaleString() }} <b>{{ message.sender.client_nickname }}</b>
+                      </div>
+                      <div>
+                        {{ message.text }}
+                      </div>
+                    </div>
+                  </v-tab-item>
+
+                  <!-- Private text message histories -->
+                  <v-tab-item
+                    v-for="(textPrivateTab, index) in textPrivateTabs"
+                    :key="index + 2" :transition="false"
+                    :reverse-transition="false"
+                  >
+                    <div v-for="message in privateTextMessages">
+                      <div v-if="message.target === textPrivateTab.target">
+                        <div>
+                          <v-icon v-if="message.sender.clid === queryUser.client_id">arrow_upward</v-icon>
+                          <v-icon v-else>arrow_downward</v-icon>
+                          {{ new Date(message.meta.timestamp).toLocaleString() }} <b>{{ message.sender.client_nickname }}</b>
+                        </div>
+                        <div>
+                          {{ message.text }}
+                        </div>
+                      </div>
+                    </div>
+                  </v-tab-item>
+
                 </v-tabs-items>
               </v-flex>
               <v-flex shrink>
@@ -120,6 +175,7 @@ export default {
           await vm.moveClient(vm.queryUser.client_id, to.params.cid)
         }
       } catch (err) {
+        console.log(err);
         vm.$toast.error(err.message)
       }
     });
@@ -141,20 +197,27 @@ export default {
        */
       textPrivateTargets: [],
       selectedTab: 0,
-      selectedChat: {},
       message: ''
     }
   },
   computed: {
+    selectedChannelItem: {
+      get() {
+        return this.channelList.findIndex(channel => channel.cid === this.channelId)
+      },
+      set(itemIndex) {
+        // does no need to be set
+      }
+    },
+    currentJoinedChannel() {
+      return this.channelList.find(channel => channel.cid === this.channelId)
+    },
     textServerTab() {
       return {
         name: this.serverInfo.virtualserver_name,
         target: this.serverInfo.virtualserver_id,
         targetmode: 3
       }
-    },
-    currentJoinedChannel() {
-      return this.channelList.find(channel => channel.cid === this.channelId)
     },
     textChannelTab() {
       return {
@@ -170,27 +233,40 @@ export default {
         targetmode: 1
       }))
     },
-    filteredTextMessages() {
-      switch (this.selectedTab) {
-        case 0:
-          this.selectedChat = this.textServerTab
-          break;
-        case 1:
-          this.selectedChat = this.textChannelTab
-          break;
-        default:
-          if (this.textPrivateTabs.length) {
-            this.selectedChat = this.textPrivateTabs[this.selectedTab - 2]
-          }
-      }
-
+    serverTextMessages() {
       return this.$store.state.chat.messages.filter(message => {
         return (
-          message.target === this.selectedChat.target &&
-          message.targetmode === this.selectedChat.targetmode &&
+          message.targetmode === 3 &&
           message.serverId === this.$store.state.query.serverId
         )
       })
+    },
+    channelTextMessages() {
+      return this.$store.state.chat.messages.filter(message => {
+        return (
+          message.targetmode === 2 &&
+          message.target === this.textChannelTab.target &&
+          message.serverId === this.$store.state.query.serverId
+        )
+      })
+    },
+    privateTextMessages() {
+      return this.$store.state.chat.messages.filter(message => {
+        return (
+          message.targetmode === 1 &&
+          message.serverId === this.$store.state.query.serverId
+        )
+      })
+    },
+    selectedChat() {
+      switch (this.selectedTab) {
+        case 0: return this.textServerTab
+        case 1: return this.textChannelTab
+        default:
+          if (this.textPrivateTabs.length) {
+            return this.textPrivateTabs[this.selectedTab - 2]
+          }
+      }
     }
   },
   methods: {
@@ -254,6 +330,7 @@ export default {
         // Focus tab
         this.selectedTab = 1
       } catch (err) {
+        console.log(err);
         this.$toasted.error(err.message)
       }
     },
@@ -303,9 +380,13 @@ export default {
           client_nickname: this.queryUser.client_nickname
         }
 
+        console.log('targetmode', targetmode);
+        console.log('target', target);
+        console.log('sender', sender);
+
         await this.$TeamSpeak.execute('sendtextmessage', {
-          targetmode: this.selectedChat.targetmode,
-          target: this.selectedChat.target,
+          targetmode,
+          target,
           msg: this.message
         })
 
@@ -358,7 +439,7 @@ export default {
       })
 
       this.$store.commit("markMessageAsRead", this.selectedChat)
-    }
+    },
   },
   beforeRouteUpdate(to, from, next) {
     this.channelId = +to.params.cid
@@ -375,6 +456,7 @@ export default {
 
 <style>
 .active-channel {
-  color: rgb(25, 118, 210);
+  /* background: blue; */
+  /* color: rgb(25, 118, 210); */
 }
 </style>
