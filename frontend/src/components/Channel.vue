@@ -1,9 +1,11 @@
 <template>
 <div>
-  <v-menu offset-x style="width: 100%">
-    <template slot="activator">
-      <spacer v-if="isSpacer(channel.channel_name)" :channelName="channel.channel_name"></spacer>
-      <v-btn text v-else>
+  <v-menu offset-y max-width="300px">
+    <template #activator="{ on }">
+      <v-btn text v-if="isSpacer(channel.channel_name)" v-on="on" width="100%">
+        <spacer :channelName="channel.channel_name"></spacer>
+      </v-btn>
+      <v-btn text v-else v-on="on">
         <v-icon>chat_bubble</v-icon>
         {{ channel.channel_name }}
       </v-btn>
@@ -79,13 +81,17 @@
 </div>
 </template>
 <script>
+// Do not dynamically import this component !!!
+// Otherwise it will not be shown !!!
+import Spacer from '@/components/Spacer'
+
 export default {
   props: {
     channel: Object,
     queryUser: Object
   },
   components: {
-    Spacer: () => import('@/components/Spacer')
+    Spacer
   },
   data() {
     return {
@@ -97,6 +103,7 @@ export default {
   },
   methods: {
     isSpacer(channelName) {
+      console.log(this.spacer.test(channelName));
       return this.spacer.test(channelName)
     },
     confirmChannelDeletion(channel) {

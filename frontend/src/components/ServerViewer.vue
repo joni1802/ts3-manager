@@ -3,12 +3,10 @@
   <v-layout>
     <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
       <v-card>
+        <v-card-title>{{ serverInfo.virtualserver_name }}</v-card-title>
         <v-card-text>
-          <v-subheader>
-            <v-icon>dns</v-icon>{{ serverInfo.virtualserver_name }}
-          </v-subheader>
-          <v-treeview :items="channelTree" :open="itemIDs">
-            <template slot="label" slot-scope="{item}">
+          <v-treeview :items="channelTree" :open="itemIDs" dense>
+            <template #label="{ item }">
               <channel v-if="item.channel_name" :channel="item" :queryUser="queryUser"></channel>
               <client v-else :client="item" :queryUser="queryUser"></client>
             </template>

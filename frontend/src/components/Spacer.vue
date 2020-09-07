@@ -97,7 +97,7 @@ export default {
 
 .spacer__normal {
   min-height: '1rem';
-  color: rgba(0, 0, 0, 0.54);
+  color: black;
 }
 
 .spacer__special {

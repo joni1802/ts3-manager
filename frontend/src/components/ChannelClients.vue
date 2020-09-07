@@ -1,8 +1,8 @@
 <template>
 <div>
-  <v-menu offset-x>
-    <template slot="activator">
-      <v-btn text>
+  <v-menu offset-y max-width="300px">
+    <template #activator="{ on }">
+      <v-btn text v-on="on">
         <v-icon>{{ statusIcon }}</v-icon>
         {{ client.client_nickname }} <i v-if="client.clid === queryUser.client_id">(You)</i>
       </v-btn>
