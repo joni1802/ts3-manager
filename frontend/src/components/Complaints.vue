@@ -10,50 +10,43 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="complaints" v-model="selected" item-key="timestamp" :rows-per-page-items="rowsPerPage">
-            <template slot="headers" slot-scope="props">
-              <th>
-                <v-checkbox :input-value="props.all" hide-details @click.stop="toggleAll"></v-checkbox>
-              </th>
-              <th v-for="header in props.headers" :key="header.text" class="text-xs-left">
-                {{ header.text }}
-              </th>
+          <v-data-table
+            :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+            :headers="headers"
+            :items="complaints"
+            v-model="selected"
+            item-key="timestamp"
+            :footer-props="{'items-per-page-options': rowsPerPage}"
+            show-select
+          >
+            <template #item.actions="{ item }">
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item :to="`/client/${item.tcldbid}/ban`">
+                    <v-list-item-title>
+                      Ban <b>{{ item.tname }}</b>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item :to="`/client/${item.fcldbid}/ban`">
+                    <v-list-item-title>
+                      Ban <b>{{ item.fname }}</b>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="openDialog([item])">
+                    <v-list-item-title>
+                      Remove Complaint
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </template>
-            <template slot="items" slot-scope="props">
-              <tr :active="props.selected" @click="props.selected = !props.selected">
-                <td>
-                  <v-checkbox :input-value="props.selected" hide-details></v-checkbox>
-                </td>
-                <td>{{ props.item.tname }}</td>
-                <td>{{ props.item.fname }}</td>
-                <td><i>"{{ props.item.message }}"</i></td>
-                <td>
-                  <v-menu bottom left>
-                    <template slot="activator" slot-scope="{ on }">
-                      <v-btn v-on="on" icon @click.native.stop.prevent>
-                        <v-icon color="grey lighten-1">more_vert</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item :to="`/client/${props.item.tcldbid}/ban`">
-                        <v-list-item-title>
-                          Ban <b>{{ props.item.tname }}</b>
-                        </v-list-item-title>
-                      </v-list-item>
-                      <v-list-item :to="`/client/${props.item.fcldbid}/ban`">
-                        <v-list-item-title>
-                          Ban <b>{{ props.item.fname }}</b>
-                        </v-list-item-title>
-                      </v-list-item>
-                      <v-list-item @click="openDialog([props.item])">
-                        <v-list-item-title>
-                          Remove
-                        </v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </td>
-              </tr>
+            <template #item.message="{ item }">
+              <i>"{{ item.message }}"</i>
             </template>
           </v-data-table>
         </v-card-text>
@@ -82,7 +75,13 @@
 export default {
   data() {
     return {
-      headers: [{
+      headers: [
+        {
+          text: '',
+          align: 'start',
+          value: 'actions'
+        },
+        {
           text: 'Target Nickname',
           value: 'tname'
         },
@@ -94,10 +93,6 @@ export default {
           text: 'Reason',
           value: 'message'
         },
-        {
-          text: 'Actions',
-          value: 'actions'
-        }
       ],
       complaints: [],
       selected: [],
@@ -118,14 +113,6 @@ export default {
     getComplainList() {
       return this.$TeamSpeak.execute('complainlist')
     },
-    toggleAll() {
-      // I do not understand this method at all but it works
-      if (this.selected.length) {
-        this.selected = []
-      } else {
-        this.selected = this.complaints.slice()
-      }
-    },
     openDialog(complaints) {
       this.selectedComplaints = complaints
       this.dialog = true
@@ -139,9 +126,7 @@ export default {
           })
         }
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       this.dialog = false
@@ -149,22 +134,16 @@ export default {
       try {
         this.complaints = await this.getComplainList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
     }
   },
   async created() {
-
-
     try {
       this.complaints = await this.getComplainList()
     } catch (err) {
-      this.$toasted.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
   }
 }
