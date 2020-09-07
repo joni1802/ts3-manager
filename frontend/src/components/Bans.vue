@@ -10,10 +10,6 @@
                 <v-icon left>delete</v-icon>
                 Remove
               </v-btn>
-              <v-btn @click="editBan" :disabled="!Boolean(selected.length)">
-                <v-icon left>edit</v-icon>
-                Edit
-              </v-btn>
             </v-flex>
             <v-flex md4 sm6 xs12>
               <v-text-field append-icon="search" label="Search" v-model="filter"></v-text-field>
@@ -21,28 +17,44 @@
           </v-layout>
         </v-card-title>
         <v-card-text>
-          <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="preparedBanlist" v-model="selected" item-key="banid" select-all :rows-per-page-items="rowsPerPage" :search="filter">
-            <template slot="headers" slot-scope="props">
-              <th>
-                <v-checkbox :input-value="props.all" hide-details @click.stop="toggleAll"></v-checkbox>
-              </th>
-              <th v-for="header in props.headers" :key="header.text" class="text-xs-left">
-                {{ header.text }}
-              </th>
+          <v-data-table
+            :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+            :headers="headers"
+            :items="preparedBanlist"
+            v-model="selected"
+            item-key="banid"
+            show-select
+            :footer-props="{'items-per-page-options': rowsPerPage}"
+            :search="filter"
+          >
+            <template #item.actions="{ item }">
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item :to="{name: 'ban-edit', params: {banid: item.banid}}">
+                    <v-list-item-title>
+                      Edit Ban
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="dialog = true">
+                    <v-list-item-title>
+                      Remove Ban
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </template>
-            <template slot="items" slot-scope="props">
-              <tr :active="props.selected" @click="props.selected = !props.selected">
-                <td>
-                  <v-checkbox :input-value="props.selected" hide-details></v-checkbox>
-                </td>
-                <td>
-                  <span v-if="props.item.ip">ip = {{ props.item.ip }}, </span>
-                  <span v-if="props.item.name">name = {{ props.item.name }}, </span>
-                  <span v-if="props.item.uid">uid = {{ props.item.uid }}, </span>
-                </td>
-                <td>{{ props.item.reason }}</td>
-                <td>{{ props.item.duration === 0 ? 'infinite' : calcExpiryDate(props.item.created, props.item.duration) }}</td>
-              </tr>
+            <template #item.name_ip_uid="{ item }">
+              <span v-if="item.ip">ip = {{ item.ip }}, </span>
+              <span v-if="item.name">name = {{ item.name }}, </span>
+              <span v-if="item.uid">uid = {{ item.uid }}, </span>
+            </template>
+            <template #item.duration="{ item }">
+              {{ item.duration === 0 ? 'infinite' : calcExpiryDate(item.created, item.duration) }}
             </template>
           </v-data-table>
         </v-card-text>
@@ -74,7 +86,13 @@
 export default {
   data() {
     return {
-      headers: [{
+      headers: [
+        {
+          text: '',
+          algin: 'start',
+          value: 'actions'
+        },
+        {
           text: 'Name/IP/UID',
           value: 'name_ip_uid'
         },
@@ -117,28 +135,12 @@ export default {
     getBanList() {
       return this.$TeamSpeak.execute('banlist')
     },
-    toggleAll() {
-      // I do not understand this method at all but it works
-      if (this.selected.length) {
-        this.selected = []
-      } else {
-        this.selected = this.banlist.slice()
-      }
-    },
     calcExpiryDate(created, duration) {
       return new Date((created * 1000) + (duration * 1000)).toLocaleString()
     },
     addBan() {
       this.$router.push({
         path: '/ban/add'
-      })
-    },
-    editBan() {
-      this.$router.push({
-        name: 'ban-edit',
-        params: {
-          banid: this.selected[0].banid
-        }
       })
     },
     async deleteBans() {
