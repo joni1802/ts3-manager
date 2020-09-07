@@ -11,36 +11,39 @@
           </v-layout>
         </v-card-title>
         <v-card-text>
-          <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="clientdblist" :search="search" :rows-per-page-items="rowsPerPage">
-            <template slot="items" slot-scope="props">
-              <td>{{ props.item.client_nickname }}</td>
-              <td>{{ props.item.client_unique_identifier }}</td>
-              <td>{{ new Date(props.item.client_created * 1000).toLocaleString() }}</td>
-              <td>{{ new Date(props.item.client_lastconnected * 1000).toLocaleString() }}</td>
-              <td>{{ props.item.client_totalconnections }}</td>
-              <td>{{ props.item.client_lastip }}</td>
-              <td>{{ props.item.client_description }}</td>
-              <td>
-                <v-menu bottom left>
-                  <template slot="activator" slot-scope="{ on }">
-                    <v-btn v-on="on" icon>
-                      <v-icon color="grey lighten-1">more_vert</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item :to="`/client/${props.item.cldbid}/ban`">
-                      <v-list-item-title>
-                        Ban Client
-                      </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="openDialog(props.item)">
-                      <v-list-item-title>
-                        Delete Client
-                      </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </td>
+          <v-data-table
+            :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+            :headers="headers"
+            :items="clientdblist"
+            :search="search"
+            :footer-props="{'items-per-page-options': rowsPerPage}"
+          >
+            <template #item.name="{ item }">
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item :to="`/client/${item.cldbid}/ban`">
+                    <v-list-item-title>
+                      Ban Client
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="openDialog(item)">
+                    <v-list-item-title>
+                      Delete Client
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+            <template #item.client_created="{ item }">
+              {{ new Date(item.client_created * 1000).toLocaleString() }}
+            </template>
+            <template #item.client_lastconnected="{ item }">
+              {{ new Date(item.client_lastconnected * 1000).toLocaleString() }}
             </template>
           </v-data-table>
         </v-card-text>
@@ -69,7 +72,14 @@
 export default {
   data() {
     return {
-      headers: [{
+      headers: [
+        {
+          text: '',
+          value: 'name',
+          align: 'start',
+          sortable: false
+        },
+        {
           text: 'Last Nickname',
           value: 'client_nickname'
         },
@@ -97,11 +107,6 @@ export default {
           text: 'Description',
           value: 'client_description'
         },
-        {
-          text: 'Actions',
-          value: 'name',
-          sortable: false
-        }
       ],
       clientdblist: [],
       search: '',
