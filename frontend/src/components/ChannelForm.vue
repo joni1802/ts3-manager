@@ -11,14 +11,13 @@
           <v-text-field type="password" label="Password" v-model="channelPassword" :disabled="$store.state.query.loading"></v-text-field>
           <v-text-field label="Topic" v-model="channelTopic" :disabled="$store.state.query.loading"></v-text-field>
           <v-textarea label="Description" v-model="channelDescription" :disabled="$store.state.query.loading"></v-textarea>
-          <v-expansion-panel class="elevation-0 ">
-            <v-expansion-panel-content>
-              <template slot="header">
-                <div>
-                  More Options
-                </div>
-              </template>
-                <v-card class="card-border">
+          <v-expansion-panels accordion flat>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                More Options
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-card>
                   <v-card-text>
                     <v-layout wrap>
                       <v-flex xs12>
@@ -47,8 +46,9 @@
                     </v-layout>
                   </v-card-text>
                 </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-card-text>
 
         <v-card-actions>
