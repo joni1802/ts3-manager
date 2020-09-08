@@ -14,7 +14,7 @@ import NProgress from "nprogress";
 import Clipboard from "v-clipboard";
 
 import TeamSpeak from "./api/TeamSpeak";
-import "./registerServiceWorker";
+// import "./registerServiceWorker";
 
 import store from "./store";
 import router from "./router";
