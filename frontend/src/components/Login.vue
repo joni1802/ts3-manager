@@ -73,7 +73,7 @@ export default {
             vm.form.username = response.username;
             vm.form.password = response.password;
           } else {
-            vm.$toast.error(response)
+            vm.$toasted.error(response)
           }
         }
       );

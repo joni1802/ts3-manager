@@ -302,7 +302,7 @@ socket.on("teamspeak-reconnected", async () => {
 
     store.dispatch("saveConnection", {queryUser, connected: true});
   } catch (err) {
-    Vue.prototype.$toast.error(err.message);
+    Vue.prototype.$toasted.error(err.message);
   }
 });
 

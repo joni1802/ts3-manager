@@ -120,7 +120,7 @@ export default {
 
         vm.startUptimeCounters();
       } catch(err) {
-        vm.$toast.error(err.message)
+        vm.$toasted.error(err.message)
       }
     })
   },

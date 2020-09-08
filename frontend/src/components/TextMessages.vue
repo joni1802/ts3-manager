@@ -176,7 +176,7 @@ export default {
         }
       } catch (err) {
         console.log(err);
-        vm.$toast.error(err.message)
+        vm.$toasted.error(err.message)
       }
     });
   },
