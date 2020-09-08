@@ -5,7 +5,6 @@ socket.init = server => {
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
   const {TeamSpeak} = require("ts3-nodejs-library");
-  let ServerQuery;
 
   const {logger} = require("./utils");
 
@@ -80,6 +79,7 @@ socket.init = server => {
     let ip = socket.client.conn.remoteAddress;
     let {token, serverId} = socket.handshake.query;
     let log = logger.child({client: ip});
+    let ServerQuery;
 
     log.info("Socket.io connected");
 
