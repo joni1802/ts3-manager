@@ -157,7 +157,7 @@ export default {
         this.clients = await this.getClientDbList()
         this.channels = await this.getChannelList()
 
-        if (this.channelId === '0' && this.clientDbId === '0') {
+        if (!this.channelId && !this.clientDbId) {
           this.$router.replace({
             name: 'permissions-channelclient',
             params: {

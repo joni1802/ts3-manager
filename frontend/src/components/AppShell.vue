@@ -46,7 +46,7 @@
             </v-list-item-content>
           </v-list-item>
         </template>
-        <v-list-item v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.route" :exact="true">
+        <v-list-item v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.route">
           <v-list-item-icon>
             <v-icon>{{ subEntry.icon }}</v-icon>
           </v-list-item-icon>

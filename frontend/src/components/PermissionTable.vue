@@ -13,20 +13,52 @@
       </v-layout>
     </v-card-title>
     <v-card-text>
-      <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="permissionlist" :rows-per-page-items="rowsPerPage" :search="filter">
-        <template slot="items" slot-scope="props">
-          <td>{{ props.item.permname }}</td>
-          <td v-if="editableContent.includes('permvalue')">{{ props.item.permvalue }}</td>
-          <td v-if="editableContent.includes('permskip')">
-            <v-checkbox :input-value="props.item.permskip" primary hide-details disabled></v-checkbox>
-          </td>
-          <td v-if="editableContent.includes('permnegated')">
-            <v-checkbox :input-value="props.item.permnegated" primary hide-details disabled></v-checkbox>
-          </td>
-          <td class="justify-center layout px-0">
-            <v-icon small class="mr-2" @click="editPermission(props.item)">edit</v-icon>
-            <v-icon small @click="confirmDeletion(props.item)">delete</v-icon>
-          </td>
+      <v-data-table
+        :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+        :headers="headers"
+        :items="permissionlist"
+        :footer-props="{'items-per-page-options': rowsPerPage}"
+        :search="filter"
+      >
+      <template #item.actions="{ item }">
+        <v-menu>
+          <template #activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="editPermission(item)">
+              <v-list-item-title>
+                Edit Permission
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="confirmDeletion(item)">
+              <v-list-item-title>
+                Remove Permission
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+        <template v-if="editableContent.includes('permvalue')" #item.permvalue="{ item }">
+          {{ item.permvalue }}
+        </template>
+        <template v-if="editableContent.includes('permskip')" #item.permskip="{ item }">
+          <v-simple-checkbox
+            v-if="typeof item.permskip !== 'object'"
+            :value="!!item.permskip"
+            disabled
+          >
+          </v-simple-checkbox>
+        </template>
+        <template v-if="editableContent.includes('permnegated')" #item.permnegated="{ item }">
+          <v-simple-checkbox
+            v-if="typeof item.permnegated !== 'object'"
+            :value="!!item.permnegated"
+            disabled
+          >
+          </v-simple-checkbox>
         </template>
       </v-data-table>
     </v-card-text>
@@ -80,7 +112,14 @@ export default {
     return {
       availablePermissions: [], // All available permissions that could be set
       onlyGranted: true, // Only show granted Permissions on default
-      availableHeaders: [{
+      availableHeaders: [
+        {
+          text: '',
+          align: 'start',
+          value: 'actions',
+          sortable: false
+        },
+        {
           text: 'Permission',
           align: 'left',
           value: 'permname',
@@ -104,21 +143,12 @@ export default {
           value: 'permnegated',
           sortable: false
         },
-        {
-          text: 'Actions',
-          align: 'right',
-          value: 'name',
-          sortable: false
-        }
       ],
       rowsPerPage: [
         50,
         100,
         150,
-        {
-          "text": "$vuetify.dataIterator.rowsPerPageAll",
-          "value": -1
-        }
+        -1
       ],
       filter: '', // Filter table content
       dialog: false, // Shows the edit lightbox
@@ -157,7 +187,7 @@ export default {
     headers() {
       return this.availableHeaders.filter(header => {
         for (let value of this.editableContent) {
-          if (header.value === value || header.value === 'permname' || header.value === 'name') {
+          if (header.value === value || header.value === 'permname' || header.value === 'actions') {
             return header
           }
         }
