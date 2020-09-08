@@ -287,7 +287,7 @@ socket.on("teamspeak-channeldelete", data => {
 });
 
 socket.on("teamspeak-error", err => {
-  Vue.prototype.$toast.error(err.message);
+  Vue.prototype.$toasted.error(err.message);
 
   store.dispatch("clearStorage");
 
