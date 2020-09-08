@@ -15,6 +15,11 @@
     </v-list-item> -->
 
     <v-list dense class="pt-2" subheader nav>
+
+      <server-query-user></server-query-user>
+
+      <v-divider></v-divider>
+
       <v-list-item v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
         <v-list-item-icon>
           <v-badge color="red" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
@@ -61,7 +66,8 @@
 export default {
   components: {
     DarkModeSwitch: () => import('@/components/DarkModeSwitch'),
-    BellIcon: () => import('@/components/BellIcon')
+    BellIcon: () => import('@/components/BellIcon'),
+    ServerQueryUser: () => import('@/components/ServerQueryUser')
   },
   data() {
     return {
