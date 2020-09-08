@@ -4,19 +4,19 @@
       <v-flex md6 sm8 xs12 offset-md3 offset-sm2>
         <v-card>
           <v-list>
-            <v-list-item v-for="group in groups" :key="group[Object.keys(group)[0]]" avatar>
+            <v-list-item v-for="group in groups" :key="group[Object.keys(group)[0]]">
               <v-list-item-content>
                 <v-list-item-title>{{ group.name }}</v-list-item-title>
-                <v-list-item-sub-title>({{ group[Object.keys(group)[0]] }})</v-list-item-sub-title>
+                <v-list-item-subtitle>({{ group[Object.keys(group)[0]] }})</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-btn icon ripple @click="editGroup(group)">
-                  <v-icon color="grey lighten-1">edit</v-icon>
+                  <v-icon>edit</v-icon>
                 </v-btn>
               </v-list-item-action>
               <v-list-item-action>
                 <v-btn icon ripple @click="confirmDeletion(group)">
-                  <v-icon color="grey lighten-1">delete</v-icon>
+                  <v-icon>delete</v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item>

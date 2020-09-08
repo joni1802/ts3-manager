@@ -103,6 +103,12 @@ export default {
     async changeMembers(list, cgid) {
       for (let clientDbId of list) {
         try {
+          console.log({
+            cgid: cgid,
+            cid: this.selectedChannel,
+            cldbid: clientDbId
+          });
+
           await this.$TeamSpeak.execute('setclientchannelgroup', {
             cgid: cgid,
             cid: this.selectedChannel,
@@ -124,6 +130,7 @@ export default {
     async addMembers() {
       let clientAddList = this.selectedClients.filter(cldbid => !this.currentClients.includes(cldbid))
 
+
       await this.changeMembers(clientAddList, this.channelGroupId)
     },
     async getMemberDbIds() {
@@ -132,6 +139,8 @@ export default {
       return channelGroupClients.map(client => client.cldbid)
     },
     async save(e) {
+
+
       try {
         await this.renameChannelGroupName()
         await this.removeMembers()

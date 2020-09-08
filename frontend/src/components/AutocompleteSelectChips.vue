@@ -1,6 +1,14 @@
 <template lang="html">
-  <v-autocomplete :value="value" @input="changeValue" :items="items"  chips multiple :label="label" :disabled="disabled">
-    <template slot="selection" slot-scope="{index, item}">
+  <v-autocomplete
+    :value="value"
+    @input="changeValue"
+    :items="items"
+    chips
+    multiple
+    :label="label"
+    :disabled="disabled"
+  >
+    <template #selection="{index, item}">
       <v-chip v-if="index < maxVisibleChips" close @input="removeChip(item.value)">
         <span>{{ item.text }}</span>
       </v-chip>
@@ -8,9 +16,9 @@
         (+{{ value.length - maxVisibleChips}} others)
       </span>
     </template>
-    <template slot="item" slot-scope="{item, tile}">
+    <template #item="{ item, attrs}">
       <v-list-item-action>
-        <v-checkbox v-model="tile.props.value"></v-checkbox>
+        <v-checkbox v-model="attrs.inputValue"></v-checkbox>
       </v-list-item-action>
       <v-list-item-content>
         <span>{{ item.text }}</span>
