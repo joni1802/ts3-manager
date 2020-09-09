@@ -38,7 +38,7 @@
               <v-radio-group v-model="joinedServerId">
                 <v-radio
                   :value="item.virtualserver_id"
-                  :disabled="item.virtualserver_status === 'offline'"
+                  :disabled="item.virtualserver_status === 'offline' || $store.state.query.loading"
                 >
                 </v-radio>
               </v-radio-group>
@@ -115,8 +115,11 @@ export default {
         if(from.name === "login") {
           let onlineServer = vm.servers.find(server => server.virtualserver_status === "online")
 
-          if(onlineServer) await vm.$TeamSpeak.selectServer(onlineServer.virtualserver_id) // vm.selectServer(onlineServer.virtualserver_id)
+          if(onlineServer) await vm.$TeamSpeak.selectServer(onlineServer.virtualserver_id)
         }
+
+        // Is primary needed to get the used server id
+        vm.queryUser = await vm.getQueryUserData()
 
         vm.startUptimeCounters();
       } catch(err) {
@@ -290,13 +293,6 @@ export default {
     resetUptimeCounters() {
       this.removeUptimeCounters();
       this.startUptimeCounters();
-    }
-  },
-  async created() {
-    try {
-      this.queryUser = await this.getQueryUserData()
-    } catch(err) {
-      this.$toasted.error(err.message)
     }
   },
   beforeRouteLeave(from, to, next) {
