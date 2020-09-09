@@ -103,7 +103,6 @@ export default {
   },
   methods: {
     isSpacer(channelName) {
-      console.log(this.spacer.test(channelName));
       return this.spacer.test(channelName)
     },
     confirmChannelDeletion(channel) {
@@ -125,9 +124,7 @@ export default {
           force: force
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       this.deleteChannelDialog = false

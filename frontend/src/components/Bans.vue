@@ -151,9 +151,7 @@ export default {
           })
         }
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       this.dialog = false
@@ -161,9 +159,7 @@ export default {
       try {
         this.banlist = await this.getBanList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
@@ -171,9 +167,7 @@ export default {
     try {
       this.banlist = await this.getBanList()
     } catch (err) {
-      this.$toasted.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
   }
 }

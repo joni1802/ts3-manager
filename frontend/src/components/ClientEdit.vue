@@ -61,9 +61,9 @@
           this.addServergroups()
           this.removeServergroups()
 
-          this.$toasted.success('Client updated', {icon: 'done'})
+          this.$toasted.success('Client updated')
         } catch(err) {
-          this.$toasted.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message)
         }
 
         // This timeout is needed because the teamspeak server is to slow and will give you wrong result back
@@ -120,7 +120,7 @@
           this.selectedGroups = this.getClientServergroups()
           this.description = this.getClientDescription()
         } catch(err) {
-          this.$toasted.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message)
         }
       }
     },

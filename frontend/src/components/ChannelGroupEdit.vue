@@ -95,9 +95,7 @@ export default {
           name: this.channelGroupName,
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async changeMembers(list, cgid) {
@@ -115,9 +113,7 @@ export default {
             cldbid: clientDbId
           })
         } catch (err) {
-          this.$toasted.error(err.message, {
-            icon: 'error'
-          })
+          this.$toasted.error(err.message)
         }
       }
     },

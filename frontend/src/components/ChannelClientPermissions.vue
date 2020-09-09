@@ -96,17 +96,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async removePermission(permission) {
@@ -121,17 +117,13 @@ export default {
           permid: permid,
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     changeClient(cldbid) {
@@ -169,9 +161,7 @@ export default {
 
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },

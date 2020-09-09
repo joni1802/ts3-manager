@@ -81,17 +81,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.clientPermissions = await this.getClientPermissions()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
     },
@@ -106,17 +102,13 @@ export default {
           permid: permid
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.clientPermissions = await this.getClientPermissions()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async init() {
@@ -134,9 +126,7 @@ export default {
 
         this.clientPermissions = await this.getClientPermissions()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
@@ -146,9 +136,7 @@ export default {
     try {
       this.clientPermissions = await this.getClientPermissions()
     } catch (err) {
-      this.$toasted.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
 
 

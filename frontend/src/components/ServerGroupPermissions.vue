@@ -148,9 +148,7 @@ export default {
     try {
       this.serverGroupPermissions = await this.getServergroupPermissions()
     } catch (err) {
-      this.$toasted.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
 
 

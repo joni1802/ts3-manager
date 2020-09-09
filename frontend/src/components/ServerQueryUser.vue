@@ -39,8 +39,6 @@ export default {
   async created() {
     try {
       this.queryUser = await this.getQueryUserInfo()
-
-      console.log(this.queryUser);
     } catch(err) {
       this.$toasted.error(err.message)
     }

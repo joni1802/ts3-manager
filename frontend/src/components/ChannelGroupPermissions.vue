@@ -71,17 +71,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelGroupPermList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async removePermission(permission) {
@@ -95,17 +91,13 @@ export default {
           permid: permid,
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelGroupPermList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     changeChannelGroup(cgid) {
@@ -131,9 +123,7 @@ export default {
 
         this.permissions = await this.getChannelGroupPermList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },

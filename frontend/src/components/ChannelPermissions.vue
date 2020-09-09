@@ -68,17 +68,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelPermissions()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async removePermission(permissionValues) {
@@ -92,17 +88,13 @@ export default {
           permid: permid
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelPermissions()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     changeChannel(cid) {
@@ -128,9 +120,7 @@ export default {
 
         this.permissions = await this.getChannelPermissions()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },

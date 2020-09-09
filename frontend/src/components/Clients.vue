@@ -137,9 +137,7 @@ export default {
           cldbid: this.selectedClient.cldbid
         })
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       this.dialog = false
@@ -147,9 +145,7 @@ export default {
       try {
         this.clientdblist = await this.getClientDbList()
       } catch (err) {
-        this.$toasted.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
@@ -157,9 +153,7 @@ export default {
     try {
       this.clientdblist = await this.getClientDbList()
     } catch (err) {
-      this.$toasted.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
   }
 }
