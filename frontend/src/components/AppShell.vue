@@ -8,13 +8,9 @@
   </v-app-bar>
 
   <v-navigation-drawer app v-model="drawer" v-if="validPage" width="300">
-
     <v-list dense class="pt-2" subheader nav>
-
-      <server-query-user></server-query-user>
-
+      <logo></logo>
       <v-divider></v-divider>
-
       <v-list-item v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
         <v-list-item-icon>
           <v-badge color="error" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
@@ -62,7 +58,7 @@ export default {
   components: {
     DarkModeSwitch: () => import('@/components/DarkModeSwitch'),
     BellIcon: () => import('@/components/BellIcon'),
-    ServerQueryUser: () => import('@/components/ServerQueryUser')
+    Logo: () => import('@/components/Logo')
   },
   data() {
     return {
@@ -184,9 +180,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.logo--dark {
-  filter: brightness(10);
-}
-</style>
