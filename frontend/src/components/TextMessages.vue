@@ -17,7 +17,7 @@
                   <v-list-item-avatar>
                     <v-icon>chat_bubble</v-icon>
                   </v-list-item-avatar>
-                    <v-badge color="red" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
+                    <v-badge color="error" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
                       <template #badge>
                         {{ countUnreadMessages({target: channel.cid, targetmode: 2}) }}
                       </template>
@@ -34,7 +34,7 @@
                 <v-list-item-avatar>
                   <v-icon>{{ clientStatusIcon(client) }}</v-icon>
                 </v-list-item-avatar>
-                  <v-badge color="red" :value="countUnreadMessages({target: client.clid, targetmode: 1})">
+                  <v-badge color="error" :value="countUnreadMessages({target: client.clid, targetmode: 1})">
                     <template #badge>
                       {{ countUnreadMessages({target: client.clid, targetmode: 1}) }}
                     </template>
@@ -54,7 +54,7 @@
 
                   <!-- Currently used server text messages (not closeable)-->
                   <v-tab>
-                    <v-badge color="red" :value="countUnreadMessages(textServerTab)">
+                    <v-badge color="error" :value="countUnreadMessages(textServerTab)">
                       <template #badge>
                         {{ countUnreadMessages(textServerTab) }}
                       </template>
@@ -64,7 +64,7 @@
 
                   <!-- Currently joined channel text messages (not closeable)-->
                   <v-tab>
-                    <v-badge color="red" :value="countUnreadMessages(textChannelTab)">
+                    <v-badge color="error" :value="countUnreadMessages(textChannelTab)">
                       <template #badge>
                         {{ countUnreadMessages(textChannelTab) }}
                       </template>
@@ -74,7 +74,7 @@
 
                   <!-- Private client text messages (closeable) -->
                   <v-tab v-for="(textPrivateTab, index) in textPrivateTabs" :key="index + 2">
-                    <v-badge color="red" :value="countUnreadMessages(textPrivateTab)">
+                    <v-badge color="error" :value="countUnreadMessages(textPrivateTab)">
                       <template #badge>
                         {{ countUnreadMessages(textPrivateTab) }}
                       </template>

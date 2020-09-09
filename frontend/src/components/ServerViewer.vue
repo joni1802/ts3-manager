@@ -16,7 +16,7 @@
     </v-flex>
   </v-layout>
 
-  <v-btn fab color="pink" fixed bottom right dark :to="{name: 'channel-add'}">
+  <v-btn fab color="primary" fixed bottom right dark :to="{name: 'channel-add'}">
     <v-icon>add</v-icon>
   </v-btn>
 </v-container>

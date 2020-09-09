@@ -10,7 +10,7 @@
             Download a backup file which contains all the necessary data to restore the virtual server
           </v-card-text>
           <v-card-actions>
-            <v-btn text color="blue" @click="createSnapshot">
+            <v-btn text color="primary" @click="createSnapshot">
               Create Snapshot
               <v-icon right>
                 mdi-file-download-outline
@@ -31,7 +31,7 @@
                 <v-text-field label="Select Backup File" @click="selectFile" v-model="fileName" prepend-icon="attach_file"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md5>
-                <v-btn text color="red" :disabled="filePicked" @click="deploySnapshot">
+                <v-btn text color="error" :disabled="filePicked" @click="deploySnapshot">
                   Deploy Snapshot
                   <v-icon right>
                     mdi-file-upload-outline

@@ -55,7 +55,7 @@
         </v-card>
       </v-dialog>
 
-      <v-btn fab color="pink" fixed bottom right dark :to="{name: 'token-add'}">
+      <v-btn fab color="primary" fixed bottom right dark :to="{name: 'token-add'}">
         <v-icon>add</v-icon>
       </v-btn>
     </v-layout>

@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-app-bar app flat hide-on-scroll :color="$vuetify.theme.dark ? '#272727' : '#fff'">
+  <v-app-bar app flat hide-on-scroll>
     <v-app-bar-nav-icon @click="drawer = !drawer" v-if="validPage"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
@@ -17,7 +17,7 @@
 
       <v-list-item v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
         <v-list-item-icon>
-          <v-badge color="red" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
+          <v-badge color="error" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
             <template #badge>
               <span>{{ $store.getters.unreadMessages }}</span>
             </template>

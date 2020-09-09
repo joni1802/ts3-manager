@@ -2,7 +2,7 @@
   <v-menu offset-y :close-on-content-click="false">
     <template #activator="{on}">
       <v-btn icon v-on="on">
-        <v-badge color="red" :value="countNotifications">
+        <v-badge color="error" :value="countNotifications">
           <template #badge v-if="countNotifications">
             <span>{{ countNotifications }}</span>
           </template>

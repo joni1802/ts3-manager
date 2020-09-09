@@ -60,7 +60,7 @@
         </v-card-text>
       </v-card>
     </v-flex>
-    <v-btn fab color="pink" fixed bottom right dark @click="addBan">
+    <v-btn fab color="primary" fixed bottom right dark @click="addBan">
       <v-icon>add</v-icon>
     </v-btn>
     <v-dialog v-model="dialog" max-width="500px">

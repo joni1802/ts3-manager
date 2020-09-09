@@ -23,7 +23,7 @@
           </v-list>
         </v-card>
       </v-flex>
-      <v-btn fab color="pink" fixed bottom right dark @click="addDialog = true">
+      <v-btn fab color="primary" fixed bottom right dark @click="addDialog = true">
         <v-icon>add</v-icon>
       </v-btn>
       <v-dialog v-model="removeDialog" max-width="500px">
