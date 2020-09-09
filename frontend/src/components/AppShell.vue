@@ -1,18 +1,13 @@
 <template>
 <div>
-  <v-app-bar app flat color="white">
-    <v-app-bar-nav-icon @click="drawer = true" v-if="validPage"></v-app-bar-nav-icon>
+  <v-app-bar app flat hide-on-scroll :color="$vuetify.theme.dark ? '#272727' : '#fff'">
+    <v-app-bar-nav-icon @click="drawer = !drawer" v-if="validPage"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
     <bell-icon v-if="$store.state.query.connected"></bell-icon>
   </v-app-bar>
 
   <v-navigation-drawer app v-model="drawer" v-if="validPage" width="300">
-    <!-- <v-list-item>
-      <v-list-item-content>
-        <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
-      </v-list-item-content>
-    </v-list-item> -->
 
     <v-list dense class="pt-2" subheader nav>
 

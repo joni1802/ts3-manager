@@ -1,5 +1,5 @@
 <template>
-<div class="spacer" :class="{'spacer--dark': $store.state.settings.darkMode}">
+<div class="spacer" :class="{'spacer--dark': $vuetify.theme.dark}">
   <svg v-if="specialSpacer" height="10" class="spacer__special">
     <line x1="0" y1="5" x2="100%" y2="5" stroke="rgba(0,0,0,0.54)" stroke-width="0.1rem" :stroke-dasharray="dashArray" />
   </svg>
