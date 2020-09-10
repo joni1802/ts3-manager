@@ -301,6 +301,9 @@ socket.on("teamspeak-reconnected", async () => {
     if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
 
     store.dispatch("saveConnection", {queryUser, connected: true});
+
+    // When there was a socket error and it reconnected automatically again
+    if(router.currentRoute.name === 'login') router.push({name: 'servers'})
   } catch (err) {
     Vue.prototype.$toasted.error(err.message);
   }
