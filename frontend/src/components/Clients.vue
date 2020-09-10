@@ -4,9 +4,15 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-layout>
+          <v-layout wrap justify-space-between>
+            <v-flex sm6 xs12>
+              <v-btn color="error" :disabled="!Boolean(selectedTableItems.length)" @click="openRemoveDialog(selectedTableItems)">
+                <v-icon left>delete</v-icon>
+                Remove
+              </v-btn>
+            </v-flex>
             <v-flex md4 sm6 xs12>
-              <v-text-field v-model="search" append-icon="search" label="Search"></v-text-field>
+              <v-text-field append-icon="search" label="Search" v-model="search"></v-text-field>
             </v-flex>
           </v-layout>
         </v-card-title>
@@ -17,6 +23,9 @@
             :items="clientdblist"
             :search="search"
             :footer-props="{'items-per-page-options': rowsPerPage}"
+            v-model="selectedTableItems"
+            show-select
+            item-key="cldbid"
           >
             <template #item.name="{ item }">
               <v-menu>
@@ -31,7 +40,7 @@
                       Ban Client
                     </v-list-item-title>
                   </v-list-item>
-                  <v-list-item @click="openDialog(item)">
+                  <v-list-item @click="openRemoveDialog([item])">
                     <v-list-item-title>
                       Delete Client
                     </v-list-item-title>
@@ -54,8 +63,9 @@
         <v-card-title>
           Delete Client
         </v-card-title>
-        <v-card-text>
-          Do you really want to delete <b>{{ selectedClient.client_nickname }}</b> from the list?
+        <v-card-text >
+          Do you really want to delete <b v-if="clientRemoveList.length === 1">{{ clientRemoveList[0].client_nickname }}</b>
+          <b v-else>all selected clients</b> from the list?
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -120,12 +130,14 @@ export default {
         }
       ],
       dialog: false,
-      selectedClient: {}
+      clientRemoveList: [],
+      selectedTableItems: []
     }
   },
   methods: {
-    openDialog(client) {
-      this.selectedClient = client
+    openRemoveDialog(clients) {
+      this.clientRemoveList = clients
+
       this.dialog = true
     },
     getClientDbList() {
@@ -133,9 +145,11 @@ export default {
     },
     async deleteClient() {
       try {
-        await this.$TeamSpeak.execute('clientdbdelete', {
-          cldbid: this.selectedClient.cldbid
-        })
+        for(let client of this.clientRemoveList) {
+          await this.$TeamSpeak.execute('clientdbdelete', {
+            cldbid: client.cldbid
+          })
+        }
       } catch (err) {
         this.$toasted.error(err.message)
       }
