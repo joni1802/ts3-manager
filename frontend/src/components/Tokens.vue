@@ -3,12 +3,25 @@
     <v-layout>
       <v-flex md10 xs12 offset-md1>
         <v-card>
+          <v-card-title>
+            <v-btn
+              color="error"
+              :disabled="!Boolean(selectedTableItems.length)"
+              @click="openDeleteDialog(selectedTableItems)"
+            >
+              <v-icon left>delete</v-icon>
+              Remove
+            </v-btn>
+          </v-card-title>
           <v-card-text>
             <v-data-table
               :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
               :headers="headers"
               :items="tokens"
               :footer-props="{'items-per-page-options': rowsPerPage}"
+              show-select
+              v-model="selectedTableItems"
+              item-key="token"
             >
               <template #item.actions="{ item }">
                 <v-menu>
@@ -18,7 +31,7 @@
                     </v-btn>
                   </template>
                   <v-list>
-                    <v-list-item @click="openDeleteDialog(item)">
+                    <v-list-item @click="openDeleteDialog([item])">
                       <v-list-item-title>
                         Delete Token
                       </v-list-item-title>
@@ -66,7 +79,6 @@
 export default {
   data() {
     return {
-      selectedToken: {},
       dialog: false,
       tokens: [],
       headers: [
@@ -87,26 +99,29 @@ export default {
           "value": -1
         }
       ],
+      selectedTableItems: [],
+      tokenRemoveList: []
     }
   },
   methods: {
     getTokenList() {
       return this.$TeamSpeak.execute("tokenlist")
     },
-    openDeleteDialog(token) {
-      this.selectedToken = token
+    openDeleteDialog(tokens) {
+      this.tokenRemoveList = tokens
 
       this.dialog = true
     },
     async deleteToken() {
       try {
-        await this.$TeamSpeak.execute("tokendelete", {token: this.selectedToken.token})
+        for(let token of this.tokenRemoveList) {
+          await this.$TeamSpeak.execute("tokendelete", {token: token.token})
+        }
 
         this.dialog = false
       } catch(err) {
         this.$toasted.error(err.message)
       }
-
       this.init()
     },
     copyToClipboard(token) {
