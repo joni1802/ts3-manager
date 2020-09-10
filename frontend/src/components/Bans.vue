@@ -162,6 +162,9 @@ export default {
 
       this.dialog = false
 
+      this.init()
+    },
+    async init() {
       try {
         this.banlist = await this.getBanList()
       } catch (err) {
@@ -170,11 +173,7 @@ export default {
     }
   },
   async created() {
-    try {
-      this.banlist = await this.getBanList()
-    } catch (err) {
-      this.$toasted.error(err.message)
-    }
+    this.init()
   }
 }
 </script>
