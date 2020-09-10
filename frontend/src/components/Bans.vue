@@ -6,7 +6,7 @@
         <v-card-title>
           <v-layout wrap justify-space-between>
             <v-flex sm6 xs12>
-              <v-btn color="error" :disabled="!Boolean(selected.length)" @click="dialog = true">
+              <v-btn color="error" :disabled="!Boolean(selectedTableItems.length)" @click="openDialog(selectedTableItems)">
                 <v-icon left>delete</v-icon>
                 Remove
               </v-btn>
@@ -21,7 +21,7 @@
             :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
             :headers="headers"
             :items="preparedBanlist"
-            v-model="selected"
+            v-model="selectedTableItems"
             item-key="banid"
             show-select
             :footer-props="{'items-per-page-options': rowsPerPage}"
@@ -40,7 +40,7 @@
                       Edit Ban
                     </v-list-item-title>
                   </v-list-item>
-                  <v-list-item @click="dialog = true">
+                  <v-list-item @click="openDialog([item])">
                     <v-list-item-title>
                       Remove Ban
                     </v-list-item-title>
@@ -106,7 +106,7 @@ export default {
         }
       ],
       banlist: [],
-      selected: [],
+      selectedTableItems: [],
       dialog: false,
       rowsPerPage: [
         25,
@@ -117,7 +117,8 @@ export default {
           "value": -1
         }
       ],
-      filter: ''
+      filter: '',
+      banRemoveList: []
     }
   },
   computed: {
@@ -132,6 +133,11 @@ export default {
     }
   },
   methods: {
+    openDialog(bans) {
+      this.banRemoveList = bans
+
+      this.dialog = true
+    },
     getBanList() {
       return this.$TeamSpeak.execute('banlist')
     },
@@ -145,7 +151,7 @@ export default {
     },
     async deleteBans() {
       try {
-        for (let ban of this.selected) {
+        for (let ban of this.banRemoveList) {
           await this.$TeamSpeak.execute('bandel', {
             banid: ban.banid
           })
