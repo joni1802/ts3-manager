@@ -73,6 +73,8 @@ export default {
             vm.form.username = response.username;
             vm.form.password = response.password;
           } else {
+            vm.$store.commit("saveToken", "")
+
             vm.$toasted.error(response)
           }
         }
