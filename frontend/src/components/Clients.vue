@@ -124,10 +124,7 @@ export default {
         25,
         50,
         75,
-        {
-          "text": "$vuetify.dataIterator.rowsPerPageAll",
-          "value": -1
-        }
+        -1
       ],
       dialog: false,
       clientRemoveList: [],
