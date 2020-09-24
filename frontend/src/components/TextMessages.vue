@@ -175,7 +175,6 @@ export default {
           await vm.moveClient(vm.queryUser.client_id, to.params.cid)
         }
       } catch (err) {
-        console.log(err);
         vm.$toasted.error(err.message)
       }
     });
@@ -344,7 +343,6 @@ export default {
         // Focus tab
         this.selectedTab = 1
       } catch (err) {
-        console.log(err);
         this.$toasted.error(err.message)
       }
     },
@@ -368,7 +366,11 @@ export default {
         this.selectedTab = 2 + this.textPrivateTargets.map(client => client.clid).indexOf(client.clid)
     },
     scrollBottom() {
-      this.$refs.chat.scrollTop = this.$refs.chat.scrollHeight
+      // Timeout is a workaround.
+      // Otherwise scrollTop is not updating corretly when switching between tabs.
+      setTimeout(() => {
+        this.$refs.chat.scrollTop =  this.$refs.chat.scrollHeight
+      }, 100)
     },
     addEventListeners() {
       this.$TeamSpeak.on("clientconnect", this.updateClientList);
@@ -395,10 +397,6 @@ export default {
           clid: this.queryUser.client_id,
           client_nickname: this.queryUser.client_nickname
         }
-
-        console.log('targetmode', targetmode);
-        console.log('target', target);
-        console.log('sender', sender);
 
         await this.$TeamSpeak.execute('sendtextmessage', {
           targetmode,
