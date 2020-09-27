@@ -2,9 +2,13 @@
 <div>
   <v-menu offset-y max-width="300px">
     <template #activator="{ on }">
-      <v-btn text v-on="on">
+      <v-btn
+        text
+        :color="client.clid === queryUser.client_id ? 'success' : 'default'"
+        v-on="on"
+      >
         <v-icon>{{ statusIcon }}</v-icon>
-        {{ client.client_nickname }} <i v-if="client.clid === queryUser.client_id">(You)</i>
+        {{ client.client_nickname }}
       </v-btn>
     </template>
     <v-list>
