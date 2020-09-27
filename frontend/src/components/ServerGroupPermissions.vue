@@ -3,7 +3,7 @@
   <v-layout>
     <v-flex xs12>
       <permission-table :grantedPermissions="serverGroupPermissions" type="Server Groups" :editableContent="['permvalue', 'permskip', 'permnegated']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template slot="selectMenu">
+        <template #selectMenu>
           <v-flex sm3 xs12>
             <v-autocomplete :items="groupSelection" v-model="selectedGroup" @change="changeGroup" label="Server Group" :disabled="$store.state.query.loading"></v-autocomplete>
           </v-flex>

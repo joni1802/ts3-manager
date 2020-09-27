@@ -3,7 +3,7 @@
   <v-layout>
     <v-flex xs12>
       <permission-table type="Client Permissions" :grantedPermissions="clientPermissions" :editableContent="['permvalue', 'permskip']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template slot="selectMenu">
+        <template #selectMenu>
           <v-flex sm3 xs12>
             <v-autocomplete :items="clientSelection" v-model="selectedClient" @change="changeClient" label="Client" :disabled="$store.state.query.loading"></v-autocomplete>
           </v-flex>

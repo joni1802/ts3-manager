@@ -15,7 +15,7 @@
               </v-flex>
               <v-flex xs3>
                 <v-checkbox v-model="form.ssh" label="SSH">
-                  <template slot="append">
+                  <template #append>
                     <v-tooltip bottom>
                       <template #activator="{on}">
                         <v-icon v-on="on">mdi-help-circle-outline</v-icon>
@@ -42,7 +42,7 @@
           <v-spacer></v-spacer>
           <v-btn text color="primary" :disabled="!valid" @click="connect" :loading="loading">
             <v-icon>arrow_forward</v-icon>Connect
-            <template slot="loader">
+            <template #loader>
               <span>Connecting...</span>
             </template>
           </v-btn>

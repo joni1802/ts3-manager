@@ -130,7 +130,7 @@
                         :disabled="$store.state.query.loading"
                         type="number"
                       >
-                        <template slot="append">
+                        <template #append>
                           <div>Byte/s</div>
                         </template>
                       </v-text-field>
@@ -140,7 +140,7 @@
                         :disabled="$store.state.query.loading"
                         type="number"
                       >
-                        <template slot="append">
+                        <template #append>
                           <div>MiB</div>
                         </template>
                       </v-text-field>
@@ -155,7 +155,7 @@
                         :disabled="$store.state.query.loading"
                         type="number"
                       >
-                        <template slot="append">
+                        <template #append>
                           <div>Byte/s</div>
                         </template>
                       </v-text-field>
@@ -165,7 +165,7 @@
                         :disabled="$store.state.query.loading"
                         type="number"
                       >
-                        <template slot="append">
+                        <template #append>
                           <div>MiB</div>
                         </template>
                       </v-text-field>
@@ -240,10 +240,10 @@
                         label="Server Group"
                         :disabled="$store.state.query.loading"
                       >
-                        <template slot="selection" slot-scope="{item}">
+                        <template #selection="{item}">
                           <div>{{ item.name }} ({{ item.sgid }})</div>
                         </template>
-                        <template slot="item" slot-scope="{item}">
+                        <template #item="{item}">
                           <div>{{ item.name }} ({{ item.sgid }})</div>
                         </template>
                       </v-autocomplete>
@@ -255,10 +255,10 @@
                         label="Channel Group"
                         :disabled="$store.state.query.loading"
                       >
-                        <template slot="selection" slot-scope="{item}">
+                        <template #selection="{item}">
                           <div>{{ item.name }} ({{ item.cgid }})</div>
                         </template>
-                        <template slot="item" slot-scope="{item}">
+                        <template #item="{item}">
                           <div>{{ item.name }} ({{ item.cgid }})</div>
                         </template>
                       </v-autocomplete>
@@ -270,10 +270,10 @@
                         label="Channel Admin Group"
                         :disabled="$store.state.query.loading"
                       >
-                        <template slot="selection" slot-scope="{item}">
+                        <template #selection="{item}">
                           <div>{{ item.name }} ({{ item.cgid }})</div>
                         </template>
-                        <template slot="item" slot-scope="{item}">
+                        <template #item="{item}">
                           <div>{{ item.name }} ({{ item.cgid }})</div>
                         </template>
                       </v-autocomplete>
@@ -298,7 +298,7 @@
                             v-model="serverInfo.virtualserver_complain_autoban_time"
                             type="number"
                           >
-                            <template slot="append">
+                            <template #append>
                               <div>sec</div>
                             </template>
                           </v-text-field>
@@ -310,7 +310,7 @@
                             v-model="serverInfo.virtualserver_complain_remove_time"
                             type="number"
                           >
-                            <template slot="append">
+                            <template #append>
                               <div>sec</div>
                             </template>
                           </v-text-field>
