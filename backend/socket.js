@@ -4,9 +4,6 @@ socket.init = server => {
   const io = require("socket.io")(server);
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
-  const {TeamSpeak} = require("ts3-nodejs-library");
-  let ServerQuery;
-
   const {logger} = require("./utils");
 
   // generates a random key for encrypting the jsonwebtoken
@@ -29,6 +26,8 @@ socket.init = server => {
       logger.info("ServerQuery connection closed");
 
       instance.removeAllListeners();
+
+      socket.emit("teamspeak-disconnect")
     });
     instance.on("clientconnect", data =>
       socket.emit("teamspeak-clientconnect", data)
@@ -77,9 +76,12 @@ socket.init = server => {
 
   // When the client is connected to the server.
   io.on("connection", async socket => {
+    const {TeamSpeak} = require("ts3-nodejs-library");
     let ip = socket.client.conn.remoteAddress;
     let {token, serverId} = socket.handshake.query;
     let log = logger.child({client: ip});
+
+    let ServerQuery;
 
     log.info("Socket.io connected");
 

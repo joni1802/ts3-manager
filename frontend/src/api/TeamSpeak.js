@@ -309,6 +309,14 @@ socket.on("teamspeak-reconnected", async () => {
   }
 });
 
+// When the teamspeak connection is closed manually.
+// E.g. writing "quit" in the console
+socket.on("teamspeak-disconnect", () => {
+  store.dispatch("clearStorage")
+
+  router.push({name: "login"});
+})
+
 setLoadingState([
   "execute",
   "createSnapshot",
