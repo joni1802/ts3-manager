@@ -3,9 +3,9 @@
     <v-layout justify-center>
       <v-flex lg8 md10 sm10 xs12>
         <v-card>
-          <v-card-text>
+          <v-card-text >
             <v-switch v-model="prettyPrint" label="Pretty print"></v-switch>
-            <div ref="terminal"></div>
+            <div ref="terminal" v-resize="resizeTerminal"></div>
           </v-card-text>
         </v-card>
       </v-flex>
@@ -15,24 +15,38 @@
 
 <script>
 import {Terminal} from 'xterm'
-import {LocalEchoController} from '../utils'
+import {FitAddon} from 'xterm-addon-fit'
+import LocalEchoController from 'local-echo'
 
 export default {
   data() {
     return {
       terminal: null,
       localEcho: null,
-      prettyPrint: true
+      prettyPrint: true,
+      fitAddon: null
     }
   },
   methods: {
+    resizeTerminal() {
+      this.$nextTick(() => {
+        this.fitAddon.fit()
+      })
+    },
     renderTerminal() {
       this.terminal = new Terminal({
         cursorBlink: true,
       })
+      this.fitAddon = new FitAddon()
+
+      this.terminal.loadAddon(this.fitAddon)
+
       this.localEcho = new LocalEchoController(this.terminal)
 
       this.terminal.open(this.$refs.terminal)
+
+      this.fitAddon.fit()
+
       this.terminal.focus()
     },
     async registerKeyEvents() {
@@ -41,44 +55,26 @@ export default {
 
         let response = await this.sendData(input)
 
-        this.terminal.writeln(this.formatResponse(response))
+        this.terminal.writeln(this.stringifyQueryResponse(response))
 
         this.registerKeyEvents()
       } catch(err) {
-        // If it is a ServerQuery error
-        if(err.id) {
-          this.terminal.writeln('error ' + this.formatResponse([{
-            id: err.id,
-            msg: err.message
-          }]))
-        } else {
-          this.terminal.writeln(err.message)
-        }
+        this.terminal.writeln(this.stringifyQueryResponse(err))
 
         this.registerKeyEvents()
       }
     },
+    stringifyQueryResponse(response) {
+      // adds "carriage return" character
+      // otherwise new line is not printed correctly by xterm
+      return JSON.stringify(response, null, this.prettyPrint ? 2 : 0).replace(/\n/g, "\n\r")
+    },
     sendData(input) {
-      let {command, parameters, options} = this.preparedCommand(input)
+      let {command, parameters, options} = this.parseQueryRequest(input)
 
       return this.$TeamSpeak.execute(command, parameters, options)
     },
-    formatResponse(response) {
-      return response.map(obj => {
-        let string = this.prettyPrint ? '\r\n' : ''
-
-        for(let [prop, val] of Object.entries(obj)) {
-          if(this.prettyPrint) {
-            string += `${prop}: ${val}\r\n`
-          } else {
-            string += `${prop}=${val} `
-          }
-        }
-
-        return string
-      }).join('| ')
-    },
-    preparedCommand(input) {
+    parseQueryRequest(input) {
       let command = input.split(' ')[0]
       let parameters = {}
       let options = []
