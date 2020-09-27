@@ -9,7 +9,8 @@
     :disabled="disabled"
   >
     <template #selection="{index, item}">
-      <v-chip v-if="index < maxVisibleChips" close @input="removeChip(item.value)">
+      <v-chip v-if="index < maxVisibleChips" close @click:close="removeChip(item.value)">
+        <!-- @input="removeChip(item.value)" -->
         <span>{{ item.text }}</span>
       </v-chip>
       <span v-if="index == maxVisibleChips" class="grey--text caption">
