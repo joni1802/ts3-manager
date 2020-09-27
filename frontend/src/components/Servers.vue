@@ -254,7 +254,7 @@ export default {
 
         this.servers = await this.getServerList()
 
-        if(this.currentServerId === this.selectedServer.virtualserver_id) this.$store.commit("setServerId", null)
+        if(this.joinedServerId === this.selectedServer.virtualserver_id) this.$store.commit("setServerId", null)
       } catch (err) {
         this.$toasted.error(err.message);
       }
