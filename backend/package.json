@@ -6,12 +6,12 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "dev": "cross-env NODE_ENV=development PORT=3000 nodemon app.js"
+    "start": "nodemon app.js"
   },
   "author": "J.F.",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express.js": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.2",
@@ -24,7 +24,5 @@
     "assets": "../frontend/dist/**/**/*"
   },
   "bin": "app.js",
-  "devDependencies": {
-    "cross-env": "^6.0.0"
-  }
+  "devDependencies": {}
 }
