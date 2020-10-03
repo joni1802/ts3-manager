@@ -49,6 +49,8 @@ export default {
       let index = this.value.indexOf(value)
 
       this.value.splice(index, 1)
+
+      this.$emit('input', this.value)
     },
     changeValue(array) {
       this.$emit('input', array)
