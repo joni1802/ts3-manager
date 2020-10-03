@@ -157,6 +157,11 @@ export default {
         this.$toasted.error(err.message)
       }
 
+      // v-model is not updating correctly when the content of the table changes.
+      // Removed content is still in the selectedTableItems array.
+      // This is a workaround for this vuetify bug.  
+      this.selectedTableItems = []
+
       this.dialog = false
 
       this.init()

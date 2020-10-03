@@ -151,8 +151,16 @@ export default {
         this.$toasted.error(err.message)
       }
 
+      // v-model is not updating correctly when the content of the table changes.
+      // Removed content is still in the selectedTableItems array.
+      // This is a workaround for this vuetify bug.
+      this.selectedTableItems = []
+
       this.dialog = false
 
+      this.init()
+    },
+    async init() {
       try {
         this.clientdblist = await this.getClientDbList()
       } catch (err) {
@@ -160,12 +168,8 @@ export default {
       }
     }
   },
-  async created() {
-    try {
-      this.clientdblist = await this.getClientDbList()
-    } catch (err) {
-      this.$toasted.error(err.message)
-    }
+  created() {
+    this.init()
   }
 }
 </script>
