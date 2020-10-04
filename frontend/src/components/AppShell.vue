@@ -70,6 +70,11 @@ export default {
           route: {name: 'servers'},
         },
         {
+          title: 'File Browser',
+          icon: 'mdi-folder',
+          route: {name: 'files'}
+        },
+        {
           title: 'Backup/Restore',
           icon: 'settings_backup_restore',
           route: {name: 'snapshot'}

@@ -202,6 +202,14 @@ TeamSpeak.selectServer = sid => {
     .then(userInfo => store.commit("saveUserInfo", userInfo[0]));
 };
 
+TeamSpeak.downloadFile = (path, cid, cpw = "") => {
+  return new Promise((resolve, reject) => {
+    socket.emit("teamspeak-downloadfile", {path, cid, cpw}, response => {
+      handleResponse(response, resolve, reject)
+    })
+  })
+}
+
 TeamSpeak.on = (name, fn) => {
   TeamSpeak.__proto__.addEventListener(name, fn);
 };

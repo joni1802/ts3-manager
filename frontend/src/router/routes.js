@@ -1,5 +1,13 @@
 export default [
   {
+    path: "/files",
+    component: () => import("@/components/FileBrowser"),
+    name: "files",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/snapshot",
     component: () => import("@/components/ServerSnapshot"),
     name: "snapshot",
