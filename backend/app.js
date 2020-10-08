@@ -8,6 +8,8 @@ const socket = require('./socket')
 
 app.use(express.static(path.join(__dirname, '../frontend/dist/')))
 
+app.use('/download', require('./routes/download'))
+
 app.get('/*', (req, res) => {
   // path must be absolute or specify root to res.sendFile
   res.sendFile(path.join(__dirname, '../frontend/dist/index.html'))
