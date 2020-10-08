@@ -79,7 +79,7 @@ socket.init = server => {
   // When the client is connected to the server.
   io.on("connection", async socket => {
     const {TeamSpeak} = require("ts3-nodejs-library");
-    let ip = socket.client.conn.remoteAddress;
+    let ip = socket.handshake.headers["x-forwarded-for"] || socket.client.conn.remoteAddress;
     let {token, serverId} = socket.handshake.query;
     let log = logger.child({client: ip});
 
