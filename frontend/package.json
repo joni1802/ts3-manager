@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "file-saver": "^2.0.2",
+    "js-cookie": "^2.2.1",
     "local-echo": "github:wavesoft/local-echo",
     "nprogress": "^0.2.0",
     "register-service-worker": "^1.6.2",

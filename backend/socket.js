@@ -6,6 +6,7 @@ socket.init = server => {
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
   const {logger} = require("./utils");
+  const cookie = require("cookie")
 
   // Generate and save a random key for encrypting the jsonwebtoken
   if(!process.env.JWT_SECRET) {
@@ -76,25 +77,27 @@ socket.init = server => {
     fn({message: err.message, ...err});
   };
 
+
   // When the client is connected to the server.
   io.on("connection", async socket => {
     const {TeamSpeak} = require("ts3-nodejs-library");
     let ip = socket.handshake.headers["x-forwarded-for"] || socket.client.conn.remoteAddress;
-    let {token, serverId} = socket.handshake.query;
     let log = logger.child({client: ip});
-
-    let ServerQuery;
+    let clientCookie = socket.handshake.headers.cookie ? cookie.parse(socket.handshake.headers.cookie) : undefined
+    let ServerQuery = {}
 
     log.info("Socket.io connected");
 
     // Try to reconnect if a token was send by the client
-    if (socket.handshake.query.hasOwnProperty("token")) {
+    if(clientCookie && clientCookie.token) {
+      console.log('fired');
+
       try {
-        let decoded = jwt.verify(token, process.env.JWT_SECRET);
+        let decoded = jwt.verify(clientCookie.token, process.env.JWT_SECRET);
 
         ServerQuery = await TeamSpeak.connect(decoded);
 
-        if (serverId) await ServerQuery.execute("use", {sid: serverId});
+        if (clientCookie.serverId) await ServerQuery.execute("use", {sid: clientCookie.serverId});
 
         registerEvents(ServerQuery, log, socket);
 

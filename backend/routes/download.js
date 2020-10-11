@@ -7,11 +7,10 @@ const {Readable} = require('stream')
 const {logger} = require("../utils")
 
 router.get('/', cors(), async (req, res) => {
-  let {token, path, name, cid, sid} = req.query
+  let {token, serverId} = req.cookies
+  let {path, name, cid} = req.query
   let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
   let log = logger.child({client: ip})
-
-  res.setHeader('Content-disposition', `attachment; filename=${name}`)
 
   try {
     let decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -22,10 +21,12 @@ router.get('/', cors(), async (req, res) => {
       if (data.type === "send") log.info(data.data)
     })
 
-    await ServerQuery.execute("use", {sid})
+    await ServerQuery.execute("use", {sid: serverId})
 
     // Channel password is not needed as a serveradmin
     let fileBuffer = await ServerQuery.downloadFile(path, cid, "")
+
+    res.setHeader('Content-disposition', `attachment; filename=${name}`)
 
     // Node >v10.17.0 required
     Readable.from(fileBuffer).pipe(res)
@@ -34,7 +35,7 @@ router.get('/', cors(), async (req, res) => {
   } catch(err) {
     log.error(err.message)
 
-    res.send(err)
+    res.send(err.message)
   }
 })
 

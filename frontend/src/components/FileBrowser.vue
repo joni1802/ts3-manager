@@ -1,24 +1,14 @@
 <template lang="html">
   <v-container>
-    <v-row>
-      <v-col>
+    <v-row justify="center">
+      <v-col cols="12" md="10" lg="8">
         <v-card>
-          <v-card-title>Title</v-card-title>
           <v-card-text>
-
-            
-
             <v-treeview
               :items="rootChannels"
-
-
-              activatable
-              open-on-click
-
-
               :load-children="getChildItems"
             >
-
+              <!-- open-on-click -->
               <template #prepend="{ item, open, active }">
                 <v-icon v-if="item.source.channel_name || item.source.type === 0" >
                   {{ open || active ? 'mdi-folder-open' : 'mdi-folder' }}
@@ -28,54 +18,17 @@
                 </v-icon>
               </template>
               <template #label="{ item }">
-
-                <v-menu offset-y max-width="300px" v-if="item.source.type === 1">
-                  <template #activator="{ on, attrs }">
-                    <v-list-item v-bind="attrs" v-on="on">
-                      <v-list-item-content>
-                        <v-list-item-title>{{ item.name }}</v-list-item-title>
-                        <v-list-item-subtitle>
-                          {{ item.source.size }} Bytes
-                        </v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-
-                  <v-list>
-                    <v-list-item :href="getDownloadURL(item.source)">
-                      <v-list-item-action>
-                        <v-icon>mdi-download</v-icon>
-                      </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title>Download File</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-action>
-                        <v-icon>mdi-delete</v-icon>
-                      </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title>Delete File</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-action>
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title>Rename File</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-
-                <v-list-item v-else>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.name }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-
-
+                <file-browser-file
+                  v-if="item.source.type === 1"
+                  :item="item"
+                  :href="getDownloadURL(item.source)"
+                >
+                </file-browser-file>
+                <file-browser-folder
+                  v-else
+                  :item="item"
+                >
+                </file-browser-folder>
               </template>
             </v-treeview>
           </v-card-text>
@@ -87,33 +40,16 @@
 
 <script>
 export default {
+  components: {
+    FileBrowserFile: () => import("@/components/FileBrowserFile"),
+    FileBrowserFolder: () => import("@/components/FileBrowserFolder"),
+  },
   data() {
     return {
       channelList: [],
       rootChannels: [],
-      // tree: [],
       active: [],
-      token: this.$store.state.query.token,
-      serverId: this.$store.state.query.serverId
     }
-  },
-  computed: {
-    // fileTree: {
-    //   get() {
-    //     return this.channelList.filter(channel => channel.pid === 0)
-    //       .map(rootChannel => {
-    //         return {
-    //           id: rootChannel.cid,
-    //           name: rootChannel.channel_name,
-    //           children: [],
-    //           channel: true
-    //         }
-    //       })
-    //   },
-    //   set(val) {
-    //     console.log(val);
-    //   }
-    // },
   },
   methods: {
     getChannelList() {
@@ -177,8 +113,6 @@ export default {
         filePath = this.joinFilePath(path, name)
       }
 
-      console.log(filePath);
-
       return this.$TeamSpeak.execute("ftgetfilelist", {
         cid,
         cpw: channelPassword,
@@ -217,18 +151,18 @@ export default {
       return temp.join("/")
     },
     getDownloadURL({cid, path, name}) {
-      let url = new URL("http://localhost:3000/download")
+      let url = new URL(`${process.env.VUE_APP_WEBSOCKET_URI}/download` || "/download")
 
       url.searchParams.append("path", this.joinFilePath(path, name))
       url.searchParams.append("name", name)
       url.searchParams.append("cid", cid)
-      url.searchParams.append("token", this.token)
-      url.searchParams.append("sid", this.serverId)
 
       return url.href
     },
   },
   async created() {
+
+
     try {
       // let temp = this.$TeamSpeak.execute("ftgetfilelist", {
       //   cid: 33,

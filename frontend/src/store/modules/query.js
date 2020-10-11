@@ -1,10 +1,11 @@
+import Cookies from "js-cookie"
+
 const state = {
   serverId: undefined,
   token: "",
   loading: false,
   connected: false,
   queryUser: {},
-  rememberLogin: true
 };
 
 const mutations = {
@@ -15,12 +16,28 @@ const mutations = {
     state.queryUser = userData;
   },
   saveToken(state, token) {
+    if(token) {
+      Cookies.set("token", token, {
+        expires: new Date(2147483647 * 1000)
+      })
+    } else {
+      Cookies.remove("token")
+    }
+
     state.token = token;
   },
   isConnected(state, status) {
     state.connected = status;
   },
   setServerId(state, id) {
+    if(id) {
+      Cookies.set("serverId", id, {
+        expires: new Date(2147483647 * 1000)
+      })
+    } else {
+      Cookies.remove("serverId")
+    }
+
     state.serverId = id;
   }
 };
