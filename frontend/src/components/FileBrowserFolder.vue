@@ -9,7 +9,7 @@
     </template>
 
     <v-list>
-      <v-list-item>
+      <v-list-item :to="{name: 'file-upload', params: {cid: item.source.cid}, query: {path: item.filePath}}">
         <v-list-item-action>
           <v-icon>mdi-upload</v-icon>
         </v-list-item-action>

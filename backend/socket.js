@@ -199,18 +199,6 @@ socket.init = server => {
       }
     });
 
-    socket.on("teamspeak-downloadfile", async ({path, cid, cpw}, fn) => {
-      try {
-        let response = await ServerQuery.downloadFile(path, cid, cpw)
-
-        console.log(response);
-
-        handleResponse(response, fn)
-      } catch(err) {
-        handleError(err, fn)
-      }
-    })
-
     // When the client disconnects from the server.
     // Try to quit the connection to the ServerQuery, if the client closed the connection without logging out properly.
     socket.on("disconnect", async () => {

@@ -1,5 +1,13 @@
 export default [
   {
+    path: "/file/upload/:cid",
+    component: () => import("@/components/FileUpload"),
+    name: "file-upload",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/files",
     component: () => import("@/components/FileBrowser"),
     name: "files",

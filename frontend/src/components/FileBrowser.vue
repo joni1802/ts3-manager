@@ -5,7 +5,7 @@
         <v-card>
           <v-card-text>
             <v-treeview
-              :items="rootChannels"
+              :items="folderList"
               :load-children="getChildItems"
             >
               <!-- open-on-click -->
@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       channelList: [],
-      rootChannels: [],
+      folderList: [],
       active: [],
     }
   },
@@ -57,46 +57,24 @@ export default {
     },
     // Normally this would be a computed property.
     // But the property load-children is not working with computed properties.
-    //
-    getRootChannels() {
-      return this.channelList.filter(channel => channel.pid === 0)
-        .map(rootChannel => {
-          return {
-            id: rootChannel.cid,
-            name: rootChannel.channel_name,
-            children: [],
-            source: rootChannel
-          }
-        })
+    getFolderList() {
+      return this.channelList.map(channel => {
+        return {
+          id: channel.cid,
+          name: channel.channel_name,
+          children: [],
+          source: channel
+        }
+      })
     },
-    /**
-     * [getChildItems description]
-     * @param  {[type]}  channel [description]
-     * @return {Promise}         [description]
-     */
     async getChildItems(channel) {
       try {
-        let subChannels = channel.source.channel_name ?
-          this.getSubChannels(channel.source.cid) :
-          []
-
         let files = await this.getFileList(channel.source)
 
-        return channel.children.push(...files, ...subChannels)
+        return channel.children.push(...files)
       } catch(err) {
-        console.log(err);
+        this.$toasted.error(err.message)
       }
-    },
-    getSubChannels(parentId) {
-      return this.channelList.filter(channel => channel.pid === parentId)
-        .map(subChannel => {
-          return {
-            id: subChannel.cid,
-            name: subChannel.channel_name,
-            children: [],
-            source: subChannel
-          }
-        })
     },
     // Is a channel or a sub folder
     // cid: 32
@@ -122,6 +100,7 @@ export default {
 
         return files.map(file => {
           let fileItem = {
+            filePath: this.joinFilePath(filePath, file.name),
             name: file.name,
             id: file.name,
             source: file
@@ -151,7 +130,8 @@ export default {
       return temp.join("/")
     },
     getDownloadURL({cid, path, name}) {
-      let url = new URL(`${process.env.VUE_APP_WEBSOCKET_URI}/download` || "/download")
+      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
+      let url = new URL("/api/download", base)
 
       url.searchParams.append("path", this.joinFilePath(path, name))
       url.searchParams.append("name", name)
@@ -164,14 +144,10 @@ export default {
 
 
     try {
-      // let temp = this.$TeamSpeak.execute("ftgetfilelist", {
-      //   cid: 33,
-      //   cpw: '',
-      //   path: '/'
-      // })
+
 
       this.channelList = await this.getChannelList()
-      this.rootChannels = this.getRootChannels()
+      this.folderList = this.getFolderList()
 
 
     } catch (err) {

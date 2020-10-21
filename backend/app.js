@@ -6,12 +6,21 @@ const express = require('express')
 const app = express()
 const socket = require('./socket')
 const cookieParser = require('cookie-parser')
+const cors = require('cors')
+const routes = require("./routes")
+
+// Needs to be disabled later
+// Only for developement
+app.use(cors({
+  origin: 'http://127.0.0.1:8080',
+  credentials: true
+}))
 
 app.use(cookieParser())
 
 app.use(express.static(path.join(__dirname, '../frontend/dist/')))
 
-app.use('/download', require('./routes/download'))
+app.use("/api", routes.api)
 
 app.get('/*', (req, res) => {
   // path must be absolute or specify root to res.sendFile
