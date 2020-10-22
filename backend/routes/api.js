@@ -120,6 +120,8 @@ router.post("/upload", async (req, res) => {
         socket.end()
 
         await ServerQuery.execute("quit")
+
+        res.sendStatus(200)
       })
 
     })
@@ -140,10 +142,7 @@ router.use((error, req, res, next) => {
 
   log.error(error.message)
 
-  res.status(400).json({
-    error: true,
-    message: error.message
-  })
+  res.status(400).send(error.message)
 })
 
 module.exports = router
