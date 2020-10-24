@@ -22,7 +22,7 @@
                 <file-browser-file
                   v-if="item.source.type === 1"
                   :item="item"
-                  @filerename="updateChildItems"
+                  @filechange="updateChildItems"
                 >
                 </file-browser-file>
                 <file-browser-folder

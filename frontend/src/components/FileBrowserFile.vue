@@ -22,7 +22,7 @@
             <v-list-item-title>Download File</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
+        <v-list-item @click="deleteDialog = true">
           <v-list-item-action>
             <v-icon>mdi-delete</v-icon>
           </v-list-item-action>
@@ -51,6 +51,20 @@
           <v-spacer></v-spacer>
           <v-btn text @click="renameFile" color="primary" :disabled="newFileName === item.source.name">OK</v-btn>
           <v-btn text @click="renameDialog = false" color="primary">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="deleteDialog" max-width="500px">
+      <v-card>
+        <v-card-title>Delete File</v-card-title>
+        <v-card-text>
+          Do you really want to delete this file?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="deleteFile" color="primary">Yes</v-btn>
+          <v-btn text @click="deleteDialog = false" color="primary">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -91,7 +105,22 @@ export default {
         this.$toasted.error(err.message)
       }
 
-      this.$emit("filerename", this.item.source)
+      this.$emit("filechange", this.item.source)
+    },
+    async deleteFile() {
+      let {cid, path, name} = this.item.source
+
+      try {
+        await this.$TeamSpeak.execute("ftdeletefile", {
+          cid,
+          cpw: "",
+          name: Path.join(path, name)
+        })
+      } catch(err) {
+        this.$toasted.error(err.message)
+      }
+
+      this.$emit("filechange", this.item.source)
     },
     getDownloadURL({cid, path, name}) {
       let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
