@@ -7,8 +7,9 @@
             <v-treeview
               :items="folderList"
               :load-children="getChildItems"
+              :open.sync="openFolders"
+              return-object
             >
-              <!-- open-on-click -->
               <template #prepend="{ item, open, active }">
                 <v-icon v-if="item.source.channel_name || item.source.type === 0" >
                   {{ open || active ? 'mdi-folder-open' : 'mdi-folder' }}
@@ -21,7 +22,7 @@
                 <file-browser-file
                   v-if="item.source.type === 1"
                   :item="item"
-                  :href="getDownloadURL(item.source)"
+                  @filerename="updateChildItems"
                 >
                 </file-browser-file>
                 <file-browser-folder
@@ -39,6 +40,8 @@
 </template>
 
 <script>
+import Path from "path-browserify"
+
 export default {
   components: {
     FileBrowserFile: () => import("@/components/FileBrowserFile"),
@@ -48,10 +51,13 @@ export default {
     return {
       channelList: [],
       folderList: [],
-      active: [],
+      openFolders: [],
     }
   },
   methods: {
+    doStuff(stuff) {
+      console.log(stuff);
+    },
     getChannelList() {
       return this.$TeamSpeak.execute("channellist", {}, ["-flags"])
     },
@@ -67,11 +73,17 @@ export default {
         }
       })
     },
-    async getChildItems(channel) {
+    /**
+     * Loads all child items form the server.
+     * Child items are files or folders.
+     * @param  {Object}  parentItem channel or folder inside a channel
+     * @return {Promise}            child items
+     */
+    async getChildItems(parentItem) {
       try {
-        let files = await this.getFileList(channel.source)
+        let childItems = await this.getFileList(parentItem.source)
 
-        return channel.children.push(...files)
+        return parentItem.children.push(...childItems)
       } catch(err) {
         this.$toasted.error(err.message)
       }
@@ -83,30 +95,26 @@ export default {
     // path: "/"
     // size: 36763
     // type: 1
-    getFileList({cid, channel_name, type, path, channel_flag_password, name}) {
+    getFileList({cid, type, path, name}) {
       let filePath = "/"
-      let channelPassword = ""
 
+      // If it is a folder
       if(type === 0) {
-        filePath = this.joinFilePath(path, name)
+        filePath = Path.join(path, name)
       }
 
       return this.$TeamSpeak.execute("ftgetfilelist", {
         cid,
-        cpw: channelPassword,
+        cpw: "",
         path: filePath
       }).then(files => {
-        console.log(files);
-
         return files.map(file => {
           let fileItem = {
-            filePath: this.joinFilePath(filePath, file.name),
             name: file.name,
             id: file.name,
             source: file
           }
 
-          // If it is a folder add the property "children" to the object.
           // With this property the item loads all child items on click.
           if(file.type === 0) {
             fileItem.children = []
@@ -117,41 +125,28 @@ export default {
       })
 
     },
-    joinFilePath(path, name) {
-      let temp = path.split("/")
+    /**
+     * [updateChildItems description]
+     * @param  {[type]} file [description]
+     * @return {[type]}      [description]
+     */
+    updateChildItems(file) {
+      let itemParentId = file.path === "/" ? file.cid : file.path.split("/").pop()
+      let parentItem = this.openFolders.find(folder => folder.id === itemParentId)
 
-      // Because "/".split("/") => ["", ""]
-      if(temp[1] === "") {
-        temp.shift()
-      }
+      // Remove all current child items
+      parentItem.children = []
 
-      temp.push(name)
-
-      return temp.join("/")
-    },
-    getDownloadURL({cid, path, name}) {
-      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
-      let url = new URL("/api/download", base)
-
-      url.searchParams.append("path", this.joinFilePath(path, name))
-      url.searchParams.append("name", name)
-      url.searchParams.append("cid", cid)
-
-      return url.href
-    },
+      // Reload child items
+      this.getChildItems(parentItem)
+    }
   },
   async created() {
-
-
     try {
-
-
       this.channelList = await this.getChannelList()
       this.folderList = this.getFolderList()
-
-
     } catch (err) {
-      console.log(err)
+      this.$toasted.error(err.message)
     }
   }
 }

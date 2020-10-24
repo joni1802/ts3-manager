@@ -11,6 +11,7 @@ const {TeamSpeak} = require("ts3-nodejs-library")
 const {logger} = require("../utils")
 const {Socket} = require("net")
 const Busboy = require('busboy')
+const Path = require("path")
 
 /**
  * Authenticate every request and try to connect to the ServerQuery.
@@ -42,14 +43,15 @@ router.use(async (req, res, next) => {
 /**
  * Download file from the server.
  */
-router.get("/download", async (req, res) => {
+router.get("/download", async (req, res, next) => {
   let {path, name, cid} = req.query
   let {ServerQuery, log} = res.locals
   let receivedBytes = 0
   let socket = new Socket()
 
   try {
-    let {ftkey, port, size} = await ServerQuery.ftInitDownload({cid, name: path})
+    // Even on Windows TeamSpeak uses only POSIX specifc paths
+    let {ftkey, port, size} = await ServerQuery.ftInitDownload({cid, name: Path.posix.join(path, name)})
 
     socket.connect(port, ServerQuery.config.host)
 
@@ -85,7 +87,7 @@ router.get("/download", async (req, res) => {
 /**
  * Upload file to the server
  */
-router.post("/upload", async (req, res) => {
+router.post("/upload", async (req, res, next) => {
   let {path, cid} = req.query
   let size = req.headers["content-length"]
   let {ServerQuery, log} = res.locals
@@ -94,7 +96,7 @@ router.post("/upload", async (req, res) => {
 
   try {
     busboy.on("file", async (fieldname, file, filename, encoding, mimetype) => {
-      let {port, ftkey} = await ServerQuery.ftInitUpload({name: `${path}${filename}`, cid, size})
+      let {port, ftkey} = await ServerQuery.ftInitUpload({name: Path.posix.join(path, filename), cid, size})
 
       socket.connect(port, ServerQuery.config.host)
 
