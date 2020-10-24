@@ -45,7 +45,7 @@
       <v-card>
         <v-card-title>Rename File</v-card-title>
         <v-card-text>
-          <v-text-field v-model="newFileName"></v-text-field>
+          <v-text-field v-model="newFileName" label="File Name"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
