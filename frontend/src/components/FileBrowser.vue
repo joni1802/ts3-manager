@@ -7,8 +7,6 @@
             <v-treeview
               :items="folderList"
               :load-children="getChildItems"
-              :open.sync="openFolders"
-              return-object
             >
               <template #prepend="{ item, open, active }">
                 <v-icon v-if="item.type !== 1" >
@@ -47,14 +45,15 @@
 /**
  * Item in the file tree.
  * @typedef {Object} TreeItem
- * @property {Number} id          - channel id or name of file or folder
- * @property {String} name        - name of channel, file or folder
- * @property {String} [path]      - path of folder or file
- * @property {Number} cid         - channel id
- * @property {Number} [type]      - type 0 = folder, type 1 = file, type undefined = channel
- * @property {Number} [datetime]  - file or folder creation date
- * @property {Number} [size]      - file size in bytes
- * @property {Array} [children]   - child items
+ * @property {(Number|String)} id     - channel id or name of file or folder
+ * @property {(Number|String)} [pid]  - id of the parent element
+ * @property {String} name            - name of channel, file or folder
+ * @property {String} [path]          - path of folder or file
+ * @property {Number} cid             - channel id
+ * @property {Number} [type]          - type 0 = folder, type 1 = file, type undefined = channel
+ * @property {Number} [datetime]      - file or folder creation date
+ * @property {Number} [size]          - file size in bytes
+ * @property {Array} [children]       - child items
  */
 
 import Path from "path-browserify"
@@ -66,8 +65,7 @@ export default {
   },
   data() {
     return {
-      folderList: [],
-      openFolders: [],
+      folderList: []
     }
   },
   methods: {
@@ -112,34 +110,60 @@ export default {
      * @param  {TreeItem}
      * @return {Array.<TreeItem>}
      */
-    getFileList({cid, type, path, name}) {
+    getFileList({cid, type, path, name, id}) {
       return this.$TeamSpeak.execute("ftgetfilelist", {
         cid,
         cpw: "",
         path: path ? Path.join(path, name) : "/"
       }).then(files => {
         return files.map(file => {
-          file.id = file.name // file name is always unique
+          let item = {
+            id: file.name,
+            pid: id,
+            name: file.name,
+            path: file.path,
+            cid: file.cid,
+            type: file.type,
+            datetime: file.datetime,
+            size: file.size
+          }
 
           // Add possibilty to load more child items if it is a folder
           if(file.type === 0) {
-            file.children = []
+            item.children = []
           }
 
-          return file
+          return item
         })
       })
     },
 
     /**
      * Reload child items of the parent folder when a file has changed.
-     * @param  {TreeItem} file
+     * @param  {TreeItem} item  - folder or file
      */
-    updateParentItem(file) {
-      let folderId = file.path === "/" ? file.cid : file.path.split("/").pop()
-      let folder = this.openFolders.find(folder => folder.id === folderId)
+    updateParentItem(item) {
+      let parentItem = this.findParentItem(item.pid, this.folderList)
 
-      this.getChildItems(folder)
+      this.getChildItems(parentItem)
+    },
+
+    /**
+     * Return the parent elemen of an item.
+     * @param  {(Number|String)} pid    - parent id
+     * @param  {Array.<TreeItem>} items - children
+     * @return {TreeItem}               - folder or channel
+     */
+    findParentItem(pid, items) {
+      for(let item of items) {
+        if(item.id === pid) {
+          return item
+        } else {
+          if(item.children && item.children.length) {
+            return this.findParentItem(pid, item.children)
+          }
+        }
+      }
     }
   },
   async created() {
