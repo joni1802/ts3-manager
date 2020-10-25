@@ -26,7 +26,7 @@
 export default {
   data() {
     return {
-      path: this.$route.query.path ? `${this.$route.query.path}/` : "/",
+      path: this.$route.query.path ? this.$route.query.path : "/",
       channelId: this.$route.params.cid,
       file: undefined,
       uploadProgress: 0

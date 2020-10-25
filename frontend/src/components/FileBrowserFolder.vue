@@ -11,7 +11,7 @@
       </template>
 
       <v-list>
-        <v-list-item :to="{name: 'file-upload', params: {cid: item.cid}, query: {path: item.path}}">
+        <v-list-item @click="goToUploadRoute">
           <v-list-item-action>
             <v-icon>mdi-upload</v-icon>
           </v-list-item-action>
@@ -113,6 +113,22 @@ export default {
       }
 
       this.$emit("subfoldercreate", this.item)
+    },
+    goToUploadRoute() {
+      let uploadRoute = {
+        name: "file-upload",
+        params: {
+          cid: this.item.cid
+        }
+      }
+
+      if(this.item.path) {
+        uploadRoute.query = {
+          path: Path.join(this.item.path, this.item.name)
+        }
+      }
+
+      this.$router.push(uploadRoute)
     }
   }
 }
