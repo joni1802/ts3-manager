@@ -11,7 +11,7 @@
               return-object
             >
               <template #prepend="{ item, open, active }">
-                <v-icon v-if="item.source.channel_name || item.source.type === 0" >
+                <v-icon v-if="item.type !== 1" >
                   {{ open || active ? 'mdi-folder-open' : 'mdi-folder' }}
                 </v-icon>
                 <v-icon v-else>
@@ -20,14 +20,18 @@
               </template>
               <template #label="{ item }">
                 <file-browser-file
-                  v-if="item.source.type === 1"
+                  v-if="item.type === 1"
                   :item="item"
-                  @filechange="updateChildItems"
+                  @filerename="updateParentItem"
+                  @filedelete="updateParentItem"
                 >
                 </file-browser-file>
                 <file-browser-folder
                   v-else
                   :item="item"
+                  @subfoldercreate="getChildItems"
+                  @folderdelete="updateParentItem"
+                  @folderrename="updateParentItem"
                 >
                 </file-browser-folder>
               </template>
@@ -40,6 +44,19 @@
 </template>
 
 <script>
+/**
+ * Item in the file tree.
+ * @typedef {Object} TreeItem
+ * @property {Number} id          - channel id or name of file or folder
+ * @property {String} name        - name of channel, file or folder
+ * @property {String} [path]      - path of folder or file
+ * @property {Number} cid         - channel id
+ * @property {Number} [type]      - type 0 = folder, type 1 = file, type undefined = channel
+ * @property {Number} [datetime]  - file or folder creation date
+ * @property {Number} [size]      - file size in bytes
+ * @property {Array} [children]   - child items
+ */
+
 import Path from "path-browserify"
 
 export default {
@@ -49,102 +66,85 @@ export default {
   },
   data() {
     return {
-      channelList: [],
       folderList: [],
       openFolders: [],
     }
   },
   methods: {
-    doStuff(stuff) {
-      console.log(stuff);
-    },
-    getChannelList() {
-      return this.$TeamSpeak.execute("channellist", {}, ["-flags"])
-    },
-    // Normally this would be a computed property.
-    // But the property load-children is not working with computed properties.
-    getFolderList() {
-      return this.channelList.map(channel => {
-        return {
-          id: channel.cid,
-          name: channel.channel_name,
-          children: [],
-          source: channel
-        }
-      })
-    },
     /**
-     * Loads all child items form the server.
-     * Child items are files or folders.
-     * @param  {Object}  parentItem channel or folder inside a channel
-     * @return {Promise}            child items
+     * The root folder list which are all channels on the server.
+     * @return {Array.<TreeItem>}
+     */
+    getFolderList() {
+      return this.$TeamSpeak.execute("channellist")
+        .then(channels => {
+          return channels.map(channel => {
+            return {
+              id: channel.cid,
+              name: channel.channel_name,
+              cid: channel.cid,
+              children: []
+            }
+          })
+        })
+    },
+
+    /**
+     * Add child items to the current item.
+     * @param  {Object}  parentItem - channel or folder inside a channel
+     * @return {Object}             - parent element with the loaded child items
      */
     async getChildItems(parentItem) {
       try {
-        let childItems = await this.getFileList(parentItem.source)
+        let childItems = await this.getFileList(parentItem)
 
-        return parentItem.children.push(...childItems)
+        parentItem.children = childItems
+
+        // return parentItem.children.push(...childItems)
       } catch(err) {
         this.$toasted.error(err.message)
       }
     },
-    // Is a channel or a sub folder
-    // cid: 32
-    // datetime: 1601820490
-    // name: "lollol.pdf"
-    // path: "/"
-    // size: 36763
-    // type: 1
+
+    /**
+     * Loads the file list from the ServerQuery.
+     * A file list contains files and folders.
+     * @param  {TreeItem}
+     * @return {Array.<TreeItem>}
+     */
     getFileList({cid, type, path, name}) {
-      let filePath = "/"
-
-      // If it is a folder
-      if(type === 0) {
-        filePath = Path.join(path, name)
-      }
-
       return this.$TeamSpeak.execute("ftgetfilelist", {
         cid,
         cpw: "",
-        path: filePath
+        path: path ? Path.join(path, name) : "/"
       }).then(files => {
         return files.map(file => {
-          let fileItem = {
-            name: file.name,
-            id: file.name,
-            source: file
-          }
+          file.id = file.name // file name is always unique
 
-          // With this property the item loads all child items on click.
+          // Add possibilty to load more child items if it is a folder
           if(file.type === 0) {
-            fileItem.children = []
+            file.children = []
           }
 
-          return fileItem
+          return file
         })
       })
-
     },
+
     /**
-     * [updateChildItems description]
-     * @param  {[type]} file [description]
-     * @return {[type]}      [description]
+     * Reload child items of the parent folder when a file has changed.
+     * @param  {TreeItem} file
      */
-    updateChildItems(file) {
-      let itemParentId = file.path === "/" ? file.cid : file.path.split("/").pop()
-      let parentItem = this.openFolders.find(folder => folder.id === itemParentId)
+    updateParentItem(file) {
+      let folderId = file.path === "/" ? file.cid : file.path.split("/").pop()
+      let folder = this.openFolders.find(folder => folder.id === folderId)
 
-      // Remove all current child items
-      parentItem.children = []
-
-      // Reload child items
-      this.getChildItems(parentItem)
+      this.getChildItems(folder)
     }
   },
   async created() {
     try {
-      this.channelList = await this.getChannelList()
-      this.folderList = this.getFolderList()
+      this.folderList = await this.getFolderList()
     } catch (err) {
       this.$toasted.error(err.message)
     }
