@@ -3,10 +3,18 @@
     <v-row justify="center">
       <v-col cols="12" md="10" lg="8">
         <v-card>
+          <v-card-title>
+            <file-delete-button :selectedFiles="selectedFiles" @filedelete="updateParentItem"></file-delete-button>
+            <v-spacer></v-spacer>
+            <!-- <v-text-field append-icon="search" label="Search"></v-text-field> -->
+          </v-card-title>
           <v-card-text>
             <v-treeview
               :items="folderList"
               :load-children="getChildItems"
+              return-object
+              selectable
+              v-model="selectedFiles"
             >
               <template #prepend="{ item, open, active }">
                 <v-icon v-if="item.type !== 1" >
@@ -62,10 +70,12 @@ export default {
   components: {
     FileBrowserFile: () => import("@/components/FileBrowserFile"),
     FileBrowserFolder: () => import("@/components/FileBrowserFolder"),
+    FileDeleteButton: () => import("@/components/FileDeleteMultiple")
   },
   data() {
     return {
-      folderList: []
+      folderList: [],
+      selectedFiles: [],
     }
   },
   methods: {
@@ -93,6 +103,8 @@ export default {
      * @return {Object}             - parent element with the loaded child items
      */
     async getChildItems(parentItem) {
+      console.log(parentItem);
+
       try {
         let childItems = await this.getFileList(parentItem)
 
@@ -100,6 +112,7 @@ export default {
 
         // return parentItem.children.push(...childItems)
       } catch(err) {
+        console.log(err);
         this.$toasted.error(err.message)
       }
     },
@@ -118,7 +131,7 @@ export default {
       }).then(files => {
         return files.map(file => {
           let item = {
-            id: file.name,
+            id: `${file.name}-${file.datetime}`,
             pid: id,
             name: file.name,
             path: file.path,
@@ -164,7 +177,7 @@ export default {
           }
         }
       }
-    }
+    },
   },
   async created() {
     try {

@@ -1,7 +1,7 @@
 <template lang="html">
   <v-dialog v-model="dialog" max-width="500px">
     <v-card>
-      <v-card-title>Delete File</v-card-title>
+      <v-card-title>Delete {{ item.type === 0 ? "Folder" : "File" }}</v-card-title>
       <v-card-text v-if="item.type === 0">
         Do you really want to delete this folder?
         All files inside the deleted folder will be lost.

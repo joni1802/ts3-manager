@@ -69,7 +69,7 @@ export default {
     /**
      * Generates download url for the file download.
      * @param  {TreeItem}
-     * @return {String}   - download url 
+     * @return {String}   - download url
      */
     getDownloadURL({cid, path, name}) {
       let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
