@@ -6,7 +6,7 @@
           <v-list-item-content>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
             <v-list-item-subtitle>
-              {{ item.size }} Bytes
+              {{ Math.round(item.size / 1024).toLocaleString() }} Kibibytes
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
