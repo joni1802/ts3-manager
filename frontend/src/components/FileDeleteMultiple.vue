@@ -26,6 +26,10 @@ import Path from "path-browserify"
 
 export default {
   props:{
+    /**
+     * All selected files, folder and channels
+     * @type {Array.<TreeItem>}
+     */
     selectedFiles: Array
   },
   data() {
@@ -34,10 +38,37 @@ export default {
     }
   },
   methods: {
+    /**
+     * Remove all selected child items if a the parent item is selected.
+     * If a folder and a file inside that folder are selected, only the delete command for
+     * the folder will be send to the ServerQuery.
+     * @return {Array.<TreeItem>} - selected parent items
+     */
+    getRemoveList() {
+      let removeList = [...this.selectedFiles]
+
+      this.selectedFiles.forEach((file, index, array) => {
+        let parentFile = array.find(selectedFile => file.pid === selectedFile.id)
+
+        if(parentFile) {
+          delete removeList[index]
+        }
+      })
+
+      // reindex array
+      return removeList.filter(file => file)
+    },
+
+    /**
+     * Send delete command for each file/folder to the ServerQuery and emit
+     * an event to update the directory.
+     */
     async deleteFiles() {
+      let fileRemoveList = this.getRemoveList()
+
       try {
-        for(let file of this.selectedFiles) {
-          // if it is not a channel
+        for(let file of fileRemoveList) {
+          // if it is a file or folder
           if(file.path !== undefined) {
             await this.$TeamSpeak.execute("ftdeletefile", {
               cid: file.cid,
@@ -45,8 +76,18 @@ export default {
               name: Path.join(file.path, file.name)
             })
 
-            this.$emit("filedelete", file)
+          // if it is a channel
+          } else {
+            for(let childFile of file.children) {
+              await this.$TeamSpeak.execute("ftdeletefile", {
+                cid: file.cid,
+                cpw: "",
+                name: Path.join(childFile.path, childFile.name)
+              })
+            }
           }
+
+          this.$emit("filedelete", file)
         }
       } catch(err) {
         this.$toasted.error(err.message)

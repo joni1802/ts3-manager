@@ -15,6 +15,7 @@
               return-object
               selectable
               v-model="selectedFiles"
+              selection-type="independent"
             >
               <template #prepend="{ item, open, active }">
                 <v-icon v-if="item.type !== 1" >
@@ -103,8 +104,6 @@ export default {
      * @return {Object}             - parent element with the loaded child items
      */
     async getChildItems(parentItem) {
-      console.log(parentItem);
-
       try {
         let childItems = await this.getFileList(parentItem)
 
@@ -112,7 +111,6 @@ export default {
 
         // return parentItem.children.push(...childItems)
       } catch(err) {
-        console.log(err);
         this.$toasted.error(err.message)
       }
     },
@@ -155,10 +153,15 @@ export default {
      * Reload child items of the parent folder when a file has changed.
      * @param  {TreeItem} item  - folder or file
      */
-    updateParentItem(item) {
-      let parentItem = this.findParentItem(item.pid, this.folderList)
+    async updateParentItem(item) {
+      if(item.path !== undefined) {
+        let parentItem = this.findParentItem(item.pid, this.folderList)
 
-      this.getChildItems(parentItem)
+        await this.getChildItems(parentItem)
+      } else {
+        await this.getChildItems(item)
+      }
+
     },
 
     /**
