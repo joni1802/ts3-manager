@@ -5,12 +5,19 @@
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title>TS3 Manager</v-list-item-title>
-      <v-list-item-subtitle>v2.0.0</v-list-item-subtitle>
+      <v-list-item-subtitle>{{ version }}</v-list-item-subtitle>
     </v-list-item-content>
   </v-list-item>
 </template>
 
 <script>
+import { version } from "../../package.json";
+
 export default {
+  data() {
+    return {
+      version
+    }
+  }
 }
 </script>
