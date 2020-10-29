@@ -60,12 +60,11 @@ import { version } from "../../package.json";
 export default {
   beforeRouteEnter(to, from, next) {
     next(async vm => {
-      if (!vm.$store.state.query.token) return;
+      let token = vm.$store.state.query.token
 
-      vm.$socket.emit(
-        "autofillform",
-        vm.$store.state.query.token,
-        response => {
+      if (!token) return;
+
+      vm.$socket.emit("autofillform", token, response => {
           if(response.host) {
             vm.form.host = response.host;
             vm.form.queryport = response.queryport;
@@ -73,7 +72,7 @@ export default {
             vm.form.username = response.username;
             vm.form.password = response.password;
           } else {
-            vm.$store.commit("saveToken", "")
+            vm.$store.dispatch("removeToken")
 
             vm.$toasted.error(response)
           }
@@ -126,7 +125,7 @@ export default {
           password: this.form.password
         })
 
-        this.$store.commit("saveToken", token)
+        this.$store.dispatch("saveToken", token)
         this.$store.commit("isConnected", true)
 
         this.$router.push({name: "servers"})

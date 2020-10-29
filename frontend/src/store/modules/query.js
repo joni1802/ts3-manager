@@ -1,8 +1,8 @@
 import Cookies from "js-cookie"
 
 const state = {
-  serverId: undefined,
-  token: "",
+  serverId: Cookies.get("serverId"),
+  token: Cookies.get("token"),
   loading: false,
   connected: false,
   queryUser: {},
@@ -15,47 +15,55 @@ const mutations = {
   saveUserInfo(state, userData) {
     state.queryUser = userData;
   },
-  saveToken(state, token) {
-    if(token) {
-      Cookies.set("token", token, {
-        expires: new Date(2147483647 * 1000)
-      })
-    } else {
-      Cookies.remove("token")
-    }
-
+  setToken(state, token) {
     state.token = token;
   },
   isConnected(state, status) {
     state.connected = status;
   },
   setServerId(state, id) {
-    if(id) {
-      Cookies.set("serverId", id, {
-        expires: new Date(2147483647 * 1000)
-      })
-    } else {
-      Cookies.remove("serverId")
-    }
-
     state.serverId = id;
   }
 };
 
 const actions = {
-  clearConnection({commit, rootState}) {
+  saveToken({commit}, token) {
+    Cookies.set("token", token, {
+      expires: new Date(2147483647 * 1000)
+    })
+
+    commit("setToken", token)
+  },
+  removeToken({commit}) {
+    Cookies.remove("token")
+
+    commit("setToken", null)
+  },
+  saveServerId({commit}, sid) {
+    Cookies.set("serverId", sid, {
+      expires: new Date(2147483647 * 1000)
+    })
+
+    commit("setServerId", sid)
+  },
+  removeServerId({commit}) {
+    Cookies.remove("serverId")
+
+    commit("setServerId", null)
+  },
+  clearConnection({commit, rootState, dispatch}) {
     commit("isConnected", false);
-    commit("setServerId", null);
+    dispatch("removeServerId");
     commit("saveUserInfo", {});
 
-    if (!rootState.settings.rememberLogin) commit("saveToken", "");
+    if (!rootState.settings.rememberLogin) dispatch("removeToken");
   },
-  saveConnection({commit}, {serverId, queryUser, token}) {
+  saveConnection({commit, dispatch}, {serverId, queryUser, token}) {
     commit("isConnected", true);
 
-    if (serverId) commit("setServerId", serverId);
+    if (serverId) dispatch("saveServerId", serverId);
     if (queryUser) commit("saveUserInfo", queryUser);
-    if (token) commit("saveToken", token);
+    if (token) dispatch("saveToken", token);
   }
 };
 

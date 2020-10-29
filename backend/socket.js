@@ -83,14 +83,16 @@ socket.init = server => {
     const {TeamSpeak} = require("ts3-nodejs-library");
     let ip = socket.handshake.headers["x-forwarded-for"] || socket.client.conn.remoteAddress;
     let log = logger.child({client: ip});
-    let clientCookie = socket.handshake.headers.cookie ? cookie.parse(socket.handshake.headers.cookie) : undefined
+    let clientCookie = socket.handshake.headers.cookie ? cookie.parse(socket.handshake.headers.cookie) : {}
     let ServerQuery = {}
 
     log.info("Socket.io connected");
 
-    // Try to reconnect if a token was send by the client
-    if(clientCookie && clientCookie.token) {
-      console.log('fired');
+
+
+    // Try to reconnect
+    // Socket.io query sends data as string
+    if(socket.handshake.query.reconnect === "true" && clientCookie.token) {
 
       try {
         let decoded = jwt.verify(clientCookie.token, process.env.JWT_SECRET);

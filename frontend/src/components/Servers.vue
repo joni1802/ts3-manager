@@ -254,7 +254,7 @@ export default {
 
         this.servers = await this.getServerList()
 
-        if(this.joinedServerId === this.selectedServer.virtualserver_id) this.$store.commit("setServerId", null)
+        if(this.joinedServerId === this.selectedServer.virtualserver_id) this.$store.dispatch("removeServerId")
       } catch (err) {
         this.$toasted.error(err.message);
       }

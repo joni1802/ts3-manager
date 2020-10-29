@@ -196,7 +196,7 @@ TeamSpeak.unregisterEvent = () => {
 
 TeamSpeak.selectServer = sid => {
   return TeamSpeak.execute("use", {sid})
-    .then(() => store.commit("setServerId", sid))
+    .then(() => store.dispatch("saveServerId", sid))
     .then(() => TeamSpeak.registerAllEvents())
     .then(() => TeamSpeak.execute("whoami"))
     .then(userInfo => store.commit("saveUserInfo", userInfo[0]));
