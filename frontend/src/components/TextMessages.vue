@@ -7,7 +7,7 @@
     <div :class="{'textmessages__users': true, 'd-none': hideChatTargets, 'd-md-flex': true }">
       <v-list subheader class="my-2">
         <v-subheader>Channels</v-subheader>
-        <v-list-item-group v-model="selectedChannelItem">
+        <v-list-item-group :value="selectedChannelItem">
           <v-list-item
             v-for="channel in channelList"
             :key="channel.cid"
@@ -202,13 +202,8 @@ export default {
     }
   },
   computed: {
-    selectedChannelItem: {
-      get() {
-        return this.channelList.findIndex(channel => channel.cid === this.channelId)
-      },
-      set(itemIndex) {
-        // does no need to be set
-      }
+    selectedChannelItem() {
+      return this.channelList.findIndex(channel => channel.cid === this.channelId)
     },
     currentJoinedChannel() {
       return this.channelList.find(channel => channel.cid === this.channelId)
