@@ -122,8 +122,6 @@ export default {
       }
     },
     async init() {
-
-
       try {
         this.servergroups = await this.getServergrouplist()
 
@@ -143,14 +141,12 @@ export default {
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.servergroupId = to.params.sgid
-
     try {
+      this.servergroupId = to.params.sgid
       this.serverGroupPermissions = await this.getServergroupPermissions()
     } catch (err) {
       this.$toasted.error(err.message)
     }
-
 
     next()
   },

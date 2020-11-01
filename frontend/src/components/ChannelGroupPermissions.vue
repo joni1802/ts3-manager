@@ -128,8 +128,12 @@ export default {
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.channelGroupId = to.params.cgid
-    this.permissions = await this.getChannelGroupPermList()
+    try {
+      this.channelGroupId = to.params.cgid
+      this.permissions = await this.getChannelGroupPermList()
+    } catch(err) {
+      this.$toasted.error(err.message)
+    }
 
     next()
   },

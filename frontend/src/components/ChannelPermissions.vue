@@ -125,8 +125,12 @@ export default {
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.channelId = to.params.cid
-    this.permissions = await this.getChannelPermissions()
+    try {
+      this.channelId = to.params.cid
+      this.permissions = await this.getChannelPermissions()
+    } catch(err) {
+      this.$toasted.error(err.message)
+    }
 
     next()
   },

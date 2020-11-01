@@ -11,7 +11,13 @@
     <v-list dense class="pt-2" subheader nav>
       <logo></logo>
       <v-divider></v-divider>
-      <v-list-item v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
+      <v-list-item
+        v-for="(entry, i) in menuEntries"
+        v-if="!entry.submenu"
+        :key="i"
+        @click="pushRoute(entry)"
+        :class="{'v-list-item--active': $route.name === entry.route.name}"
+      >
         <v-list-item-icon>
           <v-badge color="error" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
             <template #badge>
@@ -27,7 +33,8 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-group v-else active-class="" no-action :prepend-icon="entry.icon">
+
+      <v-list-group v-else no-action :prepend-icon="entry.icon">
         <template #activator>
           <v-list-item>
             <v-list-item-content>
@@ -37,7 +44,12 @@
             </v-list-item-content>
           </v-list-item>
         </template>
-        <v-list-item v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.route">
+        <v-list-item
+          v-for="(subEntry, j) in entry.submenu"
+          :key="j"
+          @click="pushRoute(subEntry)"
+          :class="{'v-list-item--active': $route.name === subEntry.route.name}"
+        >
           <v-list-item-icon>
             <v-icon>{{ subEntry.icon }}</v-icon>
           </v-list-item-icon>
@@ -174,14 +186,14 @@ export default {
       } else {
         return true
       }
-    },
-    notServers() {
-      if(!this.$route.name === 'servers') {
-        return true
-      } else {
-        return false
+    }
+  },
+  methods: {
+    pushRoute(entry) {
+      if(entry.route.name !== this.$route.name) {
+        this.$router.push(entry.route)
       }
     }
-  }
+  },
 }
 </script>

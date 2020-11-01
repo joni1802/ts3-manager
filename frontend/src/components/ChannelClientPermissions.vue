@@ -166,9 +166,13 @@ export default {
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.channelId = to.params.cid
-    this.clientDbId = to.params.cldbid
-    this.permissions = await this.getChannelClientPermList()
+    try {
+      this.channelId = to.params.cid
+      this.clientDbId = to.params.cldbid
+      this.permissions = await this.getChannelClientPermList()
+    } catch(err) {
+      this.$toasted.error(err.message)
+    }
 
     next()
   },

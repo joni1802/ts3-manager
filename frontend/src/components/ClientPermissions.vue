@@ -131,14 +131,12 @@ export default {
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.clientDbId = to.params.cldbid
-
     try {
+      this.clientDbId = to.params.cldbid
       this.clientPermissions = await this.getClientPermissions()
     } catch (err) {
       this.$toasted.error(err.message)
     }
-
 
     next()
   },

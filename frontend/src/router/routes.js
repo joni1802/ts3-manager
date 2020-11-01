@@ -173,6 +173,20 @@ export default [
       requiresAuth: true
     }
   },
+  /**
+   * The order of the following two routes matters.
+   * Vice versa the route "permissions-channel" would be fired
+   * when manually refreshing the page "permissions-channelclient".
+   * @see {@link https://router.vuejs.org/guide/essentials/dynamic-matching.html#matching-priority}
+   */
+  {
+    path: "/permissions/channel/:cid?/client/:cldbid?",
+    component: () => import("@/components/ChannelClientPermissions"),
+    name: "permissions-channelclient",
+    meta: {
+      requiresAuth: true
+    }
+  },
   {
     path: "/permissions/channel/:cid?",
     component: () => import("@/components/ChannelPermissions"),
@@ -217,14 +231,6 @@ export default [
     path: "/permissions/channelgroup/:cgid?",
     component: () => import("@/components/ChannelGroupPermissions"),
     name: "permissions-channelgroup",
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: "/permissions/channel/:cid?/client/:cldbid?",
-    component: () => import("@/components/ChannelClientPermissions"),
-    name: "permissions-channelclient",
     meta: {
       requiresAuth: true
     }
