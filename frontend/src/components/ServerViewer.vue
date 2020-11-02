@@ -25,7 +25,7 @@
 export default {
   components: {
     Channel: () => import('@/components/Channel'),
-    Client: () => import('@/components/ChannelClients'),
+    Client: () => import('@/components/ChannelClient'),
   },
   data() {
     return {
