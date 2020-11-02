@@ -5,16 +5,22 @@
         <v-card>
           <v-card-title>Upload File</v-card-title>
           <v-card-text>
-            <v-file-input label="Upload File(s)" v-model="file" :disabled="!!uploadProgress"></v-file-input>
-            <div :class="{progress: true, 'progress--visible': uploadProgress}">
-              <v-progress-linear v-model="uploadProgress" striped></v-progress-linear>
-              <span>{{ Math.ceil(uploadProgress) }}%</span>
-            </div>
+            <v-file-input label="Upload File(s)" v-model="file" :disabled="loading"></v-file-input>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="uploadFiles" :disabled="file ? false : true">Upload</v-btn>
-            <v-btn text color="primary" @click="$router.go(-1)">Cancel</v-btn>
+            <v-btn
+              color="primary"
+              @click="uploadFiles"
+              :disabled="!!!file || loading"
+              :loading="!!uploadProgress"
+            >
+              <template #loader>
+                <span>{{ Math.ceil(uploadProgress) }}%</span>
+              </template>
+              Upload
+            </v-btn>
+            <v-btn text color="primary" @click="cancel">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -29,35 +35,41 @@ export default {
       path: this.$route.query.path ? this.$route.query.path : "/",
       channelId: this.$route.params.cid,
       file: undefined,
-      uploadProgress: 0
+      uploadProgress: 0,
+      request: {}
+    }
+  },
+  computed: {
+    loading() {
+      return !!this.uploadProgress
     }
   },
   methods: {
     uploadFiles() {
       let formData = new FormData()
-      let req = new XMLHttpRequest()
+      this.request = new XMLHttpRequest()
 
       formData.append("file", this.file)
 
       // Send Cookies
-      req.withCredentials = true
+      this.request.withCredentials = true
 
-      req.open("POST", this.getUploadURL(this.channelId, this.path))
+      this.request.open("POST", this.getUploadURL(this.channelId, this.path))
 
-      req.addEventListener("readystatechange", e => {
+      this.request.addEventListener("readystatechange", e => {
         // Request done
-        if(req.readyState === 4) {
-          if(req.status === 200) {
+        if(this.request.readyState === 4) {
+          if(this.request.status === 200) {
             this.$toasted.success("File successfully uploaded")
           } else {
-            this.$toasted.error(req.response)
+            this.$toasted.error(this.request.response)
           }
         }
       })
 
-      req.upload.addEventListener("progress", this.showProgress)
+      this.request.upload.addEventListener("progress", this.showProgress)
 
-      req.send(formData)
+      this.request.send(formData)
     },
     getUploadURL(cid, path) {
       let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
@@ -76,17 +88,12 @@ export default {
           this.uploadProgress = 0
         }, 1000)
       }
+    },
+    cancel() {
+      this.request.abort && this.request.abort()
+
+      this.$router.go(-1)
     }
   }
 }
 </script>
-
-<style lang="css" scoped>
-  .progress {
-    visibility: hidden;
-  }
-
-  .progress--visible {
-    visibility: visible;
-  }
-</style>
