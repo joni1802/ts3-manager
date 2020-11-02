@@ -1,19 +1,13 @@
 const socket = {};
 
 socket.init = server => {
+  const config = require("./config")
   const fs = require("fs")
   const io = require("socket.io")(server);
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
   const {logger} = require("./utils");
   const cookie = require("cookie")
-
-  // Generate and save a random key for encrypting the jsonwebtoken
-  if(!process.env.JWT_SECRET) {
-    const secret = crypto.randomBytes(256).toString("base64")
-
-    fs.appendFileSync(".env", `JWT_SECRET=${secret}\n`)
-  }
 
   const registerEvents = (instance, logger, socket) => {
     instance.on("error", err => {
@@ -95,7 +89,7 @@ socket.init = server => {
     if(socket.handshake.query.reconnect === "true" && clientCookie.token) {
 
       try {
-        let decoded = jwt.verify(clientCookie.token, process.env.JWT_SECRET);
+        let decoded = jwt.verify(clientCookie.token, config.secret);
 
         ServerQuery = await TeamSpeak.connect(decoded);
 
@@ -115,7 +109,7 @@ socket.init = server => {
 
     socket.on("autofillform", (token, fn) => {
       try {
-        let decoded = jwt.verify(token, process.env.JWT_SECRET);
+        let decoded = jwt.verify(token, config.secret);
 
         fn(decoded);
       } catch (err) {
@@ -130,7 +124,7 @@ socket.init = server => {
 
         log.info("ServerQuery connected");
 
-        token = jwt.sign(options, process.env.JWT_SECRET);
+        token = jwt.sign(options, config.secret);
 
         registerEvents(ServerQuery, log, socket);
 

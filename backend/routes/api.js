@@ -4,6 +4,7 @@
  * still handled by socket.io.
  */
 
+const config = require("../config")
 const express = require("express")
 const router = express.Router()
 const jwt = require("jsonwebtoken")
@@ -24,7 +25,7 @@ router.use(async (req, res, next) => {
   res.locals.log = log
 
   try {
-    let decoded = jwt.verify(token, process.env.JWT_SECRET)
+    let decoded = jwt.verify(token, config.secret)
 
     let ServerQuery = await TeamSpeak.connect(decoded)
 
