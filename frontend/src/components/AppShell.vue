@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-app-bar app flat hide-on-scroll>
+  <v-app-bar app>
     <v-app-bar-nav-icon @click="drawer = !drawer" v-if="validPage"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
