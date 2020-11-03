@@ -4,7 +4,8 @@
     <template #activator="{ on }">
       <v-list-item v-on="on">
         <v-list-item-avatar>
-          <v-img :src="avatar"></v-img>
+          <v-icon v-if="!avatarURL" class="accent" dark>person</v-icon>
+          <v-img v-else :src="avatarURL"></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
@@ -87,7 +88,8 @@
 export default {
   props: {
     client: Object,
-    queryUser: Object
+    queryUser: Object,
+    avatarList: Array
   },
   data() {
     return {
@@ -106,8 +108,15 @@ export default {
         return 'volume_off'
       } else if (this.client.client_input_muted === 1) {
         return 'mic_off'
+      } 
+    },
+    avatarURL() {
+      let avatar = this.avatarList.find(client => client.cldbid === this.client.client_database_id)
+
+      if(avatar) {
+        return URL.createObjectURL(avatar.avatar)
       } else {
-        return 'fiber_manual_record'
+        return
       }
     }
   },
@@ -143,49 +152,6 @@ export default {
     },
     openPrivateChat(clid) {
       this.$router.push({name: 'chat', query: {client: clid}})
-    },
-    getClientDbInfo() {
-      return this.$TeamSpeak.execute("clientdbinfo", {
-        cldbid: this.client.client_database_id
-      }).then(info => info[0])
-    },
-    getAvatarDownloadURL(base64Hash) {
-      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
-      let url = new URL("/api/download", base)
-
-      url.searchParams.append("path", "/")
-      url.searchParams.append("name", `avatar_${base64Hash}`)
-      url.searchParams.append("cid", 0)
-
-      return url.href
-    },
-    getAvatar(url) {
-      return fetch(url, {credentials: 'include'})
-        .then(res => res.blob())
-    },
-    async setAvatar() {
-      try {
-        let clientDbInfo = await this.getClientDbInfo()
-
-
-
-        // If client has an avatar
-        if(clientDbInfo.client_flag_avatar) {
-          let url = this.getAvatarDownloadURL(clientDbInfo.client_base64HashClientUID)
-          let blob = await this.getAvatar(url)
-
-          this.avatar = URL.createObjectURL(blob)
-        }
-      } catch(err) {
-        console.log(err);
-        this.$toasted.error(err.message)
-      }
-    }
-  },
-  async created() {
-    // If is not the serveradmin
-    if(this.client.client_database_id !== 1) {
-       await this.setAvatar()
     }
   }
 }

@@ -8,7 +8,7 @@
           <v-treeview :items="channelTree" :open="itemIDs" dense>
             <template #label="{ item }">
               <channel v-if="item.channel_name" :channel="item" :queryUser="queryUser"></channel>
-              <client v-else :client="item" :queryUser="queryUser"></client>
+              <client v-else :client="item" :queryUser="queryUser" :avatarList="clientAvatars"></client>
             </template>
           </v-treeview>
         </v-card-text>
@@ -36,7 +36,8 @@ export default {
       queryUser: {},
       channelTree: [],
       currentChannel: {},
-      textPrivates: []
+      textPrivates: [],
+      clientAvatars: []
     }
   },
   methods: {
@@ -132,6 +133,51 @@ export default {
 
       this.updateCurrentChannel()
     },
+    getClientDbInfo(clientDbId) {
+      return this.$TeamSpeak.execute("clientdbinfo", {
+        cldbid: clientDbId //this.client.client_database_id
+      }).then(info => info[0])
+    },
+    getAvatarDownloadURL(base64Hash) {
+      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
+      let url = new URL("/api/download", base)
+
+      url.searchParams.append("path", "/")
+      url.searchParams.append("name", `avatar_${base64Hash}`)
+      url.searchParams.append("cid", 0)
+
+      return url.href
+    },
+    downloadClientAvatar(url) {
+      return fetch(url, {credentials: 'include'}).then(res => res.blob())
+    },
+    async getClientAvatars(clients) {
+      let clientAvatars = []
+
+      for(let client of clients) {
+        try {
+          // The serveradmin has no database data
+          if(client.client_database_id !== 1) {
+            let clientDbInfo = await this.getClientDbInfo(client.client_database_id)
+
+            // If client has an avatar
+            if(clientDbInfo.client_flag_avatar) {
+              let url = this.getAvatarDownloadURL(clientDbInfo.client_base64HashClientUID)
+              let blob = await this.downloadClientAvatar(url)
+
+              clientAvatars.push({
+                cldbid: client.client_database_id,
+                avatar: blob
+              })
+            }
+          }
+        } catch(err) {
+          this.$toasted.error(err.message)
+        }
+      }
+
+      return clientAvatars
+    }
   },
   async created() {
     try {
@@ -142,6 +188,7 @@ export default {
       this.queryUser = await this.whoAmI()
       this.channelTree = this.createNestedList(this.mergedList(this.clientList, this.channelList))
       this.currentChannel = this.getCurrentChannel(this.channelList, this.queryUser)
+      this.clientAvatars = await this.getClientAvatars(this.clientList)
 
       this.openAllChannels()
 
