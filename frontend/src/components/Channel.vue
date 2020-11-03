@@ -2,13 +2,23 @@
 <div>
   <v-menu offset-y max-width="300px">
     <template #activator="{ on }">
-      <v-btn text v-if="isSpacer(channel.channel_name)" v-on="on" width="100%">
-        <spacer :channelName="channel.channel_name"></spacer>
-      </v-btn>
-      <v-btn text v-else v-on="on">
-        <v-icon>chat_bubble</v-icon>
-        {{ channel.channel_name }}
-      </v-btn>
+      <v-list-item v-if="isSpacer(channel.channel_name)" dense  v-on="on">
+        <v-list-item-content>
+          <v-list-item-title>
+            <spacer :channelName="channel.channel_name"></spacer>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-else dense  v-on="on">
+        <v-list-item-avatar>
+          <v-icon>chat_bubble</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ channel.channel_name }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </template>
     <v-list>
       <v-list-item @click="enterChannel">
