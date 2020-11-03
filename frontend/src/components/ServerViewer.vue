@@ -22,6 +22,8 @@
 </v-container>
 </template>
 <script>
+import sleep from "@/utils/sleep"
+
 export default {
   components: {
     Channel: () => import('@/components/Channel'),
@@ -151,9 +153,7 @@ export default {
     downloadClientAvatar(url) {
       return fetch(url, {credentials: 'include'}).then(res => res.blob())
     },
-    async getClientAvatars(clients) {
-      let clientAvatars = []
-
+    async setClientAvatars(clients) {
       for(let client of clients) {
         try {
           // The serveradmin has no database data
@@ -163,20 +163,23 @@ export default {
             // If client has an avatar
             if(clientDbInfo.client_flag_avatar) {
               let url = this.getAvatarDownloadURL(clientDbInfo.client_base64HashClientUID)
+
+              // wait 1 second before every download to prevent flooding
+              await sleep(1000)
+
               let blob = await this.downloadClientAvatar(url)
 
-              clientAvatars.push({
+              this.clientAvatars.push({
                 cldbid: client.client_database_id,
                 avatar: blob
               })
             }
+
           }
         } catch(err) {
           this.$toasted.error(err.message)
         }
       }
-
-      return clientAvatars
     }
   },
   async created() {
@@ -188,11 +191,12 @@ export default {
       this.queryUser = await this.whoAmI()
       this.channelTree = this.createNestedList(this.mergedList(this.clientList, this.channelList))
       this.currentChannel = this.getCurrentChannel(this.channelList, this.queryUser)
-      this.clientAvatars = await this.getClientAvatars(this.clientList)
 
       this.openAllChannels()
 
       this.addEventListeners()
+
+      this.setClientAvatars(this.clientList)
     } catch (err) {
       this.$toasted.error(err.message)
     }
