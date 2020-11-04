@@ -138,7 +138,7 @@ export default {
         },
         {
           title: 'Channel Groups',
-          icon: 'chat_bubble',
+          icon: 'mdi-hexagon-slice-4',
           route: {name: 'channelgroups'}
         },
         {
@@ -156,17 +156,17 @@ export default {
             },
             {
               title: 'Channel Permissions',
-              icon: 'chat_bubble',
+              icon: 'mdi-hexagon-slice-4',
               route: {name: 'permissions-channel'}
             },
             {
               title: 'Channel Groups',
-              icon: 'chat_bubble',
+              icon: 'mdi-hexagon-slice-4',
               route: {name: 'permissions-channelgroup'}
             },
             {
               title: 'Channel Client Permissions',
-              icon: 'chat_bubble',
+              icon: 'mdi-hexagon-slice-4',
               route: {name: 'permissions-channelclient'}
             },
           ]

@@ -11,7 +11,7 @@
       </v-list-item>
       <v-list-item v-else dense  v-on="on">
         <v-list-item-avatar>
-          <v-icon>chat_bubble</v-icon>
+          <v-icon large>mdi-hexagon-slice-4</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>

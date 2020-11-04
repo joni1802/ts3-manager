@@ -14,7 +14,7 @@
             @click="switchTextChannel(channel.cid)"
           >
             <v-list-item-avatar>
-              <v-icon>chat_bubble</v-icon>
+              <v-icon>mdi-hexagon-slice-4</v-icon>
             </v-list-item-avatar>
               <v-badge color="error" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
                 <template #badge>
