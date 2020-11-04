@@ -64,13 +64,17 @@ export default {
     addEventListeners() {
       this.$TeamSpeak.on('clientmoved', this.loadChannelTree)
       this.$TeamSpeak.on('clientconnect', this.loadChannelTree)
+      this.$TeamSpeak.on('clientconnect', this.loadSingleClientAvatar)
       this.$TeamSpeak.on('clientdisconnect', this.loadChannelTree)
+      this.$TeamSpeak.on('clientdisconnect', this.removeSingleClientAvatar)
       this.$TeamSpeak.on('channeldelete', this.loadChannelTree)
     },
     removeEventListeners() {
       this.$TeamSpeak.__proto__.removeEventListener('clientmoved', this.loadChannelTree)
       this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.loadChannelTree)
+      this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.loadSingleClientAvatar)
       this.$TeamSpeak.__proto__.removeEventListener('clientdisconnect', this.loadChannelTree)
+      this.$TeamSpeak.__proto__.removeEventListener('clientdisconnect', this.removeSingleClientAvatar)
       this.$TeamSpeak.__proto__.removeEventListener('channeldelete', this.loadChannelTree)
     },
     openAllChannels() {
@@ -150,10 +154,10 @@ export default {
 
       return url.href
     },
-    downloadClientAvatar(url) {
-      return fetch(url, {credentials: 'include'}).then(res => res.blob())
+    downloadFile(path, cid, cpw) {
+      return this.$TeamSpeak.downloadFile(path, cid, cpw)
     },
-    async setClientAvatars(clients) {
+    async loadClientAvatars(clients) {
       for(let client of clients) {
         try {
           // The serveradmin has no database data
@@ -162,16 +166,15 @@ export default {
 
             // If client has an avatar
             if(clientDbInfo.client_flag_avatar) {
-              let url = this.getAvatarDownloadURL(clientDbInfo.client_base64HashClientUID)
-
-              // wait 1 second before every download to prevent flooding
-              await sleep(1000)
-
-              let blob = await this.downloadClientAvatar(url)
+              let fileName = `avatar_${clientDbInfo.client_base64HashClientUID}`
+              let filePath = `/${fileName}`
+              let buffer = await this.downloadFile(filePath, 0)
 
               this.clientAvatars.push({
                 cldbid: client.client_database_id,
-                avatar: blob
+                avatar: new Blob([new Uint8Array(buffer.data)]),
+                // clid is needed for removing the data when the client disconnects
+                clid: client.clid,
               })
             }
 
@@ -179,6 +182,19 @@ export default {
         } catch(err) {
           this.$toasted.error(err.message)
         }
+      }
+    },
+    loadSingleClientAvatar(e) {
+      let client = e.detail.client
+
+      this.loadClientAvatars([client])
+    },
+    removeSingleClientAvatar(e) {
+      let clientId = e.detail.client.clid
+      let index = this.clientAvatars.findIndex(client => client.clid === clientId)
+
+      if(index > 0) {
+        this.clientAvatars.splice(index, 1)
       }
     }
   },
@@ -196,7 +212,7 @@ export default {
 
       this.addEventListeners()
 
-      this.setClientAvatars(this.clientList)
+      this.loadClientAvatars(this.clientList)
     } catch (err) {
       this.$toasted.error(err.message)
     }
