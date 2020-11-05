@@ -8,40 +8,25 @@
       <v-list subheader class="my-2">
         <v-subheader>Channels</v-subheader>
         <v-list-item-group :value="selectedChannelItem">
-          <v-list-item
+          <channel
             v-for="channel in channelList"
             :key="channel.cid"
+            :channel="channel"
             @click="switchTextChannel(channel.cid)"
+            :badge="countUnreadMessages({target: channel.cid, targetmode: 2})"
           >
-            <v-list-item-avatar>
-              <v-icon>mdi-hexagon-slice-4</v-icon>
-            </v-list-item-avatar>
-              <v-badge color="error" :value="countUnreadMessages({target: channel.cid, targetmode: 2})">
-                <template #badge>
-                  {{ countUnreadMessages({target: channel.cid, targetmode: 2}) }}
-                </template>
-                <v-list-item-content>
-                  <v-list-item-title>{{ channel.channel_name }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ channel.cid }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-badge>
-          </v-list-item>
+          </channel>
         </v-list-item-group>
 
         <v-subheader>Clients</v-subheader>
-        <v-list-item v-for="client in clientList" @click="openTextPrivate(client)">
-          <v-list-item-avatar>
-            <v-icon>{{ clientStatusIcon(client) }}</v-icon>
-          </v-list-item-avatar>
-            <v-badge color="error" :value="countUnreadMessages({target: client.clid, targetmode: 1})">
-              <template #badge>
-                {{ countUnreadMessages({target: client.clid, targetmode: 1}) }}
-              </template>
-              <v-list-item-content>
-                <v-list-item-title>{{ client.client_nickname }}</v-list-item-title>
-              </v-list-item-content>
-            </v-badge>
-        </v-list-item>
+        <client
+          v-for="client in clientList"
+          :client="client"
+          :badge="countUnreadMessages({target: client.clid, targetmode: 1})"
+          @click="openTextPrivate(client)"
+          :avatarList="clientAvatars"
+        >
+        </client>
       </v-list>
     </div>
 
@@ -146,7 +131,6 @@
         <v-text-field :append-icon="'send'" label="Send Message" v-model="message" @click:append="sendMessage" @keyup="keyPressed" ></v-text-field>
       </div>
 
-
     </div>
   </v-sheet>
 
@@ -156,6 +140,8 @@
 </template>
 
 <script>
+import loadAvatars from "@/mixins/loadAvatars"
+
 export default {
   beforeRouteEnter(to, from, next) {
     next(async vm => {
@@ -178,6 +164,13 @@ export default {
         vm.$toasted.error(err.message)
       }
     });
+  },
+  mixins: [
+    loadAvatars
+  ],
+  components: {
+    Client: () => import("@/components/TextMessageClient"),
+    Channel: () => import("@/components/TextMessageChannel")
   },
   data() {
     return {
@@ -426,6 +419,8 @@ export default {
         }
 
         this.addEventListeners()
+
+        this.loadClientAvatars(this.clientList)
       } catch (err) {
         this.$toasted.error(err.message)
       }

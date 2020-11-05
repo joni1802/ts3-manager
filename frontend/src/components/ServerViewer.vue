@@ -8,7 +8,7 @@
           <v-treeview :items="channelTree" :open="itemIDs" dense>
             <template #label="{ item }">
               <channel v-if="item.channel_name" :channel="item" :queryUser="queryUser"></channel>
-              <client v-else :client="item" :queryUser="queryUser" :avatarList="clientAvatars"></client>
+              <client v-else :client="item" :avatarList="clientAvatars"></client>
             </template>
           </v-treeview>
         </v-card-text>
@@ -22,12 +22,15 @@
 </v-container>
 </template>
 <script>
-import sleep from "@/utils/sleep"
+import loadAvatars from "@/mixins/loadAvatars"
 
 export default {
+  mixins: [
+    loadAvatars
+  ],
   components: {
-    Channel: () => import('@/components/Channel'),
-    Client: () => import('@/components/ChannelClient'),
+    Channel: () => import('@/components/ServerViewerChannel'),
+    Client: () => import('@/components/ServerViewerClient'),
   },
   data() {
     return {
@@ -39,7 +42,6 @@ export default {
       channelTree: [],
       currentChannel: {},
       textPrivates: [],
-      clientAvatars: []
     }
   },
   methods: {
@@ -64,17 +66,13 @@ export default {
     addEventListeners() {
       this.$TeamSpeak.on('clientmoved', this.loadChannelTree)
       this.$TeamSpeak.on('clientconnect', this.loadChannelTree)
-      this.$TeamSpeak.on('clientconnect', this.loadSingleClientAvatar)
       this.$TeamSpeak.on('clientdisconnect', this.loadChannelTree)
-      this.$TeamSpeak.on('clientdisconnect', this.removeSingleClientAvatar)
       this.$TeamSpeak.on('channeldelete', this.loadChannelTree)
     },
     removeEventListeners() {
       this.$TeamSpeak.__proto__.removeEventListener('clientmoved', this.loadChannelTree)
       this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.loadChannelTree)
-      this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.loadSingleClientAvatar)
       this.$TeamSpeak.__proto__.removeEventListener('clientdisconnect', this.loadChannelTree)
-      this.$TeamSpeak.__proto__.removeEventListener('clientdisconnect', this.removeSingleClientAvatar)
       this.$TeamSpeak.__proto__.removeEventListener('channeldelete', this.loadChannelTree)
     },
     openAllChannels() {
@@ -138,64 +136,6 @@ export default {
       }
 
       this.updateCurrentChannel()
-    },
-    getClientDbInfo(clientDbId) {
-      return this.$TeamSpeak.execute("clientdbinfo", {
-        cldbid: clientDbId //this.client.client_database_id
-      }).then(info => info[0])
-    },
-    getAvatarDownloadURL(base64Hash) {
-      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
-      let url = new URL("/api/download", base)
-
-      url.searchParams.append("path", "/")
-      url.searchParams.append("name", `avatar_${base64Hash}`)
-      url.searchParams.append("cid", 0)
-
-      return url.href
-    },
-    downloadFile(path, cid, cpw) {
-      return this.$TeamSpeak.downloadFile(path, cid, cpw)
-    },
-    async loadClientAvatars(clients) {
-      for(let client of clients) {
-        try {
-          // The serveradmin has no database data
-          if(client.client_database_id !== 1) {
-            let clientDbInfo = await this.getClientDbInfo(client.client_database_id)
-
-            // If client has an avatar
-            if(clientDbInfo.client_flag_avatar) {
-              let fileName = `avatar_${clientDbInfo.client_base64HashClientUID}`
-              let filePath = `/${fileName}`
-              let buffer = await this.downloadFile(filePath, 0)
-
-              this.clientAvatars.push({
-                cldbid: client.client_database_id,
-                avatar: new Blob([new Uint8Array(buffer.data)]),
-                // clid is needed for removing the data when the client disconnects
-                clid: client.clid,
-              })
-            }
-
-          }
-        } catch(err) {
-          this.$toasted.error(err.message)
-        }
-      }
-    },
-    loadSingleClientAvatar(e) {
-      let client = e.detail.client
-
-      this.loadClientAvatars([client])
-    },
-    removeSingleClientAvatar(e) {
-      let clientId = e.detail.client.clid
-      let index = this.clientAvatars.findIndex(client => client.clid === clientId)
-
-      if(index > 0) {
-        this.clientAvatars.splice(index, 1)
-      }
     }
   },
   async created() {

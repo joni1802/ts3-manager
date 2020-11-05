@@ -88,7 +88,6 @@
 export default {
   props: {
     client: Object,
-    queryUser: Object,
     avatarList: Array
   },
   data() {
@@ -97,7 +96,6 @@ export default {
       reason: '',
       destination: '',
       reasonid: null,
-      avatar: "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
     }
   },
   computed: {
@@ -108,7 +106,7 @@ export default {
         return 'volume_off'
       } else if (this.client.client_input_muted === 1) {
         return 'mic_off'
-      } 
+      }
     },
     avatarURL() {
       let avatar = this.avatarList.find(client => client.cldbid === this.client.client_database_id)
