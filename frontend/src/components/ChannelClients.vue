@@ -8,6 +8,16 @@
       </v-btn>
     </template>
     <v-list>
+      <v-list-tile @click="pokeClientDialog = true">
+        <v-list-tile-action>
+          <v-icon>mdi-alert-octagram</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-content>
+          <v-list-tile-title>
+            Poke
+          </v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
       <v-list-tile @click="openPrivateChat(client.clid)">
         <v-list-tile-action>
           <v-icon>send</v-icon>
@@ -74,6 +84,20 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <v-dialog v-model="pokeClientDialog" max-width="500px">
+    <v-card>
+      <v-card-title>Poke</v-card-title>
+      <v-card-text>
+        <v-text-field label="Poke Message" v-model="pokeMessage"></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn flat @click="pokeClientDialog = false" color="primary">Cancel</v-btn>
+        <v-btn flat @click="poke" color="primary">Send</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </div>
 </template>
 
@@ -86,6 +110,8 @@ export default {
   data() {
     return {
       kickClientDialog: false,
+      pokeClientDialog: false,
+      pokeMessage: '',
       reason: '',
       destination: '',
       reasonid: null,
@@ -105,6 +131,15 @@ export default {
     }
   },
   methods: {
+    async poke() {
+      //this.pokeClientDialog = true;
+      await this.$TeamSpeak.execute('clientpoke', {
+        msg: this.pokeMessage,
+        clid: this.client.clid
+      });
+      this.pokeMessage = '';
+      this.pokeClientDialog = false
+    },
     openKickDialog(reasonid) {
       // reasonid :
       // 4 = kick form current channel into default channel
