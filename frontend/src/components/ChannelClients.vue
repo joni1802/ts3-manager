@@ -133,10 +133,14 @@ export default {
   methods: {
     async poke() {
       //this.pokeClientDialog = true;
-      await this.$TeamSpeak.execute('clientpoke', {
-        msg: this.pokeMessage,
-        clid: this.client.clid
-      });
+      try {
+        await this.$TeamSpeak.execute('clientpoke', {
+          msg: this.pokeMessage,
+          clid: this.client.clid
+        });
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
       this.pokeMessage = '';
       this.pokeClientDialog = false
     },
