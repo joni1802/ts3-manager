@@ -3,7 +3,7 @@ const {program} = require("commander")
 
 program.option("-p, --port <value>", "port the server is listening on")
 program.option("-s, --secret <value>", "secret for decrypting and encrypting the token")
-program.option("-w, --whitelist <value>", "comma separated ip list of TeamSpeak servers you can connect to", parseWhitelist)
+program.option("-w, --whitelist <value>", "comma separated list of TeamSpeak servers you can connect to (ip or domain)", parseWhitelist)
 
 program.parse(process.argv)
 
