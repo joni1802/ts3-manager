@@ -9,6 +9,12 @@
               @filedelete="updateParentItem"
             >
             </file-delete-button>
+            <file-refresh-button
+              class="ml-2"
+              :openFolders="openFolders"
+              @refresh="refreshList"
+            >
+            </file-refresh-button>
             <v-spacer></v-spacer>
           </v-card-title>
           <v-card-text>
@@ -18,7 +24,9 @@
               return-object
               selectable
               v-model="selectedFiles"
+              :open.sync="openFolders"
               selection-type="independent"
+              :key="key"
             >
               <template #prepend="{ item, open, active }">
                 <v-icon v-if="item.type !== 1" >
@@ -74,12 +82,15 @@ export default {
   components: {
     FileBrowserFile: () => import("@/components/FileBrowserFile"),
     FileBrowserFolder: () => import("@/components/FileBrowserFolder"),
-    FileDeleteButton: () => import("@/components/FileDeleteMultiple")
+    FileDeleteButton: () => import("@/components/FileDeleteButton"),
+    FileRefreshButton: () => import("@/components/FileRefreshButton")
   },
   data() {
     return {
       folderList: [],
       selectedFiles: [],
+      openFolders: [],
+      key: 0
     }
   },
   methods: {
@@ -112,6 +123,7 @@ export default {
 
         parentItem.children = childItems
       } catch(err) {
+        console.log(err);
         this.$toasted.error(err.message)
       }
     },
@@ -158,6 +170,8 @@ export default {
       if(item.path !== undefined) {
         let parentItem = this.findParentItem(item.pid, this.folderList)
 
+        console.log("parent", parentItem);
+
         await this.getChildItems(parentItem)
       } else {
         await this.getChildItems(item)
@@ -177,11 +191,33 @@ export default {
           return item
         } else {
           if(item.children && item.children.length) {
-            this.findParentItem(pid, item.children)
+            let parent = this.findParentItem(pid, item.children)
+
+            if(parent) {
+              return parent
+            }
           }
         }
       }
     },
+
+    // async refreshList(openFolders) {
+    //   console.log(openFolders);
+    //
+    //   try {
+    //     // this.key = this.key + 1
+    //
+    //     this.folderList = await this.getFolderList()
+    //
+    //
+    //
+    //     // for(let folder of openFolders) {
+    //     //   await this.updateParentItem(folder)
+    //     // }
+    //   } catch (err) {
+    //     this.$toasted.error(err.message)
+    //   }
+    // }
   },
   async created() {
     try {
