@@ -40,16 +40,16 @@
       </v-list>
     </v-menu>
 
-    <file-rename v-model="renameDialog" :item="item" @filerename="$emit('filerename', item)"></file-rename>
-    <file-delete v-model="deleteDialog" :item="item" @filedelete="$emit('filedelete', item)"></file-delete>
+    <file-rename-dialog v-model="renameDialog" :item="item" @filerename="$emit('filerename', item)"></file-rename-dialog>
+    <file-delete-dialog v-model="deleteDialog" :item="item" @filedelete="$emit('filedelete', item)"></file-delete-dialog>
   </div>
 </template>
 
 <script>
 export default {
   components: {
-    FileRename: () => import("@/components/FileRename"),
-    FileDelete: () => import("@/components/FileDelete")
+    FileRenameDialog: () => import("@/components/FileRenameDialog"),
+    FileDeleteDialog: () => import("@/components/FileDeleteDialog")
   },
   props: {
     /**

@@ -62,8 +62,8 @@
       </v-card>
     </v-dialog>
 
-    <folder-rename v-model="renameDialog" :item="item" @filerename="$emit('folderrename', item)"></folder-rename>
-    <folder-delete v-model="deleteDialog" :item="item" @filedelete="$emit('folderdelete', item)"></folder-delete>
+    <file-rename-dialog v-model="renameDialog" :item="item" @filerename="$emit('folderrename', item)"></file-rename-dialog>
+    <file-delete-dialog v-model="deleteDialog" :item="item" @filedelete="$emit('folderdelete', item)"></file-delete-dialog>
   </div>
 </template>
 
@@ -72,8 +72,8 @@ import Path from "path-browserify"
 
 export default {
   components: {
-    FolderRename: () => import("@/components/FileRename"),
-    FolderDelete: () => import("@/components/FileDelete")
+    FileRenameDialog: () => import("@/components/FileRenameDialog"),
+    FileDeleteDialog: () => import("@/components/FileDeleteDialog")
   },
   props: {
     /**
