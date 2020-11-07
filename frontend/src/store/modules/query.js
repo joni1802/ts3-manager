@@ -27,9 +27,9 @@ const mutations = {
 };
 
 const actions = {
-  saveToken({commit}, token) {
+  saveToken({commit, rootState}, token) {
     Cookies.set("token", token, {
-      expires: new Date(2147483647 * 1000)
+      expires: rootState.settings.rememberLogin ? new Date(2147483647 * 1000) : ""
     })
 
     commit("setToken", token)
@@ -39,9 +39,9 @@ const actions = {
 
     commit("setToken", null)
   },
-  saveServerId({commit}, sid) {
+  saveServerId({commit, rootState}, sid) {
     Cookies.set("serverId", sid, {
-      expires: new Date(2147483647 * 1000)
+      expires: rootState.settings.rememberLogin ? new Date(2147483647 * 1000) : ""
     })
 
     commit("setServerId", sid)

@@ -14,8 +14,17 @@ import Vue from "vue";
 const TeamSpeak = Object.create(new EventTarget());
 
 const handleError = (error, resolve, reject) => {
+  // If it is a general error without a TeamSpeak error id, redirect to login.
+  if(!error.id) {
+    store.dispatch("clearStorage");
+
+    router.push({name: "login"});
+
+    reject(error)
+  }
+
   switch (error.id) {
-    // Empty result error e.g. an empty permissionlist
+    // Ignore empty result error e.g. an empty permissionlist
     case 1281:
       resolve([]);
       break;
