@@ -9,7 +9,7 @@ const express = require("express")
 const router = express.Router()
 const jwt = require("jsonwebtoken")
 const {TeamSpeak} = require("ts3-nodejs-library")
-const {logger} = require("../utils")
+const {logger, whitelist} = require("../utils")
 const {Socket} = require("net")
 const Busboy = require('busboy')
 const Path = require("path")
@@ -26,6 +26,8 @@ router.use(async (req, res, next) => {
 
   try {
     let decoded = jwt.verify(token, config.secret)
+
+    whitelist.check(decoded.host)
 
     let ServerQuery = await TeamSpeak.connect(decoded)
 

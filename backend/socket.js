@@ -6,7 +6,7 @@ socket.init = server => {
   const io = require("socket.io")(server);
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
-  const {logger} = require("./utils");
+  const {logger, whitelist} = require("./utils");
   const cookie = require("cookie")
 
   const registerEvents = (instance, logger, socket) => {
@@ -87,9 +87,10 @@ socket.init = server => {
     // Try to reconnect
     // Socket.io query sends data as string
     if(socket.handshake.query.reconnect === "true" && clientCookie.token) {
-
       try {
         let decoded = jwt.verify(clientCookie.token, config.secret);
+
+        whitelist.check(decoded.host)
 
         ServerQuery = await TeamSpeak.connect(decoded);
 
@@ -120,6 +121,8 @@ socket.init = server => {
     // Connect to the ServerQuery and try to login.
     socket.on("teamspeak-connect", async (options, fn) => {
       try {
+        whitelist.check(options.host)
+
         ServerQuery = await TeamSpeak.connect(options);
 
         log.info("ServerQuery connected");
