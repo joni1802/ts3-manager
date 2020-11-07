@@ -1,14 +1,19 @@
 const crypto = require("crypto")
-const argv = require('minimist')(process.argv)
+const {program} = require("commander")
 
+program.option("-p, --port <value>", "port the server is listening on")
+program.option("-s, --secret <value>", "secret for decrypting and encrypting the token")
+program.option("-w, --whitelist <value>", "comma separated ip list of TeamSpeak servers you can connect to", parseWhitelist)
+
+program.parse(process.argv)
+
+function parseWhitelist(value) {
+  return value.split(",")
+}
+
+// process order of the parameters: command line > environment variable > default value
 module.exports = {
-  // Port the server is listening on
-  port: argv.port || process.env.PORT || 3000,
-
-  // Key for encrypting and decrypting the jwt token
-  secret: argv.secret || process.env.JWT_SECRET || crypto.randomBytes(256).toString("base64"),
-
-  // By default all teamspeak servers are accepted
-  // This can be changed by providing an ip list
-  whitelist: argv.whitelist && argv.whitelist.split(",") || [],
+  port: program.port ? program.port : process.env.PORT || 3000,
+  secret: program.secret ? program.secret : process.env.JWT_SECRET || crypto.randomBytes(256).toString("base64"),
+  whitelist: program.whitelist ? program.whitelist : process.env.WHITELIST || [],
 }
