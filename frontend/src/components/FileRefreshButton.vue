@@ -8,6 +8,10 @@
 <script>
 export default {
   props: {
+    /**
+     * Currently open folders
+     * @type {Array.<TreeItem>}
+     */
     openFolders: Array
   },
   methods: {

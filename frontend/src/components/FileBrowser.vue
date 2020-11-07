@@ -201,23 +201,27 @@ export default {
       }
     },
 
-    // async refreshList(openFolders) {
-    //   console.log(openFolders);
-    //
-    //   try {
-    //     // this.key = this.key + 1
-    //
-    //     this.folderList = await this.getFolderList()
-    //
-    //
-    //
-    //     // for(let folder of openFolders) {
-    //     //   await this.updateParentItem(folder)
-    //     // }
-    //   } catch (err) {
-    //     this.$toasted.error(err.message)
-    //   }
-    // }
+    /**
+     * Refresh the currently open folders. 
+     * @param  {Array.<TreeItem>}  openFolders - open folders/channels
+     */
+    async refreshList(openFolders) {
+      try {
+        // This is a workaround to force rerender of the list.
+        // See {@link https://github.com/vuetifyjs/vuetify/issues/10587}
+        this.key = this.key + 1
+
+        this.folderList = await this.getFolderList()
+
+        for(let folder of openFolders) {
+          await this.updateParentItem(folder)
+
+          this.openFolders.push(folder)
+        }
+      } catch (err) {
+        this.$toasted.error(err.message)
+      }
+    }
   },
   async created() {
     try {
