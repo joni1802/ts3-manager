@@ -4,9 +4,12 @@
       <v-col cols="12" md="10" lg="8">
         <v-card>
           <v-card-title>
-            <file-delete-button :selectedFiles="selectedFiles" @filedelete="updateParentItem"></file-delete-button>
+            <file-delete-button
+              :selectedFiles="selectedFiles"
+              @filedelete="updateParentItem"
+            >
+            </file-delete-button>
             <v-spacer></v-spacer>
-            <!-- <v-text-field append-icon="search" label="Search"></v-text-field> -->
           </v-card-title>
           <v-card-text>
             <v-treeview
@@ -108,8 +111,6 @@ export default {
         let childItems = await this.getFileList(parentItem)
 
         parentItem.children = childItems
-
-        // return parentItem.children.push(...childItems)
       } catch(err) {
         this.$toasted.error(err.message)
       }
@@ -176,7 +177,7 @@ export default {
           return item
         } else {
           if(item.children && item.children.length) {
-            return this.findParentItem(pid, item.children)
+            this.findParentItem(pid, item.children)
           }
         }
       }
