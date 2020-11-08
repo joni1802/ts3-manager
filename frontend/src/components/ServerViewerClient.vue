@@ -65,6 +65,16 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
+      <v-list-item @click="deleteAvatarDialog = true" :disabled="!!!avatarURL">
+        <v-list-item-action>
+          <v-icon>mdi-delete</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
+            Delete Avatar
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
   </v-menu>
 
@@ -81,11 +91,16 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <avatar-delete-dialog v-model="deleteAvatarDialog" :client="client" :avatarList="avatarList"></avatar-delete-dialog>
 </div>
 </template>
 
 <script>
 export default {
+  components: {
+    AvatarDeleteDialog: () => import("@/components/AvatarDeleteDialog")
+  },
   props: {
     client: Object,
     avatarList: Array
@@ -93,6 +108,7 @@ export default {
   data() {
     return {
       kickClientDialog: false,
+      deleteAvatarDialog: false,
       reason: '',
       destination: '',
       reasonid: null,
