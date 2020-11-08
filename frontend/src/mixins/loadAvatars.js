@@ -1,6 +1,18 @@
+/**
+ * An array with the downloaded image files of all clients.
+ * This images are downloaded from the server.
+ * @typedef {Array} ClientAvtars
+ * @property {Number} cldbid        - client database id
+ * @property {Blob} avatar          - downloaded image from the server
+ * @property {(Number|Undefined)} clid - current client id (if the client is not online it is undefined)
+ */
+
 export default {
   data() {
     return {
+      /**
+       * @type {ClientAvtars}
+       */
       clientAvatars: []
     }
   },
@@ -18,15 +30,23 @@ export default {
         cldbid: clientDbId
       }).then(info => info[0])
     },
+    getClientId(clientUiD) {
+      return this.$TeamSpeak.execute("clientgetids", {
+        cluid: clientUiD
+      }).then(result => {
+        return result.length ? result[0].clid : undefined
+      })
+    },
     downloadFile(path, cid, cpw) {
       return this.$TeamSpeak.downloadFile(path, cid, cpw)
     },
-    async loadClientAvatars(clients) {
-      for(let client of clients) {
+    async loadClientAvatars(clientDbIdList) {
+      for(let clientDbId of clientDbIdList) {
         try {
           // The serveradmin has no database data
-          if(client.client_database_id !== 1) {
-            let clientDbInfo = await this.getClientDbInfo(client.client_database_id)
+          if(clientDbId !== 1) {
+            let clientDbInfo = await this.getClientDbInfo(clientDbId)
+            let clientId = await this.getClientId(clientDbInfo.client_unique_identifier)
 
             // If client has an avatar
             if(clientDbInfo.client_flag_avatar) {
@@ -35,10 +55,10 @@ export default {
               let buffer = await this.downloadFile(filePath, 0)
 
               this.clientAvatars.push({
-                cldbid: client.client_database_id,
+                cldbid: clientDbId,
                 avatar: new Blob([new Uint8Array(buffer.data)]),
                 // clid is needed for removing the data when the client disconnects
-                clid: client.clid,
+                clid: clientId,
               })
             }
 
@@ -51,7 +71,7 @@ export default {
     loadSingleClientAvatar(e) {
       let client = e.detail.client
 
-      this.loadClientAvatars([client])
+      this.loadClientAvatars([client.client_database_id])
     },
     removeSingleClientAvatar(e) {
       let clientId = e.detail.client.clid

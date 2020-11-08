@@ -420,7 +420,7 @@ export default {
 
         this.addEventListeners()
 
-        this.loadClientAvatars(this.clientList)
+        this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
       } catch (err) {
         this.$toasted.error(err.message)
       }
