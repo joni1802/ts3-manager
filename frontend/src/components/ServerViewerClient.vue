@@ -92,7 +92,12 @@
     </v-card>
   </v-dialog>
 
-  <avatar-delete-dialog v-model="deleteAvatarDialog" :client="client" :avatarList="avatarList"></avatar-delete-dialog>
+  <avatar-delete-dialog
+    v-model="deleteAvatarDialog"
+    :clientDbId="client.client_database_id"
+    :avatarList="avatarList"
+  >
+  </avatar-delete-dialog>
 </div>
 </template>
 

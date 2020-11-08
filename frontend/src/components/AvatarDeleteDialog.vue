@@ -19,7 +19,7 @@
 <script>
 export default {
   props: {
-    client: Object,
+    clientDbId: Number,
     avatarList: Array,
     value: Boolean
   },
@@ -33,7 +33,7 @@ export default {
       }
     },
     avatarURL() {
-      let avatar = this.avatarList.find(client => client.cldbid === this.client.client_database_id)
+      let avatar = this.avatarList.find(client => client.cldbid === this.clientDbId)
 
       if(avatar) {
         return URL.createObjectURL(avatar.avatar)
@@ -43,8 +43,32 @@ export default {
     }
   },
   methods: {
-    deleteAvatar() {
-      console.log("do something");
+    deleteFile(cid, name, cpw = "") {
+      return this.$TeamSpeak.execute("ftdeletefile", {
+        cid,
+        cpw,
+        name
+      })
+    },
+    getClientDbInfo() {
+      return this.$TeamSpeak.execute("clientdbinfo", {
+        cldbid: this.clientDbId
+      }).then(info => info[0])
+    },
+    async deleteAvatar() {
+      try {
+        let clientDbInfo = await this.getClientDbInfo()
+        let fileName = `avatar_${clientDbInfo.client_base64HashClientUID}`
+        let filePath = `/${fileName}`
+
+        await this.deleteFile(0, filePath)
+
+        this.dialog = false
+      } catch(err) {
+        this.$toasted.error(err.message)
+      }
+
+      this.$emit("avatardelete", this.clientDbId)
     }
   }
 }
