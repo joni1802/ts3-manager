@@ -48,6 +48,12 @@
                 </v-list>
               </v-menu>
             </template>
+            <template #item.avatar="{ item }">
+              <v-avatar class="ma-2">
+                <v-icon v-if="!getAvatarURL(item.cldbid)" class="accent" dark>person</v-icon>
+                <img v-else :src="getAvatarURL(item.cldbid)" />
+              </v-avatar>
+            </template>
             <template #item.client_created="{ item }">
               {{ new Date(item.client_created * 1000).toLocaleString() }}
             </template>
@@ -79,7 +85,12 @@
 </template>
 
 <script>
+import loadAvatars from "@/mixins/loadAvatars"
+
 export default {
+  mixins: [
+    loadAvatars
+  ],
   data() {
     return {
       headers: [
@@ -87,6 +98,12 @@ export default {
           text: '',
           value: 'name',
           align: 'start',
+          sortable: false
+        },
+        {
+          text: 'Avatar',
+          value: 'avatar',
+          align: 'center',
           sortable: false
         },
         {
@@ -132,6 +149,15 @@ export default {
     }
   },
   methods: {
+    getAvatarURL(clientDbId) {
+      let avatar = this.clientAvatars.find(client => client.cldbid === clientDbId)
+
+      if(avatar) {
+        return URL.createObjectURL(avatar.avatar)
+      } else {
+        return
+      }
+    },
     openRemoveDialog(clients) {
       this.clientRemoveList = clients
 
@@ -168,8 +194,10 @@ export default {
       }
     }
   },
-  created() {
-    this.init()
+  async created() {
+    await this.init()
+
+    this.loadClientAvatars(this.clientdblist.map(client => client.cldbid))
   }
 }
 </script>
