@@ -1,7 +1,7 @@
 /**
  * An array with the downloaded image files of all clients.
  * This images are downloaded from the server.
- * @typedef {Array} ClientAvtars
+ * @typedef {Array} ClientAvatars
  * @property {Number} cldbid        - client database id
  * @property {Blob} avatar          - downloaded image from the server
  * @property {(Number|Undefined)} clid - current client id (if the client is not online it is undefined)
@@ -11,7 +11,7 @@ export default {
   data() {
     return {
       /**
-       * @type {ClientAvtars}
+       * @type {ClientAvatars}
        */
       clientAvatars: []
     }
