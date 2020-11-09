@@ -45,11 +45,6 @@
                       Delete Client
                     </v-list-item-title>
                   </v-list-item>
-                  <v-list-item @click="openAvatarDeleteDialog(item)" :disabled="!!!getAvatarURL(item.cldbid)">
-                    <v-list-item-title>
-                      Delete Avatar
-                    </v-list-item-title>
-                  </v-list-item>
                 </v-list>
               </v-menu>
             </template>
@@ -85,13 +80,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <avatar-delete-dialog
-      v-model="avatarDeleteDialog"
-      :avatarList="clientAvatars"
-      :clientDbId="clickedClient.cldbid"
-    >
-    </avatar-delete-dialog>
   </v-layout>
 </v-container>
 </template>
@@ -103,9 +91,6 @@ export default {
   mixins: [
     loadAvatars
   ],
-  components: {
-    AvatarDeleteDialog: () => import("@/components/AvatarDeleteDialog")
-  },
   data() {
     return {
       headers: [
@@ -161,8 +146,6 @@ export default {
       dialog: false,
       clientRemoveList: [],
       selectedTableItems: [],
-      avatarDeleteDialog: false,
-      clickedClient: {}
     }
   },
   methods: {
@@ -179,11 +162,6 @@ export default {
       this.clientRemoveList = clients
 
       this.dialog = true
-    },
-    openAvatarDeleteDialog(client) {
-      this.clickedClient = client
-
-      this.avatarDeleteDialog = true
     },
     getClientDbList() {
       return this.$TeamSpeak.fullClientDBList()
