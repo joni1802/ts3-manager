@@ -1,8 +1,11 @@
 <template lang="html">
   <v-list-item @click="$emit('click', client)">
     <v-list-item-avatar>
-      <v-icon v-if="!avatarURL" class="accent" dark>person</v-icon>
-      <v-img v-else :src="avatarURL"></v-img>
+      <client-avatar
+        :clientDbId="client.client_database_id"
+        :clientAvatars="avatarList"
+      >
+      </client-avatar>
     </v-list-item-avatar>
     <v-badge color="error" :value="!!badgeValue">
       <template #badge>
@@ -19,6 +22,9 @@
 
 <script>
 export default {
+  components: {
+    ClientAvatar: () => import("@/components/ClientAvatar")
+  },
   props: {
     client: Object,
     avatarList: Array,
@@ -35,15 +41,6 @@ export default {
         return 'volume_off'
       } else if (this.client.client_input_muted === 1) {
         return 'mic_off'
-      }
-    },
-    avatarURL() {
-      let avatar = this.avatarList.find(client => client.cldbid === this.client.client_database_id)
-
-      if(avatar) {
-        return URL.createObjectURL(avatar.avatar)
-      } else {
-        return
       }
     }
   },

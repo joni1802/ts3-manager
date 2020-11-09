@@ -49,10 +49,12 @@
               </v-menu>
             </template>
             <template #item.avatar="{ item }">
-              <v-avatar class="ma-2">
-                <v-icon v-if="!getAvatarURL(item.cldbid)" class="accent" dark>person</v-icon>
-                <img v-else :src="getAvatarURL(item.cldbid)" />
-              </v-avatar>
+                <client-avatar
+                  :clientAvatars="clientAvatars"
+                  :clientDbId="item.cldbid"
+                  class="ma-2"
+                >
+                </client-avatar>
             </template>
             <template #item.client_created="{ item }">
               {{ new Date(item.client_created * 1000).toLocaleString() }}
@@ -88,6 +90,9 @@
 import loadAvatars from "@/mixins/loadAvatars"
 
 export default {
+  components: {
+    ClientAvatar: () => import("@/components/ClientAvatar"),
+  },
   mixins: [
     loadAvatars
   ],
@@ -146,18 +151,10 @@ export default {
       dialog: false,
       clientRemoveList: [],
       selectedTableItems: [],
+      clientAvatarDialog: false
     }
   },
   methods: {
-    getAvatarURL(clientDbId) {
-      let avatar = this.clientAvatars.find(client => client.cldbid === clientDbId)
-
-      if(avatar) {
-        return URL.createObjectURL(avatar.avatar)
-      } else {
-        return
-      }
-    },
     openRemoveDialog(clients) {
       this.clientRemoveList = clients
 
