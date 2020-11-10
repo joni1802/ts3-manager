@@ -48,14 +48,6 @@
                 </v-list>
               </v-menu>
             </template>
-            <template #item.avatar="{ item }">
-                <client-avatar
-                  :clientAvatars="clientAvatars"
-                  :clientDbId="item.cldbid"
-                  class="ma-2"
-                >
-                </client-avatar>
-            </template>
             <template #item.client_created="{ item }">
               {{ new Date(item.client_created * 1000).toLocaleString() }}
             </template>
@@ -87,15 +79,7 @@
 </template>
 
 <script>
-import loadAvatars from "@/mixins/loadAvatars"
-
 export default {
-  components: {
-    ClientAvatar: () => import("@/components/ClientAvatar"),
-  },
-  mixins: [
-    loadAvatars
-  ],
   data() {
     return {
       headers: [
@@ -103,12 +87,6 @@ export default {
           text: '',
           value: 'name',
           align: 'start',
-          sortable: false
-        },
-        {
-          text: 'Avatar',
-          value: 'avatar',
-          align: 'center',
           sortable: false
         },
         {
@@ -191,10 +169,8 @@ export default {
       }
     }
   },
-  async created() {
-    await this.init()
-
-    this.loadClientAvatars(this.clientdblist.map(client => client.cldbid))
+  created() {
+    this.init()
   }
 }
 </script>
