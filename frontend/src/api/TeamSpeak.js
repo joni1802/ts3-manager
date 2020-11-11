@@ -14,10 +14,18 @@ import Vue from "vue";
 const TeamSpeak = Object.create(new EventTarget());
 
 const handleError = (error, resolve, reject) => {
-  // Ignore empty result error e.g. an empty permissionlist
-  if(error.id === 1281) {
-    resolve([])
+  if(error.connected) {
+    // Ignore empty result error e.g. an empty permissionlist
+    if(error.id === 1281) {
+      resolve([])
+    } else {
+      reject(error)
+    }
   } else {
+    store.dispatch("clearStorage");
+
+    router.push({name: "login"});
+
     reject(error)
   }
 };
@@ -292,7 +300,7 @@ socket.on("teamspeak-channeldelete", data => {
   );
 });
 
-socket.on("teamspeak-error", async err => {
+socket.on("teamspeak-reconnecterror", async err => {
   Vue.prototype.$toasted.error(err.message);
 
   store.dispatch("clearStorage");

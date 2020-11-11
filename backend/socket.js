@@ -43,7 +43,7 @@ socket.init = server => {
         } catch (err) {
           log.error(err.message);
 
-          socket.emit("teamspeak-error", err);
+          socket.emit("teamspeak-reconnecterror", {message: err.message});
         }
       }
     }
@@ -57,9 +57,16 @@ socket.init = server => {
      */
     const handleError = (err, fn) => {
       if(ServerQuery.query && ServerQuery.query.connected) {
-        fn({message: err.message, ...err})
+        fn({
+          message: err.message,
+          id: err.id,
+          connected: true
+        })
       } else {
-        socket.emit("teamspeak-error", err)
+        fn({
+          message: err.message,
+          connected: false
+        })
       }
     };
 
