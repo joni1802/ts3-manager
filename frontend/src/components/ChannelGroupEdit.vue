@@ -101,12 +101,6 @@ export default {
     async changeMembers(list, cgid) {
       for (let clientDbId of list) {
         try {
-          console.log({
-            cgid: cgid,
-            cid: this.selectedChannel,
-            cldbid: clientDbId
-          });
-
           await this.$TeamSpeak.execute('setclientchannelgroup', {
             cgid: cgid,
             cid: this.selectedChannel,

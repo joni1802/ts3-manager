@@ -123,7 +123,6 @@ export default {
 
         parentItem.children = childItems
       } catch(err) {
-        console.log(err);
         this.$toasted.error(err.message)
       }
     },
@@ -170,8 +169,6 @@ export default {
       if(item.path !== undefined) {
         let parentItem = this.findParentItem(item.pid, this.folderList)
 
-        console.log("parent", parentItem);
-
         await this.getChildItems(parentItem)
       } else {
         await this.getChildItems(item)
@@ -202,7 +199,7 @@ export default {
     },
 
     /**
-     * Refresh the currently open folders. 
+     * Refresh the currently open folders.
      * @param  {Array.<TreeItem>}  openFolders - open folders/channels
      */
     async refreshList(openFolders) {
