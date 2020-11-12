@@ -13,8 +13,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat color="primary" @click="saveAndLeave">Yes</v-btn>
-          <v-btn flat color="primary" @click="temporaryChannelWarning = false">No</v-btn>
+          <v-btn text color="primary" @click="saveAndLeave">Yes</v-btn>
+          <v-btn text color="primary" @click="temporaryChannelWarning = false">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -79,7 +79,7 @@ export default {
           }
         }
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async saveAndLeave() {
@@ -88,14 +88,14 @@ export default {
 
         this.$router.go(-1)
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async init() {
       try {
         this.channel = await this.getChannelInfo()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

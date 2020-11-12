@@ -1,59 +1,67 @@
 <template>
 <div>
-  <v-toolbar dense flat color="rgba(0, 0, 0, 0)">
-    <v-toolbar-side-icon @click="drawer = !drawer" v-if="validPage"></v-toolbar-side-icon>
+  <v-app-bar app>
+    <v-app-bar-nav-icon @click="drawer = !drawer" v-if="validPage"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
     <bell-icon v-if="$store.state.query.connected"></bell-icon>
-  </v-toolbar>
+  </v-app-bar>
 
-  <nav v-if="validPage">
-    <v-navigation-drawer app v-model="drawer">
-      <v-toolbar flat class="transparent py-2">
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-content>
-              <img :class="{'logo--dark': $store.state.settings.darkMode}" src="@/assets/ts3_manager_text_new.svg" />
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-      </v-toolbar>
-      <v-list dense class="pt-2" subheader>
-        <v-list-tile v-for="(entry, i) in menuEntries" v-if="!entry.submenu" :key="i" :to="entry.route" >
-          <v-list-tile-action>
-            <v-badge color="red">
-              <template slot="badge" v-if="entry.title === 'Chat' && $store.getters.unreadMessages">
-                <span>{{ $store.getters.unreadMessages }}</span>
-              </template>
-              <v-icon>{{ entry.icon }}</v-icon>
-            </v-badge>
-
-          </v-list-tile-action>
-          <v-list-tile-title>
+  <v-navigation-drawer app v-model="drawer" v-if="validPage" width="300">
+    <v-list dense class="pt-2" subheader nav>
+      <logo></logo>
+      <v-divider></v-divider>
+      <v-list-item
+        v-for="(entry, i) in menuEntries"
+        v-if="!entry.submenu"
+        :key="i"
+        @click="pushRoute(entry)"
+        :class="{'v-list-item--active': $route.name === entry.route.name}"
+      >
+        <v-list-item-icon>
+          <v-badge color="error" :value="entry.title === 'Chat' && $store.getters.unreadMessages">
+            <template #badge>
+              <span>{{ $store.getters.unreadMessages }}</span>
+            </template>
+            <v-icon>{{ entry.icon }}</v-icon>
+          </v-badge>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>
             {{ entry.title }}
             <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
-          </v-list-tile-title>
-        </v-list-tile>
-        <v-list-group v-else :prepend-icon="entry.icon" active-class="" no-action>
-          <template slot="activator">
-            <v-list-tile>
-              <v-list-tile-title>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-list-group v-else no-action :prepend-icon="entry.icon">
+        <template #activator>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>
                 {{ entry.title }}
-              </v-list-tile-title>
-            </v-list-tile>
-          </template>
-          <v-list-tile v-for="(subEntry, j) in entry.submenu" :key="j" :to="subEntry.route" :exact="true">
-            <v-list-tile-action>
-              <v-icon>{{ subEntry.icon }}</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-title>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+        <v-list-item
+          v-for="(subEntry, j) in entry.submenu"
+          :key="j"
+          @click="pushRoute(subEntry)"
+          :class="{'v-list-item--active': $route.name === subEntry.route.name}"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ subEntry.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
               {{ subEntry.title }}
-            </v-list-tile-title>
-          </v-list-tile>
-        </v-list-group>
-      </v-list>
-    </v-navigation-drawer>
-  </nav>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-group>
+    </v-list>
+  </v-navigation-drawer>
 </div>
 </template>
 
@@ -61,7 +69,8 @@
 export default {
   components: {
     DarkModeSwitch: () => import('@/components/DarkModeSwitch'),
-    BellIcon: () => import('@/components/BellIcon')
+    BellIcon: () => import('@/components/BellIcon'),
+    Logo: () => import('@/components/Logo')
   },
   data() {
     return {
@@ -71,6 +80,11 @@ export default {
           title: 'Server List',
           icon: 'dns',
           route: {name: 'servers'},
+        },
+        {
+          title: 'File Browser',
+          icon: 'mdi-folder',
+          route: {name: 'files'}
         },
         {
           title: 'Backup/Restore',
@@ -124,7 +138,7 @@ export default {
         },
         {
           title: 'Channel Groups',
-          icon: 'chat_bubble',
+          icon: 'mdi-hexagon-slice-4',
           route: {name: 'channelgroups'}
         },
         {
@@ -142,17 +156,17 @@ export default {
             },
             {
               title: 'Channel Permissions',
-              icon: 'chat_bubble',
+              icon: 'mdi-hexagon-slice-4',
               route: {name: 'permissions-channel'}
             },
             {
               title: 'Channel Groups',
-              icon: 'chat_bubble',
+              icon: 'mdi-hexagon-slice-4',
               route: {name: 'permissions-channelgroup'}
             },
             {
               title: 'Channel Client Permissions',
-              icon: 'chat_bubble',
+              icon: 'mdi-hexagon-slice-4',
               route: {name: 'permissions-channelclient'}
             },
           ]
@@ -172,20 +186,14 @@ export default {
       } else {
         return true
       }
-    },
-    notServers() {
-      if(!this.$route.name === 'servers') {
-        return true
-      } else {
-        return false
+    }
+  },
+  methods: {
+    pushRoute(entry) {
+      if(entry.route.name !== this.$route.name) {
+        this.$router.push(entry.route)
       }
     }
-  }
+  },
 }
 </script>
-
-<style>
-.logo--dark {
-  filter: brightness(10);
-}
-</style>

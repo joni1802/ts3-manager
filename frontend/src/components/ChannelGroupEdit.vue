@@ -13,9 +13,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="save" color="primary">OK</v-btn>
-          <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
-          <v-btn flat @click="save" color="primary">Apply</v-btn>
+          <v-btn text @click="save" color="primary">OK</v-btn>
+          <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
+          <v-btn text @click="save" color="primary">Apply</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -95,9 +95,7 @@ export default {
           name: this.channelGroupName,
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async changeMembers(list, cgid) {
@@ -109,9 +107,7 @@ export default {
             cldbid: clientDbId
           })
         } catch (err) {
-          this.$toast.error(err.message, {
-            icon: 'error'
-          })
+          this.$toasted.error(err.message)
         }
       }
     },
@@ -124,6 +120,7 @@ export default {
     async addMembers() {
       let clientAddList = this.selectedClients.filter(cldbid => !this.currentClients.includes(cldbid))
 
+
       await this.changeMembers(clientAddList, this.channelGroupId)
     },
     async getMemberDbIds() {
@@ -132,12 +129,14 @@ export default {
       return channelGroupClients.map(client => client.cldbid)
     },
     async save(e) {
+
+
       try {
         await this.renameChannelGroupName()
         await this.removeMembers()
         await this.addMembers()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       switch (e.target.textContent) {
@@ -148,7 +147,7 @@ export default {
           try {
             this.channelGroup = await this.getChannelGroup()
           } catch (err) {
-            this.$toast.error(err.message)
+            this.$toasted.error(err.message)
           }
 
           try {
@@ -158,7 +157,7 @@ export default {
               this.currentClients = [...this.selectedClients]
             }
           } catch (err) {
-            this.$toast.error(err.message)
+            this.$toasted.error(err.message)
           }
       }
 
@@ -172,7 +171,7 @@ export default {
       this.channels = await this.getChannelList()
       this.clients = await this.getClientDbList()
     } catch (err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   },
   watch: {

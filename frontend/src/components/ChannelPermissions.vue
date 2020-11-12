@@ -3,7 +3,7 @@
   <v-layout>
     <v-flex xs12>
       <permission-table :grantedPermissions="permissions" type="Channel Permissions" :editableContent="['permvalue']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template slot="selectMenu">
+        <template #selectMenu>
           <v-flex sm3 xs12>
             <v-autocomplete :items="channelSelection" v-model="selectedChannel" @change="changeChannel" label="Channel" :disabled="$store.state.query.loading"></v-autocomplete>
           </v-flex xs12>
@@ -68,17 +68,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelPermissions()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async removePermission(permissionValues) {
@@ -92,17 +88,13 @@ export default {
           permid: permid
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelPermissions()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     changeChannel(cid) {
@@ -128,15 +120,17 @@ export default {
 
         this.permissions = await this.getChannelPermissions()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.channelId = to.params.cid
-    this.permissions = await this.getChannelPermissions()
+    try {
+      this.channelId = to.params.cid
+      this.permissions = await this.getChannelPermissions()
+    } catch(err) {
+      this.$toasted.error(err.message)
+    }
 
     next()
   },

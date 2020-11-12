@@ -3,7 +3,7 @@
   <v-layout>
     <v-flex xs12>
       <permission-table :grantedPermissions="serverGroupPermissions" type="Server Groups" :editableContent="['permvalue', 'permskip', 'permnegated']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template slot="selectMenu">
+        <template #selectMenu>
           <v-flex sm3 xs12>
             <v-autocomplete :items="groupSelection" v-model="selectedGroup" @change="changeGroup" label="Server Group" :disabled="$store.state.query.loading"></v-autocomplete>
           </v-flex>
@@ -90,13 +90,13 @@ export default {
       try {
         await this.$TeamSpeak.execute('servergroupaddperm', params)
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       try {
         this.serverGroupPermissions = await this.getServergroupPermissions()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async removePermission(permissionValues) {
@@ -112,18 +112,16 @@ export default {
       try {
         await this.$TeamSpeak.execute('servergroupdelperm', params)
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       try {
         this.serverGroupPermissions = await this.getServergroupPermissions()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async init() {
-
-
       try {
         this.servergroups = await this.getServergrouplist()
 
@@ -138,21 +136,17 @@ export default {
 
         this.serverGroupPermissions = await this.getServergroupPermissions()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.servergroupId = to.params.sgid
-
     try {
+      this.servergroupId = to.params.sgid
       this.serverGroupPermissions = await this.getServergroupPermissions()
     } catch (err) {
-      this.$toast.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
-
 
     next()
   },

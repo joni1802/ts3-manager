@@ -3,7 +3,7 @@
   <v-layout>
     <v-flex xs12>
       <permission-table :grantedPermissions="permissions" type="Channel Client Permissions" :editableContent="['permvalue']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template slot="selectMenu">
+        <template #selectMenu>
           <v-flex sm3 xs12>
             <v-autocomplete :items="channelSelection" v-model="selectedChannel" label="Channel" @change="changeChannel" :disabled="$store.state.query.loading"></v-autocomplete>
           </v-flex xs12>
@@ -96,17 +96,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async removePermission(permission) {
@@ -121,17 +117,13 @@ export default {
           permid: permid,
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     changeClient(cldbid) {
@@ -157,7 +149,7 @@ export default {
         this.clients = await this.getClientDbList()
         this.channels = await this.getChannelList()
 
-        if (this.channelId === '0' && this.clientDbId === '0') {
+        if (!this.channelId && !this.clientDbId) {
           this.$router.replace({
             name: 'permissions-channelclient',
             params: {
@@ -169,16 +161,18 @@ export default {
 
         this.permissions = await this.getChannelClientPermList()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.channelId = to.params.cid
-    this.clientDbId = to.params.cldbid
-    this.permissions = await this.getChannelClientPermList()
+    try {
+      this.channelId = to.params.cid
+      this.clientDbId = to.params.cldbid
+      this.permissions = await this.getChannelClientPermList()
+    } catch(err) {
+      this.$toasted.error(err.message)
+    }
 
     next()
   },

@@ -1,13 +1,9 @@
 const state = {
-  darkMode: false,
   rememberLogin: true,
   notifications: true
 };
 
 const mutations = {
-  setDarkMode(state, status) {
-    state.darkMode = status;
-  },
   setRememberLogin(state, status) {
     state.rememberLogin = status;
   },
@@ -16,14 +12,7 @@ const mutations = {
   }
 };
 
-const actions = {
-  enableDarkMode({commit}) {
-    commit("setDarkMode", true);
-  }
-};
-
 export default {
   state,
   mutations,
-  actions
 };

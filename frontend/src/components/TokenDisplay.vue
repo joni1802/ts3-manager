@@ -1,9 +1,9 @@
 <template>
   <v-text-field class="mt-5" label="Generated Privilege Key" :value="value" @input="$emit('input', $event)" readonly>
-    <template slot="append">
+    <template #append v-if="value">
       <v-tooltip bottom>
-        <template slot="activator" v-if="value">
-          <v-icon @click="copyToClipboard">mdi-content-copy</v-icon>
+        <template #activator="{ on }">
+          <v-icon v-on="on" @click="copyToClipboard">mdi-content-copy</v-icon>
         </template>
         <span>Copy Token To Clipboard</span>
       </v-tooltip>
@@ -18,7 +18,7 @@ export default {
     copyToClipboard() {
       this.$clipboard(this.value)
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toasted.info("Token Copied To Clipboard")
     },
   }
 }

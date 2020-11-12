@@ -34,15 +34,9 @@
               :items="logItems"
               :headers="headers"
               :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
-              :rows-per-page-items="rowsPerPage"
+              :footer-props="{'items-per-page-options': rowsPerPage}"
               :search="filter"
             >
-              <template slot="items" slot-scope="{item}">
-                <td>{{ item.timestamp }}</td>
-                <td>{{ item.level }}</td>
-                <td>{{ item.channel }}</td>
-                <td>{{ item.msg }}</td>
-              </template>
             </v-data-table>
           </v-card-text>
         </v-card>
@@ -59,10 +53,7 @@ export default {
       rowsPerPage: [
         50,
         75,
-        {
-          "text": "$vuetify.dataIterator.rowsPerPageAll",
-          "value": -1
-        }
+        -1
       ],
       filter: '',
       headers: [
@@ -187,7 +178,7 @@ export default {
     try {
       this.logs = await this.getServerLogs()
     } catch(err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   }
 }

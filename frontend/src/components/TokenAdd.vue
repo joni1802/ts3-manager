@@ -4,7 +4,7 @@
       <v-flex lg6 md8 sm8 xs12>
         <v-card>
           <v-card-title>
-            Edit Client
+            Add Token
           </v-card-title>
           <v-card-text>
             <v-select :items="tokenTypes" label="Type" v-model="selectedType" :disabled="$store.state.query.loading"></v-select>
@@ -15,8 +15,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat @click="createToken" color="primary" :disabled="typeof selectedType === 'undefined'">Create</v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Close</v-btn>
+            <v-btn text @click="createToken" color="primary" :disabled="typeof selectedType === 'undefined'">Create</v-btn>
+            <v-btn text @click="$router.go(-1)" color="primary">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -66,7 +66,7 @@ export default {
     copyToClipboard() {
       this.$clipboard(this.token)
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toasted.info("Token Copied To Clipboard")
     },
     async createToken() {
       try {
@@ -77,11 +77,11 @@ export default {
           tokendescription: this.tokenDescription
         })
 
-        this.$toast.success("Token successfully created")
+        this.$toasted.success("Token successfully created")
 
         this.token = response.token
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     getServerGroupList() {
@@ -110,7 +110,7 @@ export default {
           this.selectedChannel = this.channels[0].cid
         }
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   }

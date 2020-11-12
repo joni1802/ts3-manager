@@ -12,9 +12,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="save" :disabled="$store.state.query.loading" color="primary">OK</v-btn>
-          <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
-          <v-btn flat @click="save" :disabled="$store.state.query.loading" color="primary">Apply</v-btn>
+          <v-btn text @click="save" :disabled="$store.state.query.loading" color="primary">OK</v-btn>
+          <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
+          <v-btn text @click="save" :disabled="$store.state.query.loading" color="primary">Apply</v-btn>
         </v-card-actions>
       </v-card>
       <v-dialog v-model="swag">
@@ -118,7 +118,7 @@ export default {
         await this.removeMembers()
         await this.addMembers()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       switch (e.target.textContent) {
@@ -137,7 +137,7 @@ export default {
 
         this.currentServerGroupClients = [...this.serverGroupClients]
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

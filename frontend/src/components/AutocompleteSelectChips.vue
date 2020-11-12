@@ -1,21 +1,30 @@
 <template lang="html">
-  <v-autocomplete :value="value" @input="changeValue" :items="items"  chips multiple :label="label" :disabled="disabled">
-    <template slot="selection" slot-scope="{index, item}">
-      <v-chip v-if="index < maxVisibleChips" close @input="removeChip(item.value)">
+  <v-autocomplete
+    :value="value"
+    @input="changeValue"
+    :items="items"
+    chips
+    multiple
+    :label="label"
+    :disabled="disabled"
+  >
+    <template #selection="{index, item}">
+      <v-chip v-if="index < maxVisibleChips" close @click:close="removeChip(item.value)">
+        <!-- @input="removeChip(item.value)" -->
         <span>{{ item.text }}</span>
       </v-chip>
       <span v-if="index == maxVisibleChips" class="grey--text caption">
         (+{{ value.length - maxVisibleChips}} others)
       </span>
     </template>
-    <template slot="item" slot-scope="{item, tile}">
-      <v-list-tile-action>
-        <v-checkbox v-model="tile.props.value"></v-checkbox>
-      </v-list-tile-action>
-      <v-list-tile-content>
+    <template #item="{ item, attrs}">
+      <v-list-item-action>
+        <v-checkbox v-model="attrs.inputValue"></v-checkbox>
+      </v-list-item-action>
+      <v-list-item-content>
         <span>{{ item.text }}</span>
         <span v-if="item.uid" class="grey--text caption">{{ item.uid }}</span>
-      </v-list-tile-content>
+      </v-list-item-content>
     </template>
   </v-autocomplete>
 </template>
@@ -40,6 +49,8 @@ export default {
       let index = this.value.indexOf(value)
 
       this.value.splice(index, 1)
+
+      this.$emit('input', this.value)
     },
     changeValue(array) {
       this.$emit('input', array)

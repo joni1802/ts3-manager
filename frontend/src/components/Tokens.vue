@@ -3,26 +3,49 @@
     <v-layout>
       <v-flex md10 xs12 offset-md1>
         <v-card>
+          <v-card-title>
+            <v-btn
+              color="error"
+              :disabled="!Boolean(selectedTableItems.length)"
+              @click="openDeleteDialog(selectedTableItems)"
+            >
+              <v-icon left>delete</v-icon>
+              Remove
+            </v-btn>
+          </v-card-title>
           <v-card-text>
-            <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="tokens" :rows-per-page-items="rowsPerPage">
-              <template slot="items" slot-scope="props">
-                <td>{{ props.item.token }}</td>
-                <td>
-                  <v-tooltip bottom>
-                    <template slot="activator">
-                      <v-icon small @click="copyToClipboard(props.item.token)">mdi-content-copy</v-icon>
-                    </template>
-                    <span>Copy Token To Clipboard</span>
-                  </v-tooltip>
-                </td>
-                <td>{{ props.item.token_type }}</td>
-                <td>{{ props.item.token_id1 }}</td>
-                <td>{{ props.item.token_id2 }}</td>
-                <td>{{ new Date(props.item.token_created * 1000).toLocaleString() }}</td>
-                <td>{{ props.item.token_description }}</td>
-                <td class="justify-center layout px-0">
-                  <v-icon @click="openDeleteDialog(props.item)">delete</v-icon>
-                </td>
+            <v-data-table
+              :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+              :headers="headers"
+              :items="tokens"
+              :footer-props="{'items-per-page-options': rowsPerPage}"
+              show-select
+              v-model="selectedTableItems"
+              item-key="token"
+            >
+              <template #item.actions="{ item }">
+                <v-menu>
+                  <template #activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="openDeleteDialog([item])">
+                      <v-list-item-title>
+                        Delete Token
+                      </v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="copyToClipboard(item.token)">
+                      <v-list-item-title>
+                        Copy Token
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </template>
+              <template #item.token_created="{ item }">
+                {{ new Date(item.token_created * 1000).toLocaleString() }}
               </template>
             </v-data-table>
           </v-card-text>
@@ -39,13 +62,13 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="dialog = false">No</v-btn>
-            <v-btn flat color="primary" @click="deleteToken">Yes</v-btn>
+            <v-btn text color="primary" @click="dialog = false">No</v-btn>
+            <v-btn text color="primary" @click="deleteToken">Yes</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <v-btn fab color="pink" fixed bottom right dark :to="{name: 'token-add'}">
+      <v-btn fab color="primary" fixed bottom right dark :to="{name: 'token-add'}">
         <v-icon>add</v-icon>
       </v-btn>
     </v-layout>
@@ -56,60 +79,64 @@
 export default {
   data() {
     return {
-      selectedToken: {},
       dialog: false,
       tokens: [],
       headers: [
+        {text: "", value: "actions", align: 'start', sortable: false},
         {text: "Privilege Key", value: "token"},
-        {text: "", value: ""},
         {text: "Type", value: "token_type"},
         {text: "Group", value: "token_id1"},
         {text: "Channel", value: "token_id2"},
         {text: "Created", value: "token_created"},
         {text: "Description", value: "token_description"},
-        {text: "Action", value: "delete", align: 'right', sortable: false},
       ],
       rowsPerPage: [
         25,
         50,
         75,
-        {
-          "text": "$vuetify.dataIterator.rowsPerPageAll",
-          "value": -1
-        }
+        -1
       ],
+      selectedTableItems: [],
+      tokenRemoveList: []
     }
   },
   methods: {
     getTokenList() {
       return this.$TeamSpeak.execute("tokenlist")
     },
-    openDeleteDialog(token) {
-      this.selectedToken = token
+    openDeleteDialog(tokens) {
+      this.tokenRemoveList = tokens
 
       this.dialog = true
     },
     async deleteToken() {
       try {
-        await this.$TeamSpeak.execute("tokendelete", {token: this.selectedToken.token})
+        for(let token of this.tokenRemoveList) {
+          await this.$TeamSpeak.execute("tokendelete", {token: token.token})
+        }
 
         this.dialog = false
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
+
+      // v-model is not updating correctly when the content of the table changes.
+      // Removed content is still in the selectedTableItems array.
+      // This is a workaround for this vuetify bug.
+      this.selectedTableItems = []
 
       this.init()
     },
     copyToClipboard(token) {
       this.$clipboard(token)
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toasted.info("Token Copied To Clipboard")
     },
     async init() {
       try {
         this.tokens = await this.getTokenList()
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },

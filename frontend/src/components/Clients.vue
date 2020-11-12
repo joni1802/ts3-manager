@@ -4,43 +4,55 @@
     <v-flex xs12>
       <v-card>
         <v-card-title>
-          <v-layout>
+          <v-layout wrap justify-space-between>
+            <v-flex sm6 xs12>
+              <v-btn color="error" :disabled="!Boolean(selectedTableItems.length)" @click="openRemoveDialog(selectedTableItems)">
+                <v-icon left>delete</v-icon>
+                Remove
+              </v-btn>
+            </v-flex>
             <v-flex md4 sm6 xs12>
-              <v-text-field v-model="search" append-icon="search" label="Search"></v-text-field>
+              <v-text-field append-icon="search" label="Search" v-model="search"></v-text-field>
             </v-flex>
           </v-layout>
         </v-card-title>
         <v-card-text>
-          <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="clientdblist" :search="search" :rows-per-page-items="rowsPerPage">
-            <template slot="items" slot-scope="props">
-              <td>{{ props.item.client_nickname }}</td>
-              <td>{{ props.item.client_unique_identifier }}</td>
-              <td>{{ new Date(props.item.client_created * 1000).toLocaleString() }}</td>
-              <td>{{ new Date(props.item.client_lastconnected * 1000).toLocaleString() }}</td>
-              <td>{{ props.item.client_totalconnections }}</td>
-              <td>{{ props.item.client_lastip }}</td>
-              <td>{{ props.item.client_description }}</td>
-              <td>
-                <v-menu bottom left>
-                  <template slot="activator" slot-scope="{ on }">
-                    <v-btn v-on="on" icon>
-                      <v-icon color="grey lighten-1">more_vert</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-tile :to="`/client/${props.item.cldbid}/ban`">
-                      <v-list-tile-title>
-                        Ban Client
-                      </v-list-tile-title>
-                    </v-list-tile>
-                    <v-list-tile @click="openDialog(props.item)">
-                      <v-list-tile-title>
-                        Delete Client
-                      </v-list-tile-title>
-                    </v-list-tile>
-                  </v-list>
-                </v-menu>
-              </td>
+          <v-data-table
+            :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+            :headers="headers"
+            :items="clientdblist"
+            :search="search"
+            :footer-props="{'items-per-page-options': rowsPerPage}"
+            v-model="selectedTableItems"
+            show-select
+            item-key="cldbid"
+          >
+            <template #item.name="{ item }">
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item :to="`/client/${item.cldbid}/ban`">
+                    <v-list-item-title>
+                      Ban Client
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="openRemoveDialog([item])">
+                    <v-list-item-title>
+                      Delete Client
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </template>
+            <template #item.client_created="{ item }">
+              {{ new Date(item.client_created * 1000).toLocaleString() }}
+            </template>
+            <template #item.client_lastconnected="{ item }">
+              {{ new Date(item.client_lastconnected * 1000).toLocaleString() }}
             </template>
           </v-data-table>
         </v-card-text>
@@ -51,13 +63,14 @@
         <v-card-title>
           Delete Client
         </v-card-title>
-        <v-card-text>
-          Do you really want to delete <b>{{ selectedClient.client_nickname }}</b> from the list?
+        <v-card-text >
+          Do you really want to delete <b v-if="clientRemoveList.length === 1">{{ clientRemoveList[0].client_nickname }}</b>
+          <b v-else>all selected clients</b> from the list?
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="dialog = false" color="primary">No</v-btn>
-          <v-btn flat @click="deleteClient" color="primary">Yes</v-btn>
+          <v-btn text @click="dialog = false" color="primary">No</v-btn>
+          <v-btn text @click="deleteClient" color="primary">Yes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -69,7 +82,14 @@
 export default {
   data() {
     return {
-      headers: [{
+      headers: [
+        {
+          text: '',
+          value: 'name',
+          align: 'start',
+          sortable: false
+        },
+        {
           text: 'Last Nickname',
           value: 'client_nickname'
         },
@@ -97,11 +117,6 @@ export default {
           text: 'Description',
           value: 'client_description'
         },
-        {
-          text: 'Actions',
-          value: 'name',
-          sortable: false
-        }
       ],
       clientdblist: [],
       search: '',
@@ -109,18 +124,18 @@ export default {
         25,
         50,
         75,
-        {
-          "text": "$vuetify.dataIterator.rowsPerPageAll",
-          "value": -1
-        }
+        -1
       ],
       dialog: false,
-      selectedClient: {}
+      clientRemoveList: [],
+      selectedTableItems: [],
+      clientAvatarDialog: false
     }
   },
   methods: {
-    openDialog(client) {
-      this.selectedClient = client
+    openRemoveDialog(clients) {
+      this.clientRemoveList = clients
+
       this.dialog = true
     },
     getClientDbList() {
@@ -128,34 +143,34 @@ export default {
     },
     async deleteClient() {
       try {
-        await this.$TeamSpeak.execute('clientdbdelete', {
-          cldbid: this.selectedClient.cldbid
-        })
+        for(let client of this.clientRemoveList) {
+          await this.$TeamSpeak.execute('clientdbdelete', {
+            cldbid: client.cldbid
+          })
+        }
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
+
+      // v-model is not updating correctly when the content of the table changes.
+      // Removed content is still in the selectedTableItems array.
+      // This is a workaround for this vuetify bug.
+      this.selectedTableItems = []
 
       this.dialog = false
 
+      this.init()
+    },
+    async init() {
       try {
         this.clientdblist = await this.getClientDbList()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
-  async created() {
-    try {
-      this.clientdblist = await this.getClientDbList()
-    } catch (err) {
-      this.$toast.error(err.message, {
-        icon: 'error'
-      })
-    }
+  created() {
+    this.init()
   }
 }
 </script>

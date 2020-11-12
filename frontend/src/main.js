@@ -6,9 +6,9 @@
 import "./assets/css/style.css"
 
 import Vue from "vue";
-import "./plugins/vuetify";
 import App from "./App.vue";
-import VuetifyToast from "vuetify-toast-snackbar";
+import vuetify from "./plugins/vuetify";
+import Toasted from 'vue-toasted'
 import "nprogress/nprogress.css";
 import NProgress from "nprogress";
 import Clipboard from "v-clipboard";
@@ -26,10 +26,16 @@ NProgress.configure({
 
 Vue.use(Clipboard);
 
-// More infos => https://github.com/eolant/vuetify-toast-snackbar
-Vue.use(VuetifyToast, {
-  classes: ["toast"] // to enable Roboto font (see public/index.html)
-});
+Vue.use(Toasted, {
+  singleton: true,
+  duration: 4000,
+  action: {
+   text: 'close',
+   onClick: (e, toast) => {
+     toast.goAway(0)
+   }
+ }
+})
 
 Vue.config.productionTip = false;
 
@@ -44,5 +50,6 @@ Vue.prototype.$TeamSpeak = TeamSpeak;
 new Vue({
   render: h => h(App),
   router,
-  store
+  store,
+  vuetify
 }).$mount("#app");

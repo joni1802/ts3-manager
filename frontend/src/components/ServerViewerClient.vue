@@ -1,73 +1,83 @@
 <template>
 <div>
-  <v-menu offset-x>
-    <template slot="activator">
-      <v-btn flat>
-        <v-icon>{{ statusIcon }}</v-icon>
-        {{ client.client_nickname }} <i v-if="client.clid === queryUser.client_id">(You)</i>
-      </v-btn>
+  <v-menu offset-y max-width="300px">
+    <template #activator="{ on }">
+      <v-list-item v-on="on">
+        <v-list-item-avatar>
+          <client-avatar
+            :clientDbId="client.client_database_id"
+            :clientAvatars="avatarList"
+          >
+          </client-avatar>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ client.client_nickname }} <v-icon>{{ statusIcon }}</v-icon>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </template>
     <v-list>
-      <v-list-tile @click="pokeClientDialog = true">
-        <v-list-tile-action>
+      <v-list-item @click="pokeClientDialog = true">
+        <v-list-item-action>
           <v-icon>mdi-alert-octagram</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
-            Poke
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="openPrivateChat(client.clid)">
-        <v-list-tile-action>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
+            Poke Client
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item @click="openPrivateChat(client.clid)">
+        <v-list-item-action>
           <v-icon>send</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Open Text Chat
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'client-edit', params: {clid: client.clid}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'client-edit', params: {clid: client.clid}}">
+        <v-list-item-action>
           <v-icon>edit</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Edit Client
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="openKickDialog(4)">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item @click="openKickDialog(4)">
+        <v-list-item-action>
           <v-icon>forward</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Kick Client from Channel
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile @click="openKickDialog(5)">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item @click="openKickDialog(5)">
+        <v-list-item-action>
           <v-icon>forward</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Kick Client from Server
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-      <v-list-tile :to="{name: 'client-ban', params: {cldbid: client.client_database_id}}">
-        <v-list-tile-action>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item :to="{name: 'client-ban', params: {cldbid: client.client_database_id}}">
+        <v-list-item-action>
           <v-icon>not_interested</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
             Ban Client
-          </v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
   </v-menu>
 
@@ -79,8 +89,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="kickClientDialog = false" color="primary">Cancel</v-btn>
-        <v-btn flat @click="kick" color="primary">OK</v-btn>
+        <v-btn text @click="kickClientDialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="kick" color="primary">OK</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -103,9 +113,12 @@
 
 <script>
 export default {
+  components: {
+    ClientAvatar: () => import("@/components/ClientAvatar")
+  },
   props: {
     client: Object,
-    queryUser: Object
+    avatarList: Array
   },
   data() {
     return {
@@ -125,10 +138,8 @@ export default {
         return 'volume_off'
       } else if (this.client.client_input_muted === 1) {
         return 'mic_off'
-      } else {
-        return 'fiber_manual_record'
       }
-    }
+    },
   },
   methods: {
     async poke() {
@@ -168,7 +179,7 @@ export default {
           clid: this.client.clid
         })
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.kickClientDialog = false

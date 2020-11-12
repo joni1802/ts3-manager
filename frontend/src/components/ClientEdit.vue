@@ -13,8 +13,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat @click="save" color="primary">OK</v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
+            <v-btn text @click="save" color="primary">OK</v-btn>
+            <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -61,9 +61,9 @@
           this.addServergroups()
           this.removeServergroups()
 
-          this.$toast.success('Client updated', {icon: 'done'})
+          this.$toasted.success('Client updated')
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message)
         }
 
         // This timeout is needed because the teamspeak server is to slow and will give you wrong result back
@@ -120,7 +120,7 @@
           this.selectedGroups = this.getClientServergroups()
           this.description = this.getClientDescription()
         } catch(err) {
-          this.$toast.error(err.message, {icon: 'error'})
+          this.$toasted.error(err.message)
         }
       }
     },

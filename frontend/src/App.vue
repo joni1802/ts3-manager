@@ -1,9 +1,9 @@
 <template>
-<v-app :dark="$store.state.settings.darkMode">
+<v-app>
   <app-shell></app-shell>
-  <v-content>
+  <v-main>
     <router-view></router-view>
-  </v-content>
+  </v-main>
 </v-app>
 </template>
 
@@ -26,7 +26,7 @@ export default {
           this.$store.commit("saveUserInfo", queryUser);
         }
       } catch (err) {
-        this.$toast.error(err.message);
+        this.$toasted.error(err.message);
       }
     },
     addNotificationListeners() {

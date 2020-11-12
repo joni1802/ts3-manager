@@ -3,14 +3,12 @@
   <v-layout>
     <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
       <v-card>
+        <v-card-title>{{ serverInfo.virtualserver_name }}</v-card-title>
         <v-card-text>
-          <v-subheader>
-            <v-icon>dns</v-icon>{{ serverInfo.virtualserver_name }}
-          </v-subheader>
-          <v-treeview :items="channelTree" :open="itemIDs">
-            <template slot="label" slot-scope="{item}">
+          <v-treeview :items="channelTree" :open="itemIDs" dense>
+            <template #label="{ item }">
               <channel v-if="item.channel_name" :channel="item" :queryUser="queryUser"></channel>
-              <client v-else :client="item" :queryUser="queryUser"></client>
+              <client v-else :client="item" :avatarList="clientAvatars"></client>
             </template>
           </v-treeview>
         </v-card-text>
@@ -18,16 +16,21 @@
     </v-flex>
   </v-layout>
 
-  <v-btn fab color="pink" fixed bottom right dark :to="{name: 'channel-add'}">
+  <v-btn fab color="primary" fixed bottom right dark :to="{name: 'channel-add'}">
     <v-icon>add</v-icon>
   </v-btn>
 </v-container>
 </template>
 <script>
+import loadAvatars from "@/mixins/loadAvatars"
+
 export default {
+  mixins: [
+    loadAvatars
+  ],
   components: {
-    Channel: () => import('@/components/Channel'),
-    Client: () => import('@/components/ChannelClients'),
+    Channel: () => import('@/components/ServerViewerChannel'),
+    Client: () => import('@/components/ServerViewerClient'),
   },
   data() {
     return {
@@ -38,7 +41,7 @@ export default {
       queryUser: {},
       channelTree: [],
       currentChannel: {},
-      textPrivates: []
+      textPrivates: [],
     }
   },
   methods: {
@@ -117,7 +120,7 @@ export default {
 
         this.currentChannel = this.getCurrentChannel(this.channelList, this.queryUser)
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     },
     async loadChannelTree() {
@@ -129,11 +132,11 @@ export default {
 
         this.openAllChannels()
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.updateCurrentChannel()
-    },
+    }
   },
   async created() {
     try {
@@ -148,8 +151,10 @@ export default {
       this.openAllChannels()
 
       this.addEventListeners()
+
+      this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
     } catch (err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   },
   beforeRouteLeave(from, to, next) {

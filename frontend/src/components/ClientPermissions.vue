@@ -3,7 +3,7 @@
   <v-layout>
     <v-flex xs12>
       <permission-table type="Client Permissions" :grantedPermissions="clientPermissions" :editableContent="['permvalue', 'permskip']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template slot="selectMenu">
+        <template #selectMenu>
           <v-flex sm3 xs12>
             <v-autocomplete :items="clientSelection" v-model="selectedClient" @change="changeClient" label="Client" :disabled="$store.state.query.loading"></v-autocomplete>
           </v-flex>
@@ -81,17 +81,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.clientPermissions = await this.getClientPermissions()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
     },
@@ -106,17 +102,13 @@ export default {
           permid: permid
         })
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
 
       try {
         this.clientPermissions = await this.getClientPermissions()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     },
     async init() {
@@ -134,23 +126,17 @@ export default {
 
         this.clientPermissions = await this.getClientPermissions()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
     }
   },
   async beforeRouteUpdate(to, from, next) {
-    this.clientDbId = to.params.cldbid
-
     try {
+      this.clientDbId = to.params.cldbid
       this.clientPermissions = await this.getClientPermissions()
     } catch (err) {
-      this.$toast.error(err.message, {
-        icon: 'error'
-      })
+      this.$toasted.error(err.message)
     }
-
 
     next()
   },

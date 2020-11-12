@@ -11,14 +11,13 @@
           <v-text-field type="password" label="Password" v-model="channelPassword" :disabled="$store.state.query.loading"></v-text-field>
           <v-text-field label="Topic" v-model="channelTopic" :disabled="$store.state.query.loading"></v-text-field>
           <v-textarea label="Description" v-model="channelDescription" :disabled="$store.state.query.loading"></v-textarea>
-          <v-expansion-panel class="elevation-0 ">
-            <v-expansion-panel-content>
-              <template slot="header">
-                <div>
-                  More Options
-                </div>
-              </template>
-                <v-card class="card-border">
+          <v-expansion-panels accordion flat>
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                More Options
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-card>
                   <v-card-text>
                     <v-layout wrap>
                       <v-flex xs12>
@@ -47,15 +46,16 @@
                     </v-layout>
                   </v-card-text>
                 </v-card>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat @click="save" :disabled="this.$store.state.query.loading" color="primary">OK</v-btn>
-          <v-btn flat @click="$router.go(-1)" color="primary">Cancel</v-btn>
-          <v-btn flat @click="save" :disabled="this.$store.state.query.loading" color="primary" :class="{'d-none': !applyButton}">Apply</v-btn>
+          <v-btn text @click="save" :disabled="this.$store.state.query.loading" color="primary">OK</v-btn>
+          <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
+          <v-btn text @click="save" :disabled="this.$store.state.query.loading" color="primary" :class="{'d-none': !applyButton}">Apply</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -255,7 +255,7 @@ export default {
       this.channels = await this.getChannelList()
       this.serverInfo = await this.getServerInfo()
     } catch(err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   }
 }

@@ -26,8 +26,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn flat @click="createServer" :disabled="!valid" color="primary">Create</v-btn>
-            <v-btn flat @click="$router.go(-1)" color="primary">Close</v-btn>
+            <v-btn text @click="createServer" :disabled="!valid" color="primary">Create</v-btn>
+            <v-btn text @click="$router.go(-1)" color="primary">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -70,11 +70,11 @@ export default {
 
         this.token = response.token
 
-        this.$toast.success("Server successfully created")
+        this.$toasted.success("Server successfully created")
 
         await this.$TeamSpeak.selectServer(response.sid)
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
     }
   },
@@ -83,7 +83,7 @@ export default {
       this.servers = await this.getServerList()
       this.serverPort = this.getAvailablePort()
     } catch(err) {
-      this.$toast.error(err.message)
+      this.$toasted.error(err.message)
     }
   }
 }

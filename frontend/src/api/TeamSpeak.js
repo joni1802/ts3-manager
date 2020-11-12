@@ -17,13 +17,19 @@ import EventTarget from '@ungap/event-target'
 const TeamSpeak = Object.create(new EventTarget());
 
 const handleError = (error, resolve, reject) => {
-  switch (error.id) {
-    // Empty result error e.g. an empty permissionlist
-    case 1281:
-      resolve([]);
-      break;
-    default:
-      reject(error);
+  if(error.connected) {
+    // Ignore empty result error e.g. an empty permissionlist
+    if(error.id === 1281) {
+      resolve([])
+    } else {
+      reject(error)
+    }
+  } else {
+    store.dispatch("clearStorage");
+
+    router.push({name: "login"});
+
+    reject(error)
   }
 };
 
@@ -199,11 +205,19 @@ TeamSpeak.unregisterEvent = () => {
 
 TeamSpeak.selectServer = sid => {
   return TeamSpeak.execute("use", {sid})
-    .then(() => store.commit("setServerId", sid))
+    .then(() => store.dispatch("saveServerId", sid))
     .then(() => TeamSpeak.registerAllEvents())
     .then(() => TeamSpeak.execute("whoami"))
     .then(userInfo => store.commit("saveUserInfo", userInfo[0]));
 };
+
+TeamSpeak.downloadFile = (path, cid, cpw = "") => {
+  return new Promise((resolve, reject) => {
+    socket.emit("teamspeak-downloadfile", {path, cid, cpw}, response => {
+      handleResponse(response, resolve, reject)
+    })
+  })
+}
 
 TeamSpeak.on = (name, fn) => {
   TeamSpeak.__proto__.addEventListener(name, fn);
@@ -289,8 +303,8 @@ socket.on("teamspeak-channeldelete", data => {
   );
 });
 
-socket.on("teamspeak-error", err => {
-  Vue.prototype.$toast.error(err.message);
+socket.on("teamspeak-reconnecterror", async err => {
+  Vue.prototype.$toasted.error(err.message);
 
   store.dispatch("clearStorage");
 
@@ -304,10 +318,21 @@ socket.on("teamspeak-reconnected", async () => {
     if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
 
     store.dispatch("saveConnection", {queryUser, connected: true});
+
+    // When there was a socket error and it reconnected automatically again
+    if(router.currentRoute.name === 'login') router.push({name: 'servers'})
   } catch (err) {
-    Vue.prototype.$toast.error(err.message);
+    Vue.prototype.$toasted.error(err.message);
   }
 });
+
+// When the teamspeak connection is closed manually.
+// E.g. writing "quit" in the console
+socket.on("teamspeak-disconnect", () => {
+  store.dispatch("clearStorage")
+
+  router.push({name: "login"});
+})
 
 setLoadingState([
   "execute",

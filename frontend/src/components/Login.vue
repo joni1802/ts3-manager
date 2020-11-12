@@ -15,10 +15,10 @@
               </v-flex>
               <v-flex xs3>
                 <v-checkbox v-model="form.ssh" label="SSH">
-                  <template slot="append">
+                  <template #append>
                     <v-tooltip bottom>
-                      <template slot="activator">
-                        <v-icon>mdi-help-circle-outline</v-icon>
+                      <template #activator="{on}">
+                        <v-icon v-on="on">mdi-help-circle-outline</v-icon>
                       </template>
                       <span>If SSH is checked (default), the connection to the
                         ServerQuery is encrypted.</span>
@@ -27,10 +27,10 @@
                 </v-checkbox>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Name" v-model="form.username" :rules="[rules.required]" placeholder="e.g. serveradmin" name="username" browser-autocomplete="username"></v-text-field>
+                <v-text-field label="Name" v-model="form.username" :rules="[rules.required]" placeholder="e.g. serveradmin" name="username" autocomplete="username"></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Password" type="password" v-model="form.password" :rules="[rules.required]" name="password" browser-autocomplete="current-password"></v-text-field>
+                <v-text-field label="Password" type="password" v-model="form.password" :rules="[rules.required]" name="password" autocomplete="current-password"></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-checkbox label="Remember me" v-model="rememberLogin"></v-checkbox>
@@ -40,9 +40,9 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat color="primary" :disabled="!valid" @click="connect" :loading="loading">
+          <v-btn text color="primary" :disabled="!valid" @click="connect" :loading="loading">
             <v-icon>arrow_forward</v-icon>Connect
-            <template slot="loader">
+            <template #loader>
               <span>Connecting...</span>
             </template>
           </v-btn>
@@ -60,12 +60,11 @@ import { version } from "../../package.json";
 export default {
   beforeRouteEnter(to, from, next) {
     next(async vm => {
-      if (!vm.$store.state.query.token) return;
+      let token = vm.$store.state.query.token
 
-      vm.$socket.emit(
-        "autofillform",
-        vm.$store.state.query.token,
-        response => {
+      if (!token) return;
+
+      vm.$socket.emit("autofillform", token, response => {
           if(response.host) {
             vm.form.host = response.host;
             vm.form.queryport = response.queryport;
@@ -73,7 +72,9 @@ export default {
             vm.form.username = response.username;
             vm.form.password = response.password;
           } else {
-            vm.$toast.error(response)
+            vm.$store.dispatch("removeToken")
+
+            vm.$toasted.error(response)
           }
         }
       );
@@ -124,13 +125,13 @@ export default {
           password: this.form.password
         })
 
-        this.$store.commit("saveToken", token)
+        this.$store.dispatch("saveToken", token)
         this.$store.commit("isConnected", true)
 
         this.$router.push({name: "servers"})
       } catch(err) {
 
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
 
       this.loading = false

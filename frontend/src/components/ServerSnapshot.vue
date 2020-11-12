@@ -3,14 +3,14 @@
     <v-layout justify-center>
       <v-flex lg6 md8 sm8 xs12>
         <v-card>
-          <v-card-title primary-title>
-            <div>
-              <span class="grey--text">Backup</span><br>
-              <span>Download a backup file which contains all the necessary data to restore the virtual server</span>
-            </div>
+          <v-card-title>
+            Backup
           </v-card-title>
+          <v-card-text>
+            Download a backup file which contains all the necessary data to restore the virtual server
+          </v-card-text>
           <v-card-actions>
-            <v-btn flat color="blue" @click="createSnapshot">
+            <v-btn color="primary" @click="createSnapshot">
               Create Snapshot
               <v-icon right>
                 mdi-file-download-outline
@@ -18,12 +18,12 @@
             </v-btn>
           </v-card-actions>
           <v-divider></v-divider>
-          <v-card-title primary-title>
-            <div>
-              <span class="grey--text">Restore</span><br>
-              <span>Upload a backup file to restore the virtual server</span>
-            </div>
+          <v-card-title>
+            Restore
           </v-card-title>
+          <v-card-text>
+            Upload a backup file to restore the virtual server
+          </v-card-text>
           <v-card-actions>
             <v-layout justify-space-between wrap>
               <v-flex xs12 sm12 md6>
@@ -31,7 +31,7 @@
                 <v-text-field label="Select Backup File" @click="selectFile" v-model="fileName" prepend-icon="attach_file"></v-text-field>
               </v-flex>
               <v-flex xs12 sm12 md5>
-                <v-btn flat color="red" :disabled="filePicked" @click="deploySnapshot">
+                <v-btn color="error" :disabled="filePicked" @click="deploySnapshot">
                   Deploy Snapshot
                   <v-icon right>
                     mdi-file-upload-outline
@@ -68,7 +68,7 @@
 
           this.saveFile(response[0].data)
         } catch(err) {
-          this.$toast.error(err.message)
+          this.$toasted.error(err.message)
         }
       },
       generateFileName() {
@@ -94,7 +94,7 @@
 
             this.fileContent = new Blob([text])
           } catch(err) {
-            this.$toast.error(err.message)
+            this.$toasted.error(err.message)
           }
         }
       },
@@ -102,13 +102,13 @@
         try {
           let response = await this.$TeamSpeak.deploySnapshot(this.fileContent)
 
-          this.$toast.success('Snapshot successfully restored')
+          this.$toasted.success('Snapshot successfully restored')
 
           await this.$TeamSpeak.selectServer(this.$store.state.query.serverId) // After snapshot deployment server needs to be selected again
 
           this.clearFileSelector()
         } catch(err) {
-          this.$toast.error(err.message)
+          this.$toasted.error(err.message)
         }
       },
       clearFileSelector() {

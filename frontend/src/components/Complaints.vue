@@ -10,50 +10,43 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-data-table :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText" :headers="headers" :items="complaints" v-model="selected" item-key="timestamp" :rows-per-page-items="rowsPerPage">
-            <template slot="headers" slot-scope="props">
-              <th>
-                <v-checkbox :input-value="props.all" hide-details @click.stop="toggleAll"></v-checkbox>
-              </th>
-              <th v-for="header in props.headers" :key="header.text" class="text-xs-left">
-                {{ header.text }}
-              </th>
+          <v-data-table
+            :no-data-text="$store.state.query.loading ? '...loading' : $vuetify.noDataText"
+            :headers="headers"
+            :items="complaints"
+            v-model="selected"
+            item-key="timestamp"
+            :footer-props="{'items-per-page-options': rowsPerPage}"
+            show-select
+          >
+            <template #item.actions="{ item }">
+              <v-menu>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </template>
+                <v-list>
+                  <v-list-item :to="`/client/${item.tcldbid}/ban`">
+                    <v-list-item-title>
+                      Ban <b>{{ item.tname }}</b>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item :to="`/client/${item.fcldbid}/ban`">
+                    <v-list-item-title>
+                      Ban <b>{{ item.fname }}</b>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item @click="openDialog([item])">
+                    <v-list-item-title>
+                      Remove Complaint
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </template>
-            <template slot="items" slot-scope="props">
-              <tr :active="props.selected" @click="props.selected = !props.selected">
-                <td>
-                  <v-checkbox :input-value="props.selected" hide-details></v-checkbox>
-                </td>
-                <td>{{ props.item.tname }}</td>
-                <td>{{ props.item.fname }}</td>
-                <td><i>"{{ props.item.message }}"</i></td>
-                <td>
-                  <v-menu bottom left>
-                    <template slot="activator" slot-scope="{ on }">
-                      <v-btn v-on="on" icon @click.native.stop.prevent>
-                        <v-icon color="grey lighten-1">more_vert</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-tile :to="`/client/${props.item.tcldbid}/ban`">
-                        <v-list-tile-title>
-                          Ban <b>{{ props.item.tname }}</b>
-                        </v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile :to="`/client/${props.item.fcldbid}/ban`">
-                        <v-list-tile-title>
-                          Ban <b>{{ props.item.fname }}</b>
-                        </v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile @click="openDialog([props.item])">
-                        <v-list-tile-title>
-                          Remove
-                        </v-list-tile-title>
-                      </v-list-tile>
-                    </v-list>
-                  </v-menu>
-                </td>
-              </tr>
+            <template #item.message="{ item }">
+              <i>"{{ item.message }}"</i>
             </template>
           </v-data-table>
         </v-card-text>
@@ -69,8 +62,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn flat color="primary" @click="dialog = false">No</v-btn>
-          <v-btn flat color="primary" @click="removeComplaints">Yes</v-btn>
+          <v-btn text color="primary" @click="dialog = false">No</v-btn>
+          <v-btn text color="primary" @click="removeComplaints">Yes</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -82,7 +75,13 @@
 export default {
   data() {
     return {
-      headers: [{
+      headers: [
+        {
+          text: '',
+          align: 'start',
+          value: 'actions'
+        },
+        {
           text: 'Target Nickname',
           value: 'tname'
         },
@@ -94,10 +93,6 @@ export default {
           text: 'Reason',
           value: 'message'
         },
-        {
-          text: 'Actions',
-          value: 'actions'
-        }
       ],
       complaints: [],
       selected: [],
@@ -107,24 +102,13 @@ export default {
         25,
         50,
         75,
-        {
-          "text": "$vuetify.dataIterator.rowsPerPageAll",
-          "value": -1
-        }
+        -1
       ],
     }
   },
   methods: {
     getComplainList() {
       return this.$TeamSpeak.execute('complainlist')
-    },
-    toggleAll() {
-      // I do not understand this method at all but it works
-      if (this.selected.length) {
-        this.selected = []
-      } else {
-        this.selected = this.complaints.slice()
-      }
     },
     openDialog(complaints) {
       this.selectedComplaints = complaints
@@ -139,33 +123,28 @@ export default {
           })
         }
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
+
+      // v-model is not updating correctly when the content of the table changes.
+      // Removed content is still in the selectedTableItems array.
+      // This is a workaround for this vuetify bug.
+      this.selected = []
 
       this.dialog = false
 
+      this.init()
+    },
+    async init() {
       try {
         this.complaints = await this.getComplainList()
       } catch (err) {
-        this.$toast.error(err.message, {
-          icon: 'error'
-        })
+        this.$toasted.error(err.message)
       }
-
     }
   },
-  async created() {
-
-
-    try {
-      this.complaints = await this.getComplainList()
-    } catch (err) {
-      this.$toast.error(err.message, {
-        icon: 'error'
-      })
-    }
+  created() {
+    this.init()
   }
 }
 </script>

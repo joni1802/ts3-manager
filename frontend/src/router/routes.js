@@ -1,5 +1,21 @@
 export default [
   {
+    path: "/file/upload/:cid",
+    component: () => import("@/components/FileUpload"),
+    name: "file-upload",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/files",
+    component: () => import("@/components/FileBrowser"),
+    name: "files",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/snapshot",
     component: () => import("@/components/ServerSnapshot"),
     name: "snapshot",
@@ -157,6 +173,20 @@ export default [
       requiresAuth: true
     }
   },
+  /**
+   * The order of the following two routes matters.
+   * Vice versa the route "permissions-channel" would be fired
+   * when manually refreshing the page "permissions-channelclient".
+   * @see {@link https://router.vuejs.org/guide/essentials/dynamic-matching.html#matching-priority}
+   */
+  {
+    path: "/permissions/channel/:cid?/client/:cldbid?",
+    component: () => import("@/components/ChannelClientPermissions"),
+    name: "permissions-channelclient",
+    meta: {
+      requiresAuth: true
+    }
+  },
   {
     path: "/permissions/channel/:cid?",
     component: () => import("@/components/ChannelPermissions"),
@@ -206,14 +236,6 @@ export default [
     }
   },
   {
-    path: "/permissions/channel/:cid?/client/:cldbid?",
-    component: () => import("@/components/ChannelClientPermissions"),
-    name: "permissions-channelclient",
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: "/serverviewer",
     component: () => import("@/components/ServerViewer"),
     name: "serverviewer",
@@ -245,14 +267,14 @@ export default [
       requiresAuth: true
     }
   },
-  // {
-  //   path: "/test",
-  //   component: () => import("@/components/Test"),
-  //   name: "test",
-  //   meta: {
-  //     requiresAuth: false
-  //   }
-  // },
+  {
+    path: "/test",
+    component: () => import("@/components/Test"),
+    name: "test",
+    meta: {
+      requiresAuth: false
+    }
+  },
   {
     path: "*",
     component: () => import("@/components/NotFound"),

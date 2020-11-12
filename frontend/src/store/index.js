@@ -32,10 +32,10 @@ const store = new Vuex.Store({
       paths: [
         "chat",
         "settings",
-        "query.token",
+        // "query.token",
         "query.connected",
         "query.queryUser",
-        "query.serverId"
+        // "query.serverId"
       ],
       // Encrypt local storage
       storage: process.env.NODE_ENV !== "development" && {
