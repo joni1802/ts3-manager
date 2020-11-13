@@ -103,8 +103,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn flat @click="pokeClientDialog = false" color="primary">Cancel</v-btn>
-        <v-btn flat @click="poke" color="primary">Send</v-btn>
+        <v-btn text @click="pokeClientDialog = false" color="primary">Cancel</v-btn>
+        <v-btn text @click="poke" color="primary">Send</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -143,14 +143,13 @@ export default {
   },
   methods: {
     async poke() {
-      //this.pokeClientDialog = true;
       try {
         await this.$TeamSpeak.execute('clientpoke', {
           msg: this.pokeMessage,
           clid: this.client.clid
         });
       } catch(err) {
-        this.$toast.error(err.message)
+        this.$toasted.error(err.message)
       }
       this.pokeMessage = '';
       this.pokeClientDialog = false
