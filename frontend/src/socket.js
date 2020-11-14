@@ -21,4 +21,14 @@ const handleSocketError = err => {
 socket.on("error", handleSocketError);
 socket.on("connect_error", handleSocketError);
 
+// Try to reconnect when the frontend is still logged in. 
+socket.on("connect", () => {
+  if(!store.state.query.loggedOut) {
+    socket.emit("teamspeak-reconnect", {
+      token: store.state.query.token,
+      serverId: store.state.query.serverId
+    })
+  }
+})
+
 export default socket;

@@ -5,6 +5,7 @@ const state = {
   token: Cookies.get("token"),
   loading: false,
   connected: false,
+  loggedOut: true,
   queryUser: {},
 };
 
@@ -23,6 +24,9 @@ const mutations = {
   },
   setServerId(state, id) {
     state.serverId = id;
+  },
+  isLoggedOut(state, status) {
+    state.loggedOut = status
   }
 };
 

@@ -19,34 +19,7 @@ socket.init = server => {
     let clientCookie = socket.handshake.headers.cookie ? cookie.parse(socket.handshake.headers.cookie) : {}
     let ServerQuery = {}
 
-    /**
-     * Try to reconnect to the ServerQuery.
-     */
-    const init = async () => {
-      log.info("Socket.io connected");
-
-      if(clientCookie.token) {
-        try {
-          let decoded = jwt.verify(clientCookie.token, config.secret);
-
-          whitelist.check(decoded.host)
-
-          ServerQuery = await TeamSpeak.connect(decoded);
-
-          if (clientCookie.serverId) await ServerQuery.execute("use", {sid: clientCookie.serverId});
-
-          registerEvents(ServerQuery, log, socket);
-
-          log.info("ServerQuery reconnected");
-
-          socket.emit("teamspeak-reconnected");
-        } catch (err) {
-          log.error(err.message);
-
-          socket.emit("teamspeak-reconnecterror", {message: err.message});
-        }
-      }
-    }
+    log.info("Socket.io connected");
 
     /**
      * Send the TeamSpeak error message back to the frontend.
@@ -148,6 +121,33 @@ socket.init = server => {
         fn(err.message);
       }
     });
+
+    /**
+     * Try to reconnect to the ServerQuery.
+     */
+    socket.on("teamspeak-reconnect", async ({token, serverId}) => {
+      if(token) {
+        try {
+          let decoded = jwt.verify(token, config.secret);
+
+          whitelist.check(decoded.host)
+
+          ServerQuery = await TeamSpeak.connect(decoded);
+
+          if (serverId) await ServerQuery.execute("use", {sid: serverId});
+
+          registerEvents(ServerQuery, log, socket);
+
+          log.info("ServerQuery reconnected");
+
+          socket.emit("teamspeak-reconnected");
+        } catch (err) {
+          log.error(err.message);
+
+          socket.emit("teamspeak-reconnecterror", {message: err.message});
+        }
+      }
+    })
 
     /**
      * Connect to the ServerQuery and try to login.
@@ -275,8 +275,6 @@ socket.init = server => {
         }
       }
     });
-
-    init()
   });
 };
 
