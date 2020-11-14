@@ -38,10 +38,19 @@ export default {
       channelList: [],
       clientList: [],
       itemIDs: [],
-      queryUser: {},
       channelTree: [],
       currentChannel: {},
       textPrivates: [],
+    }
+  },
+  computed: {
+    queryUser: {
+      get() {
+        return this.$store.state.query.queryUser
+      },
+      set(value) {
+        this.$store.commit("saveUserInfo", value)
+      }
     }
   },
   methods: {
