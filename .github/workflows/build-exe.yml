@@ -35,9 +35,9 @@ jobs:
         with:
           node-version: 12.x
       - run: |
-          npm --prefix ./frontend install
+          npm --prefix ./frontend install ./frontend
           npm --prefix ./frontend run build
-          npm --prefix ./backend install
+          npm --prefix ./backend install ./backend
           npm --prefix ./backend run ${{ matrix.build-script }} --if-present
 
       - name: Upload binaries
