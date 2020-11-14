@@ -25,7 +25,7 @@ socket.init = server => {
     const init = async () => {
       log.info("Socket.io connected");
 
-      if(socket.handshake.query.reconnect === "true" && clientCookie.token) {
+      if(clientCookie.token) {
         try {
           let decoded = jwt.verify(clientCookie.token, config.secret);
 
@@ -49,13 +49,12 @@ socket.init = server => {
     }
 
     /**
-     * Sends the TeamSpeak error message back to the frontend.
-     * If the connection to the ServerQuery is not established, a general
-     * TeamSpeak error will be emitted to the client.
+     * Send the TeamSpeak error message back to the frontend.
+     * Check if the connection to the ServerQuery is established.
      * @param  {Object}   err - error object
      * @param  {Function} fn  - socket.io callback function
      */
-    const handleError = (err, fn) => {
+    const handleServerQueryError = (err, fn) => {
       if(ServerQuery.query && ServerQuery.query.connected) {
         fn({
           message: err.message,
@@ -167,7 +166,7 @@ socket.init = server => {
 
         fn({token});
       } catch (err) {
-        handleError(err, fn);
+        handleServerQueryError(err, fn);
       }
     });
 
@@ -182,7 +181,7 @@ socket.init = server => {
 
         handleResponse(response, fn);
       } catch (err) {
-        handleError(err, fn);
+        handleServerQueryError(err, fn);
       }
     });
 
@@ -195,7 +194,7 @@ socket.init = server => {
 
         handleResponse(response, fn);
       } catch (err) {
-        handleError(err, fn);
+        handleServerQueryError(err, fn);
       }
     });
 
@@ -214,7 +213,7 @@ socket.init = server => {
 
         handleResponse(response, fn);
       } catch (err) {
-        handleError(err, fn);
+        handleServerQueryError(err, fn);
       }
     });
 
@@ -227,7 +226,7 @@ socket.init = server => {
 
         handleResponse(response, fn);
       } catch (err) {
-        handleError(err, fn);
+        handleServerQueryError(err, fn);
       }
     });
 
@@ -240,7 +239,7 @@ socket.init = server => {
 
         handleResponse(response, fn);
       } catch (err) {
-        handleError(err, fn);
+        handleServerQueryError(err, fn);
       }
     });
 
@@ -255,7 +254,7 @@ socket.init = server => {
 
         handleResponse(buffer, fn)
       } catch(err) {
-        handleError(err, fn)
+        handleServerQueryError(err, fn)
       }
     })
 

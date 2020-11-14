@@ -5,10 +5,7 @@ import router from "./router";
 
 // Socket connection to the backend
 const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
-  autoConnect: false,
-  query: {
-    reconnect: !!store.state.query.connected
-  }
+  autoConnect: false
 });
 
 // When a connection error occurs logout and redirect to login page
