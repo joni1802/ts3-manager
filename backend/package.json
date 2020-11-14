@@ -7,7 +7,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "build-linux-exe": "pkg . -t node12-linux -o linux-exe",
+    "build-win-exe": "pkg . -t node12-win -o win-exe.exe",
+    "build-macos-exe": "pkg . -t node12-macos -o macos-exe"
   },
   "author": "J.F.",
   "license": "ISC",
@@ -30,6 +33,7 @@
   },
   "bin": "app.js",
   "devDependencies": {
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "pkg": "^4.4.9"
   }
 }
