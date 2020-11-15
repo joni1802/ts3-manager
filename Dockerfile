@@ -10,7 +10,7 @@ COPY ./frontend ./frontend
 ENV FRONTEND_DIR ./frontend
 
 # download all the packages for the frontend and build app for production with minification
-RUN npm --prefix ${FRONTEND_DIR} install ${FRONTEND_DIR} && npm run build --prefix ${FRONTEND_DIR}
+RUN npm cache clean --force --prefix ${FRONTEND_DIR} && npm --prefix ${FRONTEND_DIR} install ${FRONTEND_DIR} && npm run build --prefix ${FRONTEND_DIR}
 
 FROM node:lts-alpine
 
