@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  ts3-manger:
+    image: "joni1802/ts3-manager"
+    ports:
+      - 8080:8080
