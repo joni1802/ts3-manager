@@ -1,4 +1,6 @@
-FROM node:lts-alpine AS build
+# package local-echo needs git for installation
+# alpine image of node does not have git installed
+FROM node:12 AS build
 
 # create the directory "app" inside the docker image and set it to the default directory
 WORKDIR /app
@@ -6,11 +8,11 @@ WORKDIR /app
 # copy the files into the workdir (node_modules are excluded by ignore file)
 COPY ./frontend ./frontend
 
-#only set frontend env here
+# only set frontend env here
 ENV FRONTEND_DIR ./frontend
 
 # download all the packages for the frontend and build app for production with minification
-RUN npm cache clean --force --prefix ${FRONTEND_DIR} && npm --prefix ${FRONTEND_DIR} install ${FRONTEND_DIR} && npm run build --prefix ${FRONTEND_DIR}
+RUN npm --prefix ${FRONTEND_DIR} install ${FRONTEND_DIR} && npm run build --prefix ${FRONTEND_DIR}
 
 FROM node:lts-alpine
 
@@ -26,7 +28,7 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-#only copy the relevant dist and backend files
+# only copy the relevant dist and backend files
 COPY --from=build /app/frontend/dist /app/frontend/dist
 COPY ./backend ./backend
 
