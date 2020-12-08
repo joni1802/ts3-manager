@@ -11,7 +11,11 @@ module.exports = {
     manifestPath: 'manifest.json',
     workboxOptions: {
       navigateFallback: 'index.html',
-      skipWaiting: true // To make update on refresh available. See https://stackoverflow.com/questions/54145735/vue-pwa-not-getting-new-content-after-refresh
+      // Ignore api calls because this routes are handled on the server side (backend).
+      navigateFallbackBlacklist: [/\/api\/.*/],
+      // To make update on refresh available.
+      // See https://stackoverflow.com/questions/54145735/vue-pwa-not-getting-new-content-after-refresh
+      skipWaiting: true
     },
     iconPaths: {
       favicon32: 'img/icons/favicon.png',
