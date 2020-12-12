@@ -7,7 +7,7 @@ const config = require("../config")
  * @return {Boolean}
  */
 const check = host => {
-  if(!config.whitelist.length || config.whitelist.includes(host)) {
+  if(!config.whitelist.length || config.whitelist.includes(host.toLowerCase())) {
     return true
   } else {
     throw new Error("TeamSpeak server is not whitelisted")
