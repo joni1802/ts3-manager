@@ -100,7 +100,7 @@ export default {
      */
     logItems() {
       let allLogs = this.logs.map(({l}) => {
-        let [timestamp, level, channel, sid, msg] = l.split('|')
+        let [timestamp, level, channel, sid, ...msg] = l.split('|')
 
         return {
           timestamp: this.selectedTimezone === 'utc' ?
@@ -108,7 +108,8 @@ export default {
           level,
           channel,
           sid,
-          msg
+          /** @see {@link https://github.com/joni1802/ts3-manager/issues/26} */
+          msg: msg.join('|')
         }
       })
 
@@ -177,6 +178,8 @@ export default {
   async created() {
     try {
       this.logs = await this.getServerLogs()
+
+      console.log(this.logs);
     } catch(err) {
       this.$toasted.error(err.message)
     }
