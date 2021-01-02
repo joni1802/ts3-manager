@@ -28,6 +28,8 @@ socket.init = server => {
      * @param  {Function} fn  - socket.io callback function
      */
     const handleServerQueryError = (err, fn) => {
+      log.error(err.msg)
+
       if(ServerQuery.query && ServerQuery.query.connected) {
         fn({
           message: err.message,
