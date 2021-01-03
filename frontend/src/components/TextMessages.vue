@@ -13,7 +13,7 @@
             :key="channel.cid"
             :channel="channel"
             @click="switchTextChannel(channel.cid)"
-            :badge="countUnreadMessages({target: channel.cid, targetmode: 2})"
+            :badgeValue="countUnreadMessages({target: channel.cid, targetmode: 2})"
           >
           </channel>
         </v-list-item-group>
@@ -22,7 +22,7 @@
         <client
           v-for="client in clientList"
           :client="client"
-          :badge="countUnreadMessages({target: client.clid, targetmode: 1})"
+          :badgeValue="countUnreadMessages({target: client.clid, targetmode: 1})"
           @click="openTextPrivate(client)"
           :avatarList="clientAvatars"
         >
@@ -280,8 +280,14 @@ export default {
         return 'fiber_manual_record'
       }
     },
-    countUnreadMessages({target, targetmode}) {
-      return this.$store.state.chat.messages.filter(message => message.target === target && message.targetmode === targetmode && message.meta.unread).length
+    countUnreadMessages(textChannel) {
+      let {target, targetmode} = textChannel
+
+      return this.$store.state.chat.messages.filter(message => {
+        return message.target === target &&
+          message.targetmode === targetmode &&
+          message.meta.unread
+      }).length
     },
     getClientList() {
       return this.$TeamSpeak.execute('clientlist', {}, ['-voice', '-away'])
