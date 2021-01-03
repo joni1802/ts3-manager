@@ -39,7 +39,8 @@ export default {
       selectedClients: [],
       currentClients: [],
       disabled: true,
-      maxVisibleClients: 11
+      maxVisibleClients: 11,
+      initChannelGroupName: undefined
     }
   },
   computed: {
@@ -90,10 +91,13 @@ export default {
     },
     async renameChannelGroupName() {
       try {
-        await this.$TeamSpeak.execute('channelgrouprename', {
-          cgid: this.channelGroupId,
-          name: this.channelGroupName,
-        })
+        /** @see {@link https://github.com/joni1802/ts3-manager/issues/27} */
+        if(this.channelGroupName !== this.initChannelGroupName) {
+          await this.$TeamSpeak.execute('channelgrouprename', {
+            cgid: this.channelGroupId,
+            name: this.channelGroupName,
+          })
+        }
       } catch (err) {
         this.$toasted.error(err.message)
       }
@@ -129,8 +133,6 @@ export default {
       return channelGroupClients.map(client => client.cldbid)
     },
     async save(e) {
-
-
       try {
         await this.renameChannelGroupName()
         await this.removeMembers()
@@ -168,6 +170,7 @@ export default {
     try {
       this.defaultChannelGroupId = await this.getDefaultChannelGroup()
       this.channelGroup = await this.getChannelGroup()
+      this.initChannelGroupName = this.channelGroup.name
       this.channels = await this.getChannelList()
       this.clients = await this.getClientDbList()
     } catch (err) {

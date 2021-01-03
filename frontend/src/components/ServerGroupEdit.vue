@@ -38,7 +38,8 @@ export default {
       currentServerGroupClients: [],
       clients: [],
       maxVisibleClients: 11,
-      swag: false
+      swag: false,
+      initServerGroupName: undefined
     }
   },
   computed: {
@@ -86,10 +87,13 @@ export default {
       return this.$TeamSpeak.fullClientDBList()
     },
     async renameServerGroup() {
-      await this.$TeamSpeak.execute('servergrouprename', {
-        sgid: this.serverGroupId,
-        name: this.serverGroup.name
-      })
+      /** @see {@link https://github.com/joni1802/ts3-manager/issues/27} */
+      if(this.serverGroup.name !== this.initServerGroupName) {
+        await this.$TeamSpeak.execute('servergrouprename', {
+          sgid: this.serverGroupId,
+          name: this.serverGroup.name
+        })
+      }
     },
     async removeMembers() {
       let clientRemoveList = this.currentServerGroupClients.filter(client => !this.selectedClients.includes(client.cldbid))
@@ -132,6 +136,7 @@ export default {
     async init() {
       try {
         this.serverGroup = await this.getServerGroup()
+        this.initServerGroupName = this.serverGroup.name
         this.clients = await this.getClientDbList()
         this.serverGroupClients = await this.getServerGroupClientList()
 
