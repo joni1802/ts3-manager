@@ -99,7 +99,7 @@ export default {
           })
         }
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async changeMembers(list, cgid) {
@@ -111,7 +111,7 @@ export default {
             cldbid: clientDbId
           })
         } catch (err) {
-          this.$toasted.error(err.message)
+          this.$toast.error(err.message)
         }
       }
     },
@@ -138,7 +138,7 @@ export default {
         await this.removeMembers()
         await this.addMembers()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       switch (e.target.textContent) {
@@ -149,7 +149,7 @@ export default {
           try {
             this.channelGroup = await this.getChannelGroup()
           } catch (err) {
-            this.$toasted.error(err.message)
+            this.$toast.error(err.message)
           }
 
           try {
@@ -159,7 +159,7 @@ export default {
               this.currentClients = [...this.selectedClients]
             }
           } catch (err) {
-            this.$toasted.error(err.message)
+            this.$toast.error(err.message)
           }
       }
 
@@ -174,7 +174,7 @@ export default {
       this.channels = await this.getChannelList()
       this.clients = await this.getClientDbList()
     } catch (err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   },
   watch: {

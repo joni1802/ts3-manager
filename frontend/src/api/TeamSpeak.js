@@ -304,7 +304,7 @@ socket.on("teamspeak-channeldelete", data => {
 });
 
 socket.on("teamspeak-reconnecterror", async err => {
-  Vue.prototype.$toasted.error(err.message);
+  Vue.prototype.$toast.error(err.message);
 
   store.dispatch("clearStorage");
 
@@ -322,7 +322,7 @@ socket.on("teamspeak-reconnected", async () => {
     // When there was a socket error and it reconnected automatically again
     if(router.currentRoute.name === 'login') router.push({name: 'servers'})
   } catch (err) {
-    Vue.prototype.$toasted.error(err.message);
+    Vue.prototype.$toast.error(err.message);
   }
 });
 

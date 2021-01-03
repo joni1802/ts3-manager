@@ -71,13 +71,13 @@ export default {
           permvalue: permvalue
         })
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelGroupPermList()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async removePermission(permission) {
@@ -91,13 +91,13 @@ export default {
           permid: permid,
         })
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       try {
         this.permissions = await this.getChannelGroupPermList()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     changeChannelGroup(cgid) {
@@ -123,7 +123,7 @@ export default {
 
         this.permissions = await this.getChannelGroupPermList()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },
@@ -132,7 +132,7 @@ export default {
       this.channelGroupId = to.params.cgid
       this.permissions = await this.getChannelGroupPermList()
     } catch(err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
 
     next()

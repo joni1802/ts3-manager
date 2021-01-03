@@ -55,7 +55,7 @@ export default {
           name: Path.join(path, name)
         })
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.$emit("filedelete", this.item)

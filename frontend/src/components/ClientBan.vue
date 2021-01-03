@@ -41,7 +41,7 @@ export default {
           time: data.time
         })
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.$router.go(-1)
@@ -54,7 +54,7 @@ export default {
       this.form.ip = this.clientDbInfo.client_lastip
       this.form.uid = this.clientDbInfo.client_unique_identifier
     } catch (err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   }
 }

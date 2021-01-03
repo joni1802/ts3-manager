@@ -517,14 +517,14 @@ export default {
 
         this.$router.go(-1)
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async applyChanges() {
       try {
         await this.serverEdit()
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.init()
@@ -536,7 +536,7 @@ export default {
         this.serverGroups = await this.getServerGroupList()
         this.channelGroups = await this.getChannelGroupList()
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },

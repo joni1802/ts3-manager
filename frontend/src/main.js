@@ -8,7 +8,8 @@ import "./assets/css/style.css"
 import Vue from "vue";
 import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
-import Toasted from 'vue-toasted'
+import VueToast from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 import "nprogress/nprogress.css";
 import NProgress from "nprogress";
 import Clipboard from "v-clipboard";
@@ -26,15 +27,9 @@ NProgress.configure({
 
 Vue.use(Clipboard);
 
-Vue.use(Toasted, {
-  singleton: true,
+Vue.use(VueToast, {
+  position: 'top',
   duration: 4000,
-  action: {
-   text: 'close',
-   onClick: (e, toast) => {
-     toast.goAway(0)
-   }
- }
 })
 
 Vue.config.productionTip = false;

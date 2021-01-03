@@ -60,9 +60,9 @@ export default {
         // Request done
         if(this.request.readyState === 4) {
           if(this.request.status === 200) {
-            this.$toasted.success("File successfully uploaded")
+            this.$toast.success("File successfully uploaded")
           } else {
-            this.$toasted.error(this.request.response)
+            this.$toast.error(this.request.response)
           }
         }
       })

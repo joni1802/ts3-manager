@@ -33,7 +33,7 @@ export default {
           name: 'bans'
         })
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   }

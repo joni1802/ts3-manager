@@ -15,7 +15,7 @@
 
         // Logout is handled by the "teamspeak-disconnect" event.
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   }

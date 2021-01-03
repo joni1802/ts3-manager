@@ -129,7 +129,7 @@ export default {
 
         this.currentChannel = this.getCurrentChannel(this.channelList, this.queryUser)
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async loadChannelTree() {
@@ -141,7 +141,7 @@ export default {
 
         this.openAllChannels()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.updateCurrentChannel()
@@ -163,7 +163,7 @@ export default {
 
       this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
     } catch (err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   },
   beforeRouteLeave(from, to, next) {

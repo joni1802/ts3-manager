@@ -10,7 +10,7 @@ const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
 
 // When a connection error occurs logout and redirect to login page
 const handleSocketError = err => {
-  Vue.prototype.$toasted.error(err.message);
+  Vue.prototype.$toast.error(err.message);
 
   // Do not clear token to make reconnection possible
   store.commit("isConnected", false);

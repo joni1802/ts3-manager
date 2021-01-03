@@ -149,7 +149,7 @@ export default {
           clid: this.client.clid
         });
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
       this.pokeMessage = '';
       this.pokeClientDialog = false
@@ -178,7 +178,7 @@ export default {
           clid: this.client.clid
         })
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.kickClientDialog = false

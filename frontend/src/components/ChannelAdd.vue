@@ -17,7 +17,7 @@ export default {
 
         this.$router.go(-1)
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   }

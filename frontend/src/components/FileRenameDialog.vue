@@ -57,7 +57,7 @@ export default {
           newname: Path.join(path, this.newFileName)
         })
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.$emit("filerename", this.item)

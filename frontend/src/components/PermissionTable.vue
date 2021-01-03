@@ -231,7 +231,7 @@ export default {
       // Emit the "loaded" event on the parent component to prevent wrong responses
       this.$emit('loaded')
     } catch (err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   }
 }

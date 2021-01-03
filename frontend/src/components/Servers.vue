@@ -123,7 +123,7 @@ export default {
 
         vm.startUptimeCounters();
       } catch(err) {
-        vm.$toasted.error(err.message)
+        vm.$toast.error(err.message)
       }
     })
   },
@@ -191,7 +191,7 @@ export default {
           await this.$TeamSpeak.selectServer(sid)
           this.queryUser = await this.getQueryUserData()
         } catch(err) {
-          this.$toasted.error(err.message)
+          this.$toast.error(err.message)
         }
       }
     },
@@ -207,7 +207,7 @@ export default {
       try {
         this.servers = await this.getServerList();
       } catch(err) {
-        this.$toasted.error(err.message);
+        this.$toast.error(err.message);
       }
 
       this.resetUptimeCounters()
@@ -230,7 +230,7 @@ export default {
 
         this.servers = await this.getServerList()
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     getQueryUserData() {
@@ -243,7 +243,7 @@ export default {
 
         this.queryUser = await this.getQueryUserData()
       } catch (err) {
-        this.$toasted.error(err.message);
+        this.$toast.error(err.message);
       }
     },
     async stopServer() {
@@ -256,7 +256,7 @@ export default {
 
         if(this.joinedServerId === this.selectedServer.virtualserver_id) this.$store.dispatch("removeServerId")
       } catch (err) {
-        this.$toasted.error(err.message);
+        this.$toast.error(err.message);
       }
     },
     getServerList() {

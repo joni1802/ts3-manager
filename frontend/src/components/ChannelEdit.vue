@@ -79,7 +79,7 @@ export default {
           }
         }
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async saveAndLeave() {
@@ -88,14 +88,14 @@ export default {
 
         this.$router.go(-1)
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async init() {
       try {
         this.channel = await this.getChannelInfo()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },

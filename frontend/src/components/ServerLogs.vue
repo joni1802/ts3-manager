@@ -181,7 +181,7 @@ export default {
 
       console.log(this.logs);
     } catch(err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   }
 }

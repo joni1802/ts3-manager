@@ -154,7 +154,7 @@ export default {
           })
         }
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       // v-model is not updating correctly when the content of the table changes.
@@ -170,7 +170,7 @@ export default {
       try {
         this.banlist = await this.getBanList()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },

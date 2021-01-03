@@ -90,7 +90,7 @@ export default {
           this.$emit("filedelete", file)
         }
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.dialog = false

@@ -161,7 +161,7 @@ export default {
           await vm.moveClient(vm.queryUser.client_id, to.params.cid)
         }
       } catch (err) {
-        vm.$toasted.error(err.message)
+        vm.$toast.error(err.message)
       }
     });
   },
@@ -296,7 +296,7 @@ export default {
       try {
         this.clientList = await this.getClientList()
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     getChannelList() {
@@ -306,7 +306,7 @@ export default {
       try {
         this.channelList = await this.getChannelList()
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     getServerInfo() {
@@ -337,7 +337,7 @@ export default {
         // Focus tab
         this.selectedTab = 1
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     closeTextPrivate(chat) {
@@ -411,7 +411,7 @@ export default {
 
         this.message = ''
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
     async init() {
@@ -428,7 +428,7 @@ export default {
 
         this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
   },

@@ -109,7 +109,7 @@ export default {
 
         this.subfolderDialog = false
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.$emit("subfoldercreate", this.item)

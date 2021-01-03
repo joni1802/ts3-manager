@@ -134,7 +134,7 @@ export default {
           force: force
         })
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.deleteChannelDialog = false
@@ -149,7 +149,7 @@ export default {
       try {
         await this.moveClient()
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
   },

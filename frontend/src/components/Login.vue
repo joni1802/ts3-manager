@@ -76,7 +76,7 @@ export default {
           } else {
             vm.$store.dispatch("removeToken")
 
-            vm.$toasted.error(response)
+            vm.$toast.error(response)
           }
         }
       );
@@ -134,7 +134,7 @@ export default {
         this.$router.push({name: "servers"})
       } catch(err) {
 
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       this.loading = false

@@ -53,7 +53,7 @@ const actions = {
         });
       }
     } catch (err) {
-      Vue.prototype.$toasted.error(err.message);
+      Vue.prototype.$toast.error(err.message);
     }
   },
   async saveTextMessage(
@@ -87,7 +87,7 @@ const actions = {
         serverId: rootState.query.serverId
       });
     } catch (err) {
-      Vue.prototype.$toasted.error(err.message);
+      Vue.prototype.$toast.error(err.message);
     }
   }
 };

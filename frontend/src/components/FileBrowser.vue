@@ -123,7 +123,7 @@ export default {
 
         parentItem.children = childItems
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     },
 
@@ -216,7 +216,7 @@ export default {
           this.openFolders.push(folder)
         }
       } catch (err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },
@@ -224,7 +224,7 @@ export default {
     try {
       this.folderList = await this.getFolderList()
     } catch (err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   }
 }

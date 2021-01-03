@@ -70,11 +70,11 @@ export default {
 
         this.token = response.token
 
-        this.$toasted.success("Server successfully created")
+        this.$toast.success("Server successfully created")
 
         await this.$TeamSpeak.selectServer(response.sid)
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },
@@ -83,7 +83,7 @@ export default {
       this.servers = await this.getServerList()
       this.serverPort = this.getAvailablePort()
     } catch(err) {
-      this.$toasted.error(err.message)
+      this.$toast.error(err.message)
     }
   }
 }

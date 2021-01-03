@@ -117,7 +117,7 @@ export default {
 
         this.dialog = false
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
 
       // v-model is not updating correctly when the content of the table changes.
@@ -130,13 +130,13 @@ export default {
     copyToClipboard(token) {
       this.$clipboard(token)
 
-      this.$toasted.info("Token Copied To Clipboard")
+      this.$toast.info("Token Copied To Clipboard")
     },
     async init() {
       try {
         this.tokens = await this.getTokenList()
       } catch(err) {
-        this.$toasted.error(err.message)
+        this.$toast.error(err.message)
       }
     }
   },
