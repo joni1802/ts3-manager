@@ -1,7 +1,6 @@
 ![TS3 Manager](https://www.ts3.app/ts3_manager_text_new_2.svg)
 
 ![Docker Pulls](https://img.shields.io/docker/pulls/joni1802/ts3-manager)
-![Sourceforge Downloads](https://img.shields.io/sourceforge/dt/ts3-manager.svg)
 ![Github Stars](https://img.shields.io/github/stars/joni1802/ts3-manager)
 [![GitHub issues](https://img.shields.io/github/issues/joni1802/ts3-manager)](https://github.com/joni1802/ts3-manager/issues)
 [![GitHub license](https://img.shields.io/github/license/joni1802/ts3-manager)](https://github.com/joni1802/ts3-manager/blob/master/LICENSE)
