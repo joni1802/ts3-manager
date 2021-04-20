@@ -3,7 +3,7 @@
   "short_name": "TS3 Manager",
   "icons": [
     {
-      "src": "./img/icons/ts3_manager_new.png",
+      "src": "./img/icons/ts3_manager.png",
       "sizes": "380x380",
       "type": "image/png"
     }

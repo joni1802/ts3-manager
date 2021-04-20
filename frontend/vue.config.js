@@ -19,9 +19,9 @@ module.exports = {
     },
     iconPaths: {
       favicon32: 'img/icons/favicon.png',
-      appleTouchIcon: 'img/icons/ts3_manager_new.png',
-      maskIcon: 'img/icons/ts3_manager_new.svg',
-      msTileImage: 'img/icons/ts3_manager_new.png'
+      appleTouchIcon: 'img/icons/ts3_manager.png',
+      maskIcon: 'img/icons/ts3_manager.svg',
+      msTileImage: 'img/icons/ts3_manager.png'
     }
   }
 }
