@@ -24,10 +24,10 @@ export default {
   },
   computed: {
     avatarURL() {
-      let avatar = this.clientAvatars.find(client => client.cldbid === this.clientDbId)
+      let file = this.$store.state.avatars.files.find(file => file.clientDbId === this.clientDbId)
 
-      if(avatar) {
-        return URL.createObjectURL(avatar.avatar)
+      if(file && file.base64) {
+        return `data:image/png;base64, ${file.base64}`
       } else {
         return
       }

@@ -4,6 +4,7 @@ import Vue from "vue";
 import settings from "./modules/settings";
 import query from "./modules/query";
 import chat from "./modules/chat";
+import avatars from "./modules/avatars";
 import TeamSpeak from "../api/TeamSpeak";
 
 import createPersistedState from "vuex-persistedstate";
@@ -25,11 +26,13 @@ const store = new Vuex.Store({
   modules: {
     settings,
     query,
-    chat
+    chat,
+    avatars
   },
   plugins: [
     createPersistedState({
       paths: [
+        "avatars",
         "chat",
         "settings",
         "query.connected",

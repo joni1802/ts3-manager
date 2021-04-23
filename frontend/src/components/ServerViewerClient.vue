@@ -4,11 +4,7 @@
     <template #activator="{ on }">
       <v-list-item v-on="on">
         <v-list-item-avatar>
-          <client-avatar
-            :clientDbId="client.client_database_id"
-            :clientAvatars="avatarList"
-          >
-          </client-avatar>
+          <client-avatar :clientDbId="client.client_database_id"></client-avatar>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>
@@ -117,8 +113,7 @@ export default {
     ClientAvatar: () => import("@/components/ClientAvatar")
   },
   props: {
-    client: Object,
-    avatarList: Array
+    client: Object
   },
   data() {
     return {

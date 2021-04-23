@@ -254,7 +254,7 @@ socket.init = server => {
       try {
         let buffer = await ServerQuery.downloadFile(path, cid, cpw)
 
-        handleResponse(buffer, fn)
+        handleResponse(buffer.toString('base64'), fn)
       } catch(err) {
         handleServerQueryError(err, fn)
       }

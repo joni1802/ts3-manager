@@ -8,7 +8,7 @@
           <v-treeview :items="channelTree" :open="itemIDs" dense>
             <template #label="{ item }">
               <channel v-if="item.channel_name" :channel="item" :queryUser="queryUser"></channel>
-              <client v-else :client="item" :avatarList="clientAvatars"></client>
+              <client v-else :client="item"></client>
             </template>
           </v-treeview>
         </v-card-text>
@@ -26,7 +26,7 @@ import loadAvatars from "@/mixins/loadAvatars"
 
 export default {
   mixins: [
-    loadAvatars
+    // loadAvatars
   ],
   components: {
     Channel: () => import('@/components/ServerViewerChannel'),
@@ -161,7 +161,7 @@ export default {
 
       this.addEventListeners()
 
-      this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
+      // this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
     } catch (err) {
       this.$toast.error(err.message)
     }
