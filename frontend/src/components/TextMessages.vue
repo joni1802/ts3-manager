@@ -24,7 +24,6 @@
           :client="client"
           :badgeValue="countUnreadMessages({target: client.clid, targetmode: 1})"
           @click="openTextPrivate(client)"
-          :avatarList="clientAvatars"
         >
         </client>
       </v-list>
@@ -165,9 +164,6 @@ export default {
       }
     });
   },
-  mixins: [
-    loadAvatars
-  ],
   components: {
     Client: () => import("@/components/TextMessageClient"),
     Channel: () => import("@/components/TextMessageChannel")
@@ -367,7 +363,8 @@ export default {
       }, 100)
     },
     addEventListeners() {
-      this.$TeamSpeak.on("clientconnect", this.updateClientList);
+      this.$TeamSpeak.on("clientconnect", this.updateClientList)
+      this.$TeamSpeak.on('clientconnect', this.getSingleClientAvatar)
       this.$TeamSpeak.on("clientdisconnect", this.updateClientList)
       this.$TeamSpeak.on("channeledit", this.updateChannelList)
       this.$TeamSpeak.on("channelcreate", this.updateChannelList)
@@ -375,10 +372,17 @@ export default {
     },
     removeEventListeners() {
       this.$TeamSpeak.__proto__.removeEventListener("clientconnect", this.updateClientList)
+      this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.getSingleClientAvatar)
       this.$TeamSpeak.__proto__.removeEventListener("clientdisconnect", this.updateClientList)
       this.$TeamSpeak.__proto__.removeEventListener("channeledit", this.updateChannelList)
       this.$TeamSpeak.__proto__.removeEventListener("channelcreate", this.updateChannelList)
       this.$TeamSpeak.__proto__.removeEventListener("channeldelete", this.updateChannelList)
+    },
+    getSingleClientAvatar(e) {
+      this.$store.dispatch('getClientAvatars', [e.detail.client.client_database_id])
+    },
+    getAllClientAvatars() {
+      this.$store.dispatch('getClientAvatars', this.clientList.map(client => client.client_database_id))
     },
     keyPressed(e) {
       // On press "Enter"
@@ -426,7 +430,7 @@ export default {
 
         this.addEventListeners()
 
-        this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
+        this.getAllClientAvatars()
       } catch (err) {
         this.$toast.error(err.message)
       }

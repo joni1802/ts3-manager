@@ -2,7 +2,7 @@ import TeamSpeak from "@/api/TeamSpeak"
 import Vue from "vue"
 
 const state = {
-  // Contains the client database id, information of the avatar file and the file itself as a blob
+  // Contains the client database id, information of the avatar file and the file itself as a base64
   files: []
 }
 
@@ -44,14 +44,6 @@ const actions = {
             // Download new avatar file if the datetime has changed or it is not in the list
             if(!currentAvatar || currentAvatar.datetime !== avatarFileInfo.datetime) {
               let base64 = await TeamSpeak.downloadFile(fileName, 0, "")
-              // let blob = new Blob([new Uint8Array(buffer.data)])
-
-              // let u8 = new Uint8Array(buffer.data)
-              // let decoded = new TextDecoder().decode(u8)
-
-
-
-              // console.log('Downloaded new Avatar', btoa(decoded) );
 
               commit("removeAvatar", fileName)
               commit("saveAvatar", {
@@ -63,7 +55,6 @@ const actions = {
           }
         }
       } catch(err) {
-        console.log(err);
         Vue.prototype.$toast.error(err.message)
       }
     }

@@ -25,9 +25,6 @@
 import loadAvatars from "@/mixins/loadAvatars"
 
 export default {
-  mixins: [
-    // loadAvatars
-  ],
   components: {
     Channel: () => import('@/components/ServerViewerChannel'),
     Client: () => import('@/components/ServerViewerClient'),
@@ -75,17 +72,25 @@ export default {
     addEventListeners() {
       this.$TeamSpeak.on('clientmoved', this.loadChannelTree)
       this.$TeamSpeak.on('clientconnect', this.loadChannelTree)
+      this.$TeamSpeak.on('clientconnect', this.getSingleClientAvatar)
       this.$TeamSpeak.on('clientdisconnect', this.loadChannelTree)
       this.$TeamSpeak.on('channeldelete', this.loadChannelTree)
     },
     removeEventListeners() {
       this.$TeamSpeak.__proto__.removeEventListener('clientmoved', this.loadChannelTree)
       this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.loadChannelTree)
+      this.$TeamSpeak.__proto__.removeEventListener('clientconnect', this.getSingleClientAvatar)
       this.$TeamSpeak.__proto__.removeEventListener('clientdisconnect', this.loadChannelTree)
       this.$TeamSpeak.__proto__.removeEventListener('channeldelete', this.loadChannelTree)
     },
     openAllChannels() {
       this.channelList.forEach(channel => this.itemIDs.push(`${channel.cid}-channel`))
+    },
+    getSingleClientAvatar(e) {
+      this.$store.dispatch('getClientAvatars', [e.detail.client.client_database_id])
+    },
+    getAllClientAvatars() {
+      this.$store.dispatch('getClientAvatars', this.clientList.map(client => client.client_database_id))
     },
     getServerInfo() {
       return this.$TeamSpeak.execute('serverinfo').then(serverinfo => serverinfo[0])
@@ -161,7 +166,7 @@ export default {
 
       this.addEventListeners()
 
-      // this.loadClientAvatars(this.clientList.map(client => client.client_database_id))
+      this.getAllClientAvatars()
     } catch (err) {
       this.$toast.error(err.message)
     }

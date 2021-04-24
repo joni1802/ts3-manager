@@ -3,7 +3,6 @@
     <v-list-item-avatar>
       <client-avatar
         :clientDbId="client.client_database_id"
-        :clientAvatars="avatarList"
       >
       </client-avatar>
     </v-list-item-avatar>
@@ -27,7 +26,6 @@ export default {
   },
   props: {
     client: Object,
-    avatarList: Array,
     badgeValue: {
       type: [String, Number],
       default: 0
