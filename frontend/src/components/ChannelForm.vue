@@ -7,7 +7,40 @@
           {{ title }}
         </v-card-title>
         <v-card-text>
-          <v-text-field label="Name" v-model="channelName" :disabled="$store.state.query.loading"></v-text-field>
+
+          <v-row align="center">
+            <v-col>
+              <v-checkbox label="Spacer" v-model="addSpacer"></v-checkbox>
+            </v-col>
+            <v-col>
+              <v-select
+                label="Special Spacer"
+                :items="specialSpacerList"
+                v-model="specialSpacer"
+              >
+                <template #item="{item}">
+                  <special-spacer :characterBlock="item"></special-spacer>
+                </template>
+              </v-select>
+            </v-col>
+            <v-col>
+              <v-select
+                label="Alignment"
+                :items=""
+                v-model="spacerAlignment"
+              >
+              </v-select>
+            </v-col>
+          </v-row>
+
+          <v-text-field
+            :prefix="addSpacer ? spacer : ''"
+            label="Name"
+            v-model="channelName"
+            :disabled="$store.state.query.loading"
+          >
+          </v-text-field>
+
           <v-text-field type="password" label="Password" v-model="channelPassword" :disabled="$store.state.query.loading"></v-text-field>
           <v-text-field label="Topic" v-model="channelTopic" :disabled="$store.state.query.loading"></v-text-field>
           <v-textarea label="Description" v-model="channelDescription" :disabled="$store.state.query.loading"></v-textarea>
@@ -64,7 +97,13 @@
 </template>
 
 <script>
+// Dynamic importing the component will throw an error when used in the v-select component
+import SpecialSpacer from '@/components/SpecialSpacer'
+
 export default {
+  components: {
+    SpecialSpacer
+  },
   props: {
     title: String,
     applyButton: {
@@ -76,7 +115,9 @@ export default {
       // Object or array defaults must be returned from a factory function
       // See: https://vuejs.org/v2/guide/components-props.html
       default() {
-        return {}
+        return {
+          channel_name: ''
+        }
       }
     }
   },
@@ -85,10 +126,23 @@ export default {
       initChannelData: {},
       channels: [],
       parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0,
-      serverInfo: {}
+      serverInfo: {},
+      addSpacer: false,
+      specialSpacerList: ['', '---', '...', '-.-', '___', '-..'],
+      specialSpacer: '',
+      spacerAlignmentList: [
+        // {text: '', value: ''},
+        // {text: 'left', value: 'l'},
+        // {text: 'center', value: 'c'},
+        // {text: 'right', value: 'r'}
+      ],
+      spacerAlignment: '',
     }
   },
   computed: {
+    spacer() {
+      return `[${this.spacerAlignment}spacer]${this.specialSpacer}`
+    },
     channelOrderSelection() {
       let rootChannelName = {}
       let siblingChannels = this.channels.filter(channel => {
