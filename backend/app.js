@@ -12,7 +12,7 @@ const routes = require("./routes")
 
 
 // Enable cross-origin resource sharing for the frontend in developement
-if(process.env.NODE_ENV === "developement") {
+if(process.env.NODE_ENV === "development") {
   app.use(cors({
     origin: 'http://127.0.0.1:8080',
     credentials: true
