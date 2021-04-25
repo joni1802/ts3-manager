@@ -26,7 +26,7 @@
             <v-col>
               <v-select
                 label="Alignment"
-                :items=""
+                :items="spacerAlignmentList"
                 v-model="spacerAlignment"
               >
               </v-select>
