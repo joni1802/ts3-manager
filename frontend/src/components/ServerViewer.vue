@@ -16,14 +16,22 @@
     </v-flex>
   </v-layout>
 
-  <v-btn fab color="primary" fixed bottom right dark :to="{name: 'channel-add'}">
-    <v-icon>add</v-icon>
-  </v-btn>
+  <v-speed-dial right bottom fixed>
+    <template #activator>
+      <v-btn fab color="primary" dark >
+        <v-icon>add</v-icon>
+      </v-btn>
+    </template>
+    <v-btn fab color="primary" dark small :to="{name: 'channel-add'}">
+      <v-icon>mdi-hexagon-slice-4</v-icon>
+    </v-btn>
+    <v-btn fab color="primary" dark small :to="{name: 'spacer-add'}">
+      <v-icon>mdi-keyboard-space</v-icon>
+    </v-btn>
+  </v-speed-dial>
 </v-container>
 </template>
 <script>
-import loadAvatars from "@/mixins/loadAvatars"
-
 export default {
   components: {
     Channel: () => import('@/components/ServerViewerChannel'),

@@ -7,34 +7,41 @@
           {{ title }}
         </v-card-title>
         <v-card-text>
+          <div v-if="spacer">
+            <v-select
+              label="Special Spacer"
+              :items="specialSpacerList"
+              v-model="specialSpacer"
+              :disabled="!!spacerAlignment || !!spacerText"
+            >
+              <template #item="{item}">
+                <special-spacer :characterBlock="item"></special-spacer>
+              </template>
+            </v-select>
 
-          <v-row align="center">
-            <v-col>
-              <v-checkbox label="Spacer" v-model="addSpacer"></v-checkbox>
-            </v-col>
-            <v-col>
-              <v-select
-                label="Special Spacer"
-                :items="specialSpacerList"
-                v-model="specialSpacer"
-              >
-                <template #item="{item}">
-                  <special-spacer :characterBlock="item"></special-spacer>
-                </template>
-              </v-select>
-            </v-col>
-            <v-col>
-              <v-select
-                label="Alignment"
-                :items="spacerAlignmentList"
-                v-model="spacerAlignment"
-              >
-              </v-select>
-            </v-col>
-          </v-row>
+            <v-row>
+              <v-col>
+                <v-select
+                  label="Alignment"
+                  :items="spacerAlignmentList"
+                  v-model="spacerAlignment"
+                  :disabled="!!specialSpacer"
+                >
+                </v-select>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  label="Text"
+                  v-model="spacerText"
+                  :disabled="!!specialSpacer"
+                >
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </div>
 
           <v-text-field
-            :prefix="addSpacer ? spacer : ''"
+            v-else
             label="Name"
             v-model="channelName"
             :disabled="$store.state.query.loading"
@@ -115,11 +122,10 @@ export default {
       // Object or array defaults must be returned from a factory function
       // See: https://vuejs.org/v2/guide/components-props.html
       default() {
-        return {
-          channel_name: ''
-        }
+        return {}
       }
-    }
+    },
+    spacer: Boolean
   },
   data() {
     return {
@@ -127,22 +133,19 @@ export default {
       channels: [],
       parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0,
       serverInfo: {},
-      addSpacer: false,
       specialSpacerList: ['', '---', '...', '-.-', '___', '-..'],
       specialSpacer: '',
       spacerAlignmentList: [
-        // {text: '', value: ''},
-        // {text: 'left', value: 'l'},
-        // {text: 'center', value: 'c'},
-        // {text: 'right', value: 'r'}
+        {text: '', value: ''},
+        {text: 'left', value: 'l'},
+        {text: 'center', value: 'c'},
+        {text: 'right', value: 'r'}
       ],
       spacerAlignment: '',
+      spacerText: ''
     }
   },
   computed: {
-    spacer() {
-      return `[${this.spacerAlignment}spacer]${this.specialSpacer}`
-    },
     channelOrderSelection() {
       let rootChannelName = {}
       let siblingChannels = this.channels.filter(channel => {
@@ -263,6 +266,11 @@ export default {
     }
   },
   methods: {
+    setSpacer() {
+      let randomId = Math.floor(Math.random() * 100)
+
+      this.channel.channel_name = `[${this.spacerAlignment}spacer${randomId}]${this.specialSpacer || this.spacerText}`
+    },
     getServerInfo() {
       return this.$TeamSpeak.execute("serverinfo").then(arr => arr.pop())
     },
@@ -281,6 +289,8 @@ export default {
       return changes
     },
     save(e) {
+      if(this.spacer) this.setSpacer()
+
       this.$emit("save", this.getChanges(), e)
 
       if(e.target.textContent.toLowerCase() === "apply") {
@@ -303,6 +313,8 @@ export default {
         // See https://vuejs.org/v2/api/#vm-watch
         if(unwatch) unwatch()
       }
+
+
     }, {immediate: true})
 
     try {

@@ -212,6 +212,14 @@ export default [
     }
   },
   {
+    path: "/spacer/add",
+    component: () => import("@/components/ChannelSpacerAdd"),
+    name: "spacer-add",
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/channelgroups",
     component: () => import("@/components/ChannelGroups"),
     name: "channelgroups",
