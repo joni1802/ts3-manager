@@ -1,5 +1,5 @@
 <template>
-  <channel-form title="Channel Add" @save="save"></channel-form>
+  <channel-form title="Create Channel" @save="save"></channel-form>
 </template>
 
 <script>
