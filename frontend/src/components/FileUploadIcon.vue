@@ -1,23 +1,21 @@
 <template lang="html">
-  <v-menu offset-y :close-on-content-click="false">
+  <v-menu offset-y :close-on-content-click="false" max-width="400">
     <template #activator="{on}">
       <v-btn icon v-on="on">
-        <v-badge :value="1">
+        <v-badge :value="countUploadingFiles">
           <template #badge>
-            <span>1</span>
+            <span>{{ countUploadingFiles }}</span>
           </template>
           <v-icon>mdi-upload</v-icon>
         </v-badge>
       </v-btn>
     </template>
     <v-card>
-      <v-list>
-        <v-list-item v-for="file in files" :key="file.fileId">
-          <v-list-item-action>
-            {{ $store.state.uploads.progress[file.fileId] }}%
-          </v-list-item-action>
+      <file-upload-list v-if="countUploadingFiles"></file-upload-list>
+      <v-list v-else>
+        <v-list-item>
           <v-list-item-content>
-            <v-list-item-title>{{ file.blob.name }}</v-list-item-title>
+            <v-list-item-title>No Files</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -27,9 +25,12 @@
 
 <script>
 export default {
+  components: {
+    FileUploadList: () => import('@/components/FileUploadList')
+  },
   computed: {
-    files() {
-      return this.$store.state.uploads.files
+    countUploadingFiles() {
+      return this.$store.state.uploads.files.length
     }
   },
   created() {

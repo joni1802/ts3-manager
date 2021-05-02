@@ -1,10 +1,6 @@
 import Vue from 'vue'
 import localForage from 'localforage'
 
-
-// console.log(Vue.set);
-// Vue.set(object, propertyName, value)
-
 const db = localForage.createInstance({
   driver: localForage.INDEXEDDB,
   name: 'uploads',
@@ -59,16 +55,26 @@ const actions = {
     return btoa(`${filename}${cid}${path}`)
   },
 
-  async saveUploadFile({dispatch}, {blob, cid, path}) {
+  async saveUploadFile({commit, dispatch}, {blob, cid, path}) {
+    let fileId = await dispatch('getUploadFileId', {filename: blob.name, cid, path})
+    let existingFile = await db.getItem(fileId)
 
-    let fileId = await dispatch('getUploadFileId', {name: blob.name, cid, path})
+    if(existingFile) {
+      throw new Error('The file is already in the upload queue')
+    } else {
+      let file = {blob, fileId, cid, path}
+      let newFile = await db.setItem(fileId, file)
 
-    return db.getItem(fileId)
-      .then(existingFile => {
-        if(existingFile) throw new Error('The file is already in the upload queue')
+      commit('addFile', file)
 
-        return db.setItem(fileId, {blob, fileId, cid, path})
-      })
+      return newFile
+    }
+  },
+
+  async removeUploadFile({commit}, fileId) {
+    await db.removeItem(fileId)
+
+    commit('removeFile', fileId)
   },
 
   createRequest({state, commit}, fileId) {
@@ -88,8 +94,6 @@ const actions = {
   },
 
   setUploadProgress({commit}, {e, fileId}) {
-
-
     let percentage = (e.loaded / e.total) * 100
 
     Vue.set(state.progress, fileId, percentage)
@@ -124,7 +128,7 @@ const actions = {
           if(request.status === 200) {
             Vue.prototype.$toast.success("File successfully uploaded")
 
-            commit('removeFile', fileId)
+            dispatch('removeUploadFile', fileId)
           } else {
             request.response && Vue.prototype.$toast.error(request.response)
           }
@@ -132,8 +136,6 @@ const actions = {
       })
 
       request.upload.addEventListener("progress", async (e) => {
-
-
         await dispatch('setUploadProgress', {e, fileId})
       })
 
