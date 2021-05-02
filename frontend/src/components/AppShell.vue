@@ -4,6 +4,7 @@
     <v-app-bar-nav-icon @click="drawer = !drawer" v-if="validPage"></v-app-bar-nav-icon>
     <v-spacer></v-spacer>
     <dark-mode-switch></dark-mode-switch>
+    <file-upload-icon></file-upload-icon>
     <bell-icon v-if="$store.state.query.connected"></bell-icon>
   </v-app-bar>
 
@@ -70,6 +71,7 @@ export default {
   components: {
     DarkModeSwitch: () => import('@/components/DarkModeSwitch'),
     BellIcon: () => import('@/components/BellIcon'),
+    FileUploadIcon: () => import('@/components/FileUploadIcon'),
     Logo: () => import('@/components/Logo')
   },
   data() {

@@ -5,6 +5,7 @@ import settings from "./modules/settings";
 import query from "./modules/query";
 import chat from "./modules/chat";
 import avatars from "./modules/avatars";
+import uploads from "./modules/uploads";
 import TeamSpeak from "../api/TeamSpeak";
 
 import createPersistedState from "vuex-persistedstate";
@@ -27,7 +28,8 @@ const store = new Vuex.Store({
     settings,
     query,
     chat,
-    avatars
+    avatars,
+    uploads
   },
   plugins: [
     createPersistedState({

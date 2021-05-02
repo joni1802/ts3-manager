@@ -92,7 +92,7 @@ router.get("/download", async (req, res, next) => {
  */
 router.post("/upload", async (req, res, next) => {
   let {path, cid} = req.query
-  let size = req.headers["content-length"]
+  let size = req.headers["x-file-size"] //req.headers["content-length"]
   let {ServerQuery, log} = res.locals
   let busboy = new Busboy({headers: req.headers})
   let socket = new Socket()
@@ -101,12 +101,14 @@ router.post("/upload", async (req, res, next) => {
     busboy.on("file", async (fieldname, file, filename, encoding, mimetype) => {
       let {port, ftkey} = await ServerQuery.ftInitUpload({name: Path.posix.join(path, filename), cid, size})
 
+      socket.setTimeout(5000)
+
       socket.connect(port, ServerQuery.config.host)
 
       socket.on("connect", () => {
         socket.write(ftkey)
 
-        log.info(`Uploading File "${filename}" to "${path}"`)
+        log.info(`Start uploading file "${filename}" to "${path}"`)
 
         file.pipe(socket)
       })
@@ -119,8 +121,24 @@ router.post("/upload", async (req, res, next) => {
         next(err)
       })
 
+      // socket.on("end", () => {
+      //   console.log('----------- SOCKET END -----------');
+      // })
+      //
+      // socket.on("drain", () => {
+      //   console.log('------------ SOCKET DRAIN --------------');
+      // })
+
+      socket.on("timeout", () => {
+        log.info(`Stopped uploading file "${filename}" to "${path}"`)
+
+        socket.end()
+
+        ServerQuery.execute("quit")
+      })
+
       busboy.on("finish", async () => {
-        log.info(`File "${filename}" successfully uploaded`)
+        log.info(`Finished uploading file "${filename}" to "${path}"`)
 
         socket.end()
 
