@@ -9,7 +9,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn text @click="uploadFile" :disabled="!files.length">Upload</v-btn>
+            <v-btn text @click="addFilesToUploadQueue" :disabled="!files.length">Upload</v-btn>
             <v-btn text @click="close">Close</v-btn>
           </v-card-actions>
         </v-card>
@@ -28,14 +28,14 @@ export default {
     }
   },
   methods: {
-    uploadFile() {
-      for(let file of this.files) {
-        this.$store.dispatch('uploadFile', {
-          blob: file,
-          path: this.path,
-          cid: this.channelId
-        })
-      }
+    addFilesToUploadQueue() {
+      let files = this.files.map(file => ({
+        blob: file,
+        path: this.path,
+        cid: this.channelId
+      }))
+
+      this.$store.commit('addFilesToQueue', files)
 
       this.$router.push({name: 'files'})
     },
