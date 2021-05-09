@@ -12,7 +12,7 @@
     </template>
     <v-card>
       <v-list>
-        <v-list-item v-for="(file, index) in queue" :key="file.fileId">
+        <v-list-item v-for="(file, index) in queue" :key="file.id">
           <v-list-item-avatar>
             <v-progress-circular
               :value="index === 0 ? progress : 0"
@@ -25,10 +25,10 @@
           </v-list-item-content>
           <v-list-item-action>
             <div class="d-flex">
-              <v-btn icon @click="$emit('pause', file.fileId)">
+              <v-btn icon @click="pauseUpload()" :disabled="index !== 0">
                 <v-icon>mdi-pause</v-icon>
               </v-btn>
-              <v-btn icon @click="$emit('remove', file.fileId)">
+              <v-btn icon @click="removeUpload(file.id)">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </div>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios, {CancelToken} from 'axios'
 
 // To-Do:
 // - show placeholder when there are no files
@@ -54,6 +54,7 @@ export default {
       queue: [],
       progress: 0,
       queueWatcher: undefined,
+      cancelUpload: {}
     }
   },
   computed: {
@@ -105,7 +106,10 @@ export default {
             this.progress = percentage
 
             console.log(percentage);
-          }
+          },
+          cancelToken: new CancelToken(cancel => {
+            this.cancelUpload = cancel
+          })
         })
 
         this.queue.splice(0, 1)
@@ -118,8 +122,22 @@ export default {
       } catch(err) {
         console.log(err)
 
-        this.$toast.error(err.message)
+        // Hide error when upload got canceled
+        if(err.constructor.name !== 'Cancel') {
+          this.$toast.error(err.message)
+        }
       }
+    },
+    pauseUpload() {
+      this.cancelUpload()
+    },
+    removeUpload(fileId) {
+      // this.pauseUpload()
+
+      let index = this.queue.IndexOf(file => file.id === fileId)
+
+      this.queue.splice(index, 1)
+
     }
   },
   created() {

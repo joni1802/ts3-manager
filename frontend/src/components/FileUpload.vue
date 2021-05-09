@@ -28,8 +28,12 @@ export default {
     }
   },
   methods: {
+    getFileId(filename) {
+      return `${filename}-${this.channelId}-${this.path}-${Date.now()}`
+    },
     addFilesToUploadQueue() {
       let files = this.files.map(file => ({
+        id: this.getFileId(file.name),
         blob: file,
         path: this.path,
         cid: this.channelId
@@ -41,6 +45,11 @@ export default {
     },
     close() {
       this.$router.push({name: 'files'})
+    }
+  },
+  watch: {
+    files(files) {
+      console.log(this.getFileId(files[0].name));
     }
   }
 }
