@@ -25,21 +25,46 @@ export default {
       path: this.$route.query.path ? this.$route.query.path : "/",
       channelId: this.$route.params.cid,
       files: [],
+      temp: []
     }
   },
   methods: {
     getFileId(filename) {
       return `${filename}-${this.channelId}-${this.path}-${Date.now()}`
     },
-    addFilesToUploadQueue() {
-      let files = this.files.map(file => ({
-        id: this.getFileId(file.name),
-        blob: file,
-        path: this.path,
-        cid: this.channelId
-      }))
+    getFilePath(filename) {
+      return `${this.path}${filename}`
+    },
+    initFileUpload(file) {
+      return this.$TeamSpeak.execute('ftinitupload', {
+        clientftfid: 1,
+        name: this.getFilePath(file.name),
+        cid: this.channelId,
+        size: file.size,
+        cpw: '',
+        overwrite: 1,
+        resume: 0
+      })
+    },
+    async addFilesToUploadQueue() {
+      try {
+        for(let file of this.files) {
+          let [uploadData] = await this.initFileUpload(file)
 
-      this.$store.commit('addFilesToQueue', files)
+          this.$store.commit('addFileToQueue', {
+            ...uploadData,
+            cid: this.channelId,
+            path: this.getFilePath(file.name),
+            blob: file
+          })
+        }
+      } catch(err) {
+        console.log(err);
+
+        this.$toast.error(err.message)
+      }
+
+      // Maybe add Loading state 
 
       this.$router.push({name: 'files'})
     },

@@ -14,8 +14,16 @@ const state = {
 }
 
 const mutations = {
-  addFilesToQueue(state, files) {
-    state.queue = files
+  addFileToQueue(state, file) {
+    state.queue.push(file)
+  },
+  removeFileFromQueue(state, serverftfid) {
+    let index = state.queue.findIndex(file => file.serverftfid === serverftfid)
+
+    state.queue.splice(index, 1)
+  },
+  setFileInQueue(state, file) {
+    state.queue[0] = fileData
   }
 }
 
