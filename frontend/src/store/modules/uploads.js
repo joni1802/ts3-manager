@@ -1,14 +1,3 @@
-// import Vue from 'vue'
-// import localForage from 'localforage'
-// import axios from 'axios'
-
-
-// const db = localForage.createInstance({
-//   driver: localForage.INDEXEDDB,
-//   name: 'uploads',
-//   storeName: 'files'
-// })
-
 const state = {
   queue: []
 }
@@ -17,13 +6,16 @@ const mutations = {
   addFileToQueue(state, file) {
     state.queue.push(file)
   },
-  removeFileFromQueue(state, serverftfid) {
-    let index = state.queue.findIndex(file => file.serverftfid === serverftfid)
+  removeFileFromQueue(state, clientftfid) {
+    let index = state.queue.findIndex(file => file.clientftfid === clientftfid)
 
     state.queue.splice(index, 1)
   },
-  setFileInQueue(state, file) {
-    state.queue[0] = fileData
+  setFileUploadProgress(state, percentage) {
+    state.queue[0].progress = percentage
+  },
+  setFileBlob(state, {index, blob}) {
+    state.queue[index].blob = blob
   }
 }
 

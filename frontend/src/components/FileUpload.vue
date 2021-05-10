@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import path from 'path-browserify'
+
 export default {
   data() {
     return {
@@ -29,34 +31,28 @@ export default {
     }
   },
   methods: {
-    getFileId(filename) {
-      return `${filename}-${this.channelId}-${this.path}-${Date.now()}`
-    },
     getFilePath(filename) {
-      return `${this.path}${filename}`
+      return path.join(this.path, filename)
     },
-    initFileUpload(file) {
-      return this.$TeamSpeak.execute('ftinitupload', {
-        clientftfid: 1,
-        name: this.getFilePath(file.name),
-        cid: this.channelId,
-        size: file.size,
-        cpw: '',
-        overwrite: 1,
-        resume: 0
-      })
+    getClientFileTransferId() {
+      return Math.floor(Math.random() * 10000)
     },
     async addFilesToUploadQueue() {
       try {
         for(let file of this.files) {
-          let [uploadData] = await this.initFileUpload(file)
 
-          this.$store.commit('addFileToQueue', {
-            ...uploadData,
+
+          let stuff = {
+            clientftfid: this.getClientFileTransferId(),
             cid: this.channelId,
-            path: this.getFilePath(file.name),
-            blob: file
-          })
+            filePath: this.getFilePath(file.name),
+            blob: file,
+            progress: 0
+          }
+
+          console.log(stuff);
+
+          this.$store.commit('addFileToQueue', stuff)
         }
       } catch(err) {
         console.log(err);
@@ -64,17 +60,12 @@ export default {
         this.$toast.error(err.message)
       }
 
-      // Maybe add Loading state 
+      // Maybe add Loading state
 
-      this.$router.push({name: 'files'})
+      // this.$router.push({name: 'files'})
     },
     close() {
       this.$router.push({name: 'files'})
-    }
-  },
-  watch: {
-    files(files) {
-      console.log(this.getFileId(files[0].name));
     }
   }
 }
