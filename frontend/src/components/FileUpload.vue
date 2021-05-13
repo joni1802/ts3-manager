@@ -40,20 +40,15 @@ export default {
     async addFilesToUploadQueue() {
       try {
         for(let file of this.files) {
-
-
-          let stuff = {
+          this.$store.commit('addFileToQueue', {
             clientftfid: this.getClientFileTransferId(),
             cid: this.channelId,
             filePath: this.getFilePath(file.name),
             blob: file,
             progress: 0,
-            fileSize: file.size
-          }
-
-          console.log(stuff);
-
-          this.$store.commit('addFileToQueue', stuff)
+            fileSize: file.size,
+            uploading: false
+          })
         }
       } catch(err) {
         console.log(err);
@@ -61,17 +56,10 @@ export default {
         this.$toast.error(err.message)
       }
 
-      // Maybe add Loading state
-
-      // this.$router.push({name: 'files'})
+      this.$router.push({name: 'files'})
     },
     close() {
       this.$router.push({name: 'files'})
-    }
-  },
-  watch: {
-    files(files) {
-      console.log(files);
     }
   }
 }

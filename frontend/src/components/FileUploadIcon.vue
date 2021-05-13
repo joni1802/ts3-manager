@@ -32,27 +32,30 @@
           </v-list-item-content>
           <v-list-item-action>
             <div class="d-flex">
-
               <v-btn
-                v-if="uploadPaused"
+                v-if="file.uploading"
                 icon
-                @click="resumeUpload(file.clientftfid)"
+                @click="pauseUpload()"
               >
-                <v-icon>mdi-play</v-icon>
+                <v-icon>mdi-pause</v-icon>
               </v-btn>
               <v-btn
                 v-else
                 icon
                 :loading="loading"
-                @click="pauseUpload()"
-                :disabled="!file.progress"
+                @click="startUploadLoop(file.clientftfid)"
+                :disabled="$store.getters.uploading"
               >
-                <v-icon>mdi-pause</v-icon>
+                <v-icon>mdi-play</v-icon>
               </v-btn>
 
-              <!-- <v-btn icon @click="removeUpload(file.clientftfid)">
+              <v-btn
+                icon
+                @click="removeUpload(file.clientftfid)"
+                :disabled="file.uploading"
+              >
                 <v-icon>mdi-close</v-icon>
-              </v-btn> -->
+              </v-btn>
             </div>
           </v-list-item-action>
         </v-list-item>
@@ -70,7 +73,6 @@ export default {
       queueWatcher: undefined,
       cancelUpload: {},
       loading: false,
-      uploadPaused: false
     }
   },
   computed: {
@@ -101,7 +103,9 @@ export default {
         .then(res => res[0])
     },
     watchQueue() {
-      this.queueWatcher = this.$watch('$store.state.uploads.queue', this.startUploadLoop)
+      this.queueWatcher = this.$watch('$store.state.uploads.queue', () => {
+        this.startUploadLoop()
+      })
     },
     unwatchQueue() {
       this.queueWatcher()
@@ -109,7 +113,7 @@ export default {
     getFileInQueue(clientftfid) {
       return this.uploadQueue.find(file => file.clientftfid === clientftfid)
     },
-    uploadFile2(blob, clientftfid, ftkey, port) {
+    uploadFile2(blob, clientftfid, ftkey, port, sendedBytes = 0) {
       let formData = new FormData()
 
       formData.append('file', blob)
@@ -124,7 +128,7 @@ export default {
         withCredentials: true,
         data: formData,
         onUploadProgress: e => {
-          let percentage = (e.loaded / e.total) * 100
+          let percentage = ((e.loaded + sendedBytes)/ (e.total + sendedBytes)) * 100
 
           this.$store.commit('setFileUploadProgress', {clientftfid, percentage})
 
@@ -136,36 +140,25 @@ export default {
       })
     },
 
-    async startUploadLoop() {
+    async startUploadLoop(clientTransferId) {
       try {
         this.unwatchQueue()
 
-        let file = this.uploadQueue[0]
-        let {ftkey, clientftfid, port} = await this.initFileUpload(file)
-
-        await this.uploadFile2(file.blob, clientftfid, ftkey, port)
-
-        this.$store.commit('removeFileFromQueue', clientftfid)
-
-        if(!this.uploadQueue.length) {
-          this.watchQueue()
-        } else {
-          this.startUploadLoop()
-        }
-      } catch(err) {
-        this.handleUploadError(err)
-      }
-    },
-
-    async resumeUpload(clientftfid) {
-      try {
-        this.uploadPaused = false
-
+        let clientftfid = clientTransferId ? clientTransferId : this.uploadQueue[0].clientftfid
         let file = this.getFileInQueue(clientftfid)
-        let {ftkey, port} = await this.initFileUpload(file, 0, 1)
-        let {size} = await this.getFileInfo(file.cid, file.filePath)
 
-        await this.uploadFile2(file.blob.slice(size), clientftfid, ftkey, port)
+        file.uploading = true
+
+        if(file.progress) {
+          let {ftkey, port} = await this.initFileUpload(file, 0, 1)
+          let {size} = await this.getFileInfo(file.cid, file.filePath)
+
+          await this.uploadFile2(file.blob.slice(size), clientftfid, ftkey, port, size)
+        } else {
+          let {ftkey, port} = await this.initFileUpload(file)
+
+          await this.uploadFile2(file.blob, clientftfid, ftkey, port)
+        }
 
         this.$store.commit('removeFileFromQueue', clientftfid)
 
@@ -178,6 +171,7 @@ export default {
         this.handleUploadError(err)
       }
     },
+
     pauseUpload() {
       this.cancelUpload()
 
@@ -185,23 +179,18 @@ export default {
 
       setTimeout(() => {
         this.loading = false
-
-        this.uploadPaused = true
       }, 5000)
     },
     removeUpload(clientftfid) {
-      // this.pauseUpload()
-
-      // let index = this.queue.IndexOf(file => file.id === fileId)
-      //
-      // this.queue.splice(index, 1)
-
+      this.$store.commit('removeFileFromQueue', clientftfid)
     },
     handleUploadError(err) {
       // Hide error when upload got paused
       if(err.constructor.name !== 'Cancel') {
         this.$toast.error(err.message)
       }
+
+      this.$store.commit('resetUploadState')
     }
   },
   created() {
