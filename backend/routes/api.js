@@ -15,7 +15,8 @@ const Busboy = require('busboy')
 const Path = require("path")
 
 /**
- * Authenticate every request and try to connect to the ServerQuery.
+ * Get the ip address or hostname of the TeamSpeak server by decoding the cookie
+ * on every request. 
  */
 router.use(async (req, res, next) => {
   let {token, serverId} = req.cookies
@@ -29,13 +30,7 @@ router.use(async (req, res, next) => {
 
     whitelist.check(decoded.host)
 
-    let ServerQuery = await TeamSpeak.connect(decoded)
-
-    await ServerQuery.execute("use", {sid: serverId})
-
-    res.locals.ServerQuery = ServerQuery
-
-    log.info("API request authenticated")
+    res.locals.host = decoded.host
 
     next()
   } catch(err) {
@@ -93,7 +88,7 @@ router.get("/download", async (req, res, next) => {
 router.post("/upload", async (req, res, next) => {
   let ftkey = req.headers['x-file-transfer-key']
   let port = req.headers['x-file-transfer-port']
-  let {ServerQuery, log} = res.locals
+  let {log, host} = res.locals
   let busboy = new Busboy({headers: req.headers})
   let socket = new Socket()
 
@@ -102,7 +97,7 @@ router.post("/upload", async (req, res, next) => {
 
       socket.setTimeout(5000)
 
-      socket.connect(port, ServerQuery.config.host)
+      socket.connect(port, host)
 
       socket.on("connect", () => {
         socket.write(ftkey)
@@ -115,8 +110,6 @@ router.post("/upload", async (req, res, next) => {
       socket.on("error", async (err) => {
         socket.destroy()
 
-        await ServerQuery.execute("quit")
-
         next(err)
       })
 
@@ -124,16 +117,12 @@ router.post("/upload", async (req, res, next) => {
         log.info(`Stopped uploading file "${filename}"`)
 
         socket.end()
-
-        ServerQuery.execute("quit")
       })
 
       busboy.on("finish", async () => {
         log.info(`Finished uploading file "${filename}"`)
 
         socket.end()
-
-        await ServerQuery.execute("quit")
 
         res.sendStatus(200)
       })

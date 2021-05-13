@@ -10,7 +10,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text @click="addFilesToUploadQueue" :disabled="!files.length">Upload</v-btn>
-            <v-btn text @click="close">Close</v-btn>
+            <v-btn text @click="close">Cancel</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -47,7 +47,8 @@ export default {
             cid: this.channelId,
             filePath: this.getFilePath(file.name),
             blob: file,
-            progress: 0
+            progress: 0,
+            fileSize: file.size
           }
 
           console.log(stuff);
@@ -66,6 +67,11 @@ export default {
     },
     close() {
       this.$router.push({name: 'files'})
+    }
+  },
+  watch: {
+    files(files) {
+      console.log(files);
     }
   }
 }

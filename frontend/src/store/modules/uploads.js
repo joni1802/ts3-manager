@@ -11,8 +11,10 @@ const mutations = {
 
     state.queue.splice(index, 1)
   },
-  setFileUploadProgress(state, percentage) {
-    state.queue[0].progress = percentage
+  setFileUploadProgress(state, {clientftfid, percentage}) {
+    let index = state.queue.findIndex(file => file.clientftfid === clientftfid)
+
+    state.queue[index].progress = percentage
   },
   setFileBlob(state, {index, blob}) {
     state.queue[index].blob = blob
