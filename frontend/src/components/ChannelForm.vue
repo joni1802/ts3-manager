@@ -15,7 +15,7 @@
               :disabled="!!spacerAlignment || !!spacerText"
             >
               <template #item="{item}">
-                <special-spacer :characterBlock="item"></special-spacer>
+                <spacer-special :characterBlock="item"></spacer-special>
               </template>
             </v-select>
 
@@ -105,11 +105,11 @@
 
 <script>
 // Dynamic importing the component will throw an error when used in the v-select component
-import SpecialSpacer from '@/components/SpecialSpacer'
+import SpacerSpecial from '@/components/SpacerSpecial'
 
 export default {
   components: {
-    SpecialSpacer
+    SpacerSpecial
   },
   props: {
     title: String,

@@ -1,82 +1,62 @@
 <template>
-<div class="spacer" :class="{'spacer--dark': $vuetify.theme.dark}">
-  <svg v-if="specialSpacer" height="10" class="spacer__special">
-    <line x1="0" y1="5" x2="100%" y2="5" stroke="rgba(0,0,0,0.54)" stroke-width="0.1rem" :stroke-dasharray="dashArray" />
-  </svg>
-  <div v-else class="spacer__normal" :style="{textAlign: textPosition}">
+<div :style="{width: '100%'}">
+  <spacer-special v-if="specialSpacer" :characterBlock="text"></spacer-special>
+  <div v-else :style="{textAlign}">
     {{ text }}
   </div>
 </div>
 </template>
 
 <script>
+import SpacerSpecial from '@/components/SpacerSpecial'
+
 export default {
+  components: {
+    SpacerSpecial
+  },
   props: {
     channelName: String
   },
   data() {
     return {
+      spacer: /^\[(.*)(spacer)(.*)\](.*)/,
       specialSpacer: false,
-      dashArray: null,
       characterBlocks: ['-..', '___', '-.-', '...', '---'],
       text: '',
-      textPosition: ''
+      textAlign: 'left'
     }
   },
   methods: {
     analyzeSpacer(name) {
-      let spacer = /\[(.*)(spacer)(.*)\](.*)/i
-      let disassembledSpacer = name.match(spacer)
+      let disassembledSpacer = name.match(this.spacer)
       let alignment = disassembledSpacer[1]
-      let text = disassembledSpacer[4]
 
-      if (this.characterBlocks.includes(text)) {
-        this.createSpecialSpacer(text)
+      this.text = disassembledSpacer[4]
+
+      if (this.characterBlocks.includes(this.text)) {
+        this.specialSpacer = true
       } else {
-        this.createSpacer(alignment, text)
+        this.specialSpacer = false
+
+        this.setTextAlignment(alignment)
       }
     },
-    createSpecialSpacer(characterBlock) {
-      this.specialSpacer = true
-
-      switch (characterBlock) {
-        case '-..':
-          this.dashArray = '5 2 1 2 1 2';
-          break;
-        case '___':
-          this.dashArray = '0';
-          break;
-        case '-.-':
-          this.dashArray = '5 2 1 2';
-          break;
-        case '...':
-          this.dashArray = '1 2';
-          break;
-        case '---':
-          this.dashArray = '5 2';
-      }
-    },
-    createSpacer(alignment, text) {
-      this.specialSpacer = false
-
-      let position = ''
-
-      switch (alignment) {
+    setTextAlignment(alignment) {
+      // Only the first chracter is taken into account
+      // All other characters are ignored
+      switch (alignment[0]) {
         case 'l':
-          position = 'left';
+          this.textAlign = 'left';
           break;
         case 'c':
-          position = 'center';
+          this.textAlign = 'center';
           break;
         case 'r':
-          position = 'right';
+          this.textAlign = 'right';
           break;
         default:
-          position: 'left';
+          this.textAlign = 'left';
       }
-
-      this.text = text
-      this.textPosition = position
     }
   },
   watch: {
@@ -91,20 +71,4 @@ export default {
 </script>
 
 <style>
-.spacer {
-  width: 100%;
-}
-
-.spacer__normal {
-  min-height: '1rem';
-  color: black;
-}
-
-.spacer__special {
-  width: 100%;
-}
-
-.spacer--dark {
-  filter: invert(1);
-}
 </style>

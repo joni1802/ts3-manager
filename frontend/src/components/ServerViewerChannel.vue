@@ -105,7 +105,7 @@ export default {
   },
   data() {
     return {
-      spacer: /\[(.*)(spacer)(.*)\](.*)/i,
+      spacer: /^\[(.*)(spacer)(.*)\](.*)/,
       deleteChannelDialog: false,
       selectedChannel: {},
       forceDeletion: false,
