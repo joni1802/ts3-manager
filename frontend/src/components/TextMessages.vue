@@ -139,8 +139,6 @@
 </template>
 
 <script>
-import loadAvatars from "@/mixins/loadAvatars"
-
 export default {
   beforeRouteEnter(to, from, next) {
     next(async vm => {
