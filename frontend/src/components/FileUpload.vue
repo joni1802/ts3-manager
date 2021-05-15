@@ -19,31 +19,28 @@
 </template>
 
 <script>
+import fileTransfer from '@/mixins/fileTransfer'
 import path from 'path-browserify'
 
 export default {
+  mixins: [
+    fileTransfer
+  ],
   data() {
     return {
       path: this.$route.query.path ? this.$route.query.path : "/",
       channelId: this.$route.params.cid,
-      files: [],
-      temp: []
+      files: []
     }
   },
   methods: {
-    getFilePath(filename) {
-      return path.join(this.path, filename)
-    },
-    getClientFileTransferId() {
-      return Math.floor(Math.random() * 10000)
-    },
     async addFilesToUploadQueue() {
       try {
         for(let file of this.files) {
           this.$store.commit('addFileToQueue', {
             clientftfid: this.getClientFileTransferId(),
             cid: this.channelId,
-            filePath: this.getFilePath(file.name),
+            filePath: this.getFilePath(this.path, file.name),
             blob: file,
             progress: 0,
             fileSize: file.size,

@@ -131,15 +131,12 @@ export default {
           let percentage = ((e.loaded + sendedBytes)/ (e.total + sendedBytes)) * 100
 
           this.$store.commit('setFileUploadProgress', {clientftfid, percentage})
-
-          console.log(percentage);
         },
         cancelToken: new CancelToken(cancel => {
           this.cancelUpload = cancel
         })
       })
     },
-
     async startUploadLoop(clientTransferId) {
       try {
         this.unwatchQueue()
@@ -171,7 +168,6 @@ export default {
         this.handleUploadError(err)
       }
     },
-
     pauseUpload() {
       this.cancelUpload()
 
