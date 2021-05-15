@@ -130,8 +130,6 @@ export default {
         onUploadProgress: e => {
           let percentage = ((e.loaded + sendedBytes)/ (e.total + sendedBytes)) * 100
 
-          console.log(percentage);
-
           this.$store.commit('setFileUploadProgress', {clientftfid, percentage})
         },
         cancelToken: new CancelToken(cancel => {
