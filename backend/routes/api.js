@@ -16,7 +16,7 @@ const Path = require("path")
 
 /**
  * Get the ip address or hostname of the TeamSpeak server by decoding the cookie
- * on every request. 
+ * on every request.
  */
 router.use(async (req, res, next) => {
   let {token, serverId} = req.cookies
@@ -42,16 +42,12 @@ router.use(async (req, res, next) => {
  * Download file from the server.
  */
 router.get("/download", async (req, res, next) => {
-  let {path, name, cid} = req.query
-  let {ServerQuery, log} = res.locals
-  let receivedBytes = 0
+  let {ftkey, port, size, name} = req.query
+  let {log, host} = res.locals
   let socket = new Socket()
 
   try {
-    // Even on Windows TeamSpeak uses only POSIX specifc paths
-    let {ftkey, port, size} = await ServerQuery.ftInitDownload({cid, name: Path.posix.join(path, name)})
-
-    socket.connect(port, ServerQuery.config.host)
+    socket.connect(port, host)
 
     socket.on("connect", () => {
       res.setHeader("content-disposition", `attachment; filename=${name}`)
@@ -59,21 +55,13 @@ router.get("/download", async (req, res, next) => {
 
       socket.write(ftkey)
 
-      log.info(`Downloading File "${name}"`)
+      log.info(`Downloading file ${name}`)
 
       socket.pipe(res)
     })
 
-    socket.on("end", async () => {
-      socket.end()
-
-      await ServerQuery.execute("quit")
-    })
-
-    socket.on("error", async (err) => {
+    socket.on("error", err => {
       socket.destroy()
-
-      await ServerQuery.execute("quit")
 
       next(err)
     })

@@ -13,7 +13,7 @@
       </template>
 
       <v-list>
-        <v-list-item :href="getDownloadURL(item)">
+        <v-list-item @click="downloadFile">
           <v-list-item-action>
             <v-icon>mdi-download</v-icon>
           </v-list-item-action>
@@ -46,11 +46,16 @@
 </template>
 
 <script>
+import fileTransfer from "@/mixins/fileTransfer"
+
 export default {
   components: {
     FileRenameDialog: () => import("@/components/FileRenameDialog"),
     FileDeleteDialog: () => import("@/components/FileDeleteDialog")
   },
+  mixins: [
+    fileTransfer
+  ],
   props: {
     /**
      * File
@@ -66,20 +71,36 @@ export default {
     }
   },
   methods: {
-    /**
-     * Generates download url for the file download.
-     * @param  {TreeItem}
-     * @return {String}   - download url
-     */
-    getDownloadURL({cid, path, name}) {
+    getDownloadUrl(ftkey, port, size, name) {
       let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
       let url = new URL("/api/download", base)
 
-      url.searchParams.append("path", path)
+      url.searchParams.append("ftkey", ftkey)
+      url.searchParams.append("port", port)
+      url.searchParams.append("size", size)
       url.searchParams.append("name", name)
-      url.searchParams.append("cid", cid)
 
       return url.href
+    },
+    initFileDownload(cpw = "", seekpos = 0) {
+      return this.$TeamSpeak.execute("ftinitdownload", {
+        clientftfid: this.getClientFileTransferId(),
+        name: this.getFilePath(this.item.path, this.item.name),
+        cid: this.item.cid,
+        cpw,
+        seekpos
+      }).then(res => res[0])
+    },
+    async downloadFile() {
+      try {
+        let {name} = this.item
+        let {ftkey, port, size} = await this.initFileDownload()
+        let url = this.getDownloadUrl(ftkey, port, size, name)
+
+        window.location = url
+      } catch(err) {
+        this.$toast.error(err.message)
+      }
     }
   }
 }
