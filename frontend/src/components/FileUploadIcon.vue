@@ -113,7 +113,7 @@ export default {
     getFileInQueue(clientftfid) {
       return this.uploadQueue.find(file => file.clientftfid === clientftfid)
     },
-    uploadFile2(blob, clientftfid, ftkey, port, sendedBytes = 0) {
+    uploadFile(blob, clientftfid, ftkey, port, sendedBytes = 0) {
       let formData = new FormData()
 
       formData.append('file', blob)
@@ -129,6 +129,8 @@ export default {
         data: formData,
         onUploadProgress: e => {
           let percentage = ((e.loaded + sendedBytes)/ (e.total + sendedBytes)) * 100
+
+          console.log(percentage);
 
           this.$store.commit('setFileUploadProgress', {clientftfid, percentage})
         },
@@ -150,11 +152,11 @@ export default {
           let {ftkey, port} = await this.initFileUpload(file, 0, 1)
           let {size} = await this.getFileInfo(file.cid, file.filePath)
 
-          await this.uploadFile2(file.blob.slice(size), clientftfid, ftkey, port, size)
+          await this.uploadFile(file.blob.slice(size), clientftfid, ftkey, port, size)
         } else {
           let {ftkey, port} = await this.initFileUpload(file)
 
-          await this.uploadFile2(file.blob, clientftfid, ftkey, port)
+          await this.uploadFile(file.blob, clientftfid, ftkey, port)
         }
 
         this.$store.commit('removeFileFromQueue', clientftfid)
@@ -191,6 +193,13 @@ export default {
   },
   created() {
     this.watchQueue()
+  },
+  beforeDestroy() {
+    try {
+      this.cancelUpload()
+    } catch(err) {
+      // Silent error
+    }
   }
 }
 </script>
