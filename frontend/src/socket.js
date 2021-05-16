@@ -5,6 +5,7 @@ import router from "./router";
 
 // Socket connection to the backend
 const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
+  withCredentials: true,
   autoConnect: false
 });
 
@@ -21,7 +22,7 @@ const handleSocketError = err => {
 socket.on("error", handleSocketError);
 socket.on("connect_error", handleSocketError);
 
-// Try to reconnect when the frontend is still logged in. 
+// Try to reconnect when the frontend is still logged in.
 socket.on("connect", () => {
   if(!store.state.query.loggedOut) {
     socket.emit("teamspeak-reconnect", {

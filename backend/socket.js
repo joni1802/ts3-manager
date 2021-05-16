@@ -1,9 +1,11 @@
 const socket = {};
 
-socket.init = server => {
+socket.init = (server, corsOptions) => {
   const config = require("./config")
   const fs = require("fs")
-  const io = require("socket.io")(server);
+  const io = require("socket.io")(server, {
+    cors: corsOptions
+  })
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
   const {logger, whitelist} = require("./utils");
