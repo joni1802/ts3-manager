@@ -275,14 +275,14 @@ export default [
       requiresAuth: true
     }
   },
-  {
-    path: "/test",
-    component: () => import("@/components/Test"),
-    name: "test",
-    meta: {
-      requiresAuth: false
-    }
-  },
+  // {
+  //   path: "/test",
+  //   component: () => import("@/components/Test"),
+  //   name: "test",
+  //   meta: {
+  //     requiresAuth: false
+  //   }
+  // },
   {
     path: "*",
     component: () => import("@/components/NotFound"),
