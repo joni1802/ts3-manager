@@ -21,30 +21,42 @@ import store from "./store";
 import router from "./router";
 import socket from "./socket";
 
-NProgress.configure({
-  showSpinner: false
-});
+(async () => {
 
-Vue.use(Clipboard);
+  NProgress.configure({
+    showSpinner: false
+  });
 
-Vue.use(VueToast, {
-  position: 'top',
-  duration: 4000,
-})
+  Vue.use(Clipboard);
 
-Vue.config.productionTip = false;
+  Vue.use(VueToast, {
+    position: 'top',
+    duration: 4000,
+  })
 
-// Connect to websocket server
-socket.open();
+  Vue.config.productionTip = false;
 
-// Adding instance properties which are often used in components
-Vue.prototype.$socket = socket;
-Vue.prototype.$TeamSpeak = TeamSpeak;
+  // Connect to websocket server
+  socket.open();
 
-// Render app
-new Vue({
-  render: h => h(App),
-  router,
-  store,
-  vuetify
-}).$mount("#app");
+  if(!store.state.query.loggedOut) {
+    try {
+      await TeamSpeak.reconnect()
+    } catch(err) {
+      console.log(err);
+    }
+  }
+
+  // Adding instance properties which are often used in components
+  Vue.prototype.$socket = socket;
+  Vue.prototype.$TeamSpeak = TeamSpeak;
+
+  // Render app
+  new Vue({
+    render: h => h(App),
+    router,
+    store,
+    vuetify
+  }).$mount("#app");
+
+})()

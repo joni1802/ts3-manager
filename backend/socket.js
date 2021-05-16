@@ -129,27 +129,25 @@ socket.init = (server, corsOptions) => {
     /**
      * Try to reconnect to the ServerQuery.
      */
-    socket.on("teamspeak-reconnect", async ({token, serverId}) => {
-      if(token) {
-        try {
-          let decoded = jwt.verify(token, config.secret);
+    socket.on("teamspeak-reconnect", async ({token, serverId}, fn) => {
+      try {
+        let decoded = jwt.verify(token, config.secret);
 
-          whitelist.check(decoded.host)
+        whitelist.check(decoded.host)
 
-          ServerQuery = await TeamSpeak.connect(decoded);
+        ServerQuery = await TeamSpeak.connect(decoded);
 
-          if (serverId) await ServerQuery.execute("use", {sid: serverId});
+        if (serverId) await ServerQuery.execute("use", {sid: serverId});
 
-          registerEvents(ServerQuery, log, socket);
+        registerEvents(ServerQuery, log, socket);
 
-          log.info("ServerQuery reconnected");
+        log.info("ServerQuery reconnected");
 
-          socket.emit("teamspeak-reconnected");
-        } catch (err) {
-          log.error(err.message);
+        handleResponse({reconnected: true}, fn)
+      } catch (err) {
+        log.error(err.message);
 
-          socket.emit("teamspeak-reconnecterror", {message: err.message});
-        }
+        handleServerQueryError(err, fn)
       }
     })
 

@@ -219,6 +219,31 @@ TeamSpeak.downloadFile = (path, cid, cpw = "") => {
   })
 }
 
+TeamSpeak.reconnect = () => {
+  return new Promise((resolve, reject) => {
+    socket.emit("teamspeak-reconnect", {
+      token: store.state.query.token,
+      serverId: store.state.query.serverId
+    }, async res => {
+      if(res.reconnected) {
+        try {
+          let queryUser = await TeamSpeak.execute("whoami").then(list => list[0]);
+
+          if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
+
+          store.dispatch("saveConnection", {queryUser, connected: true});
+        } catch (err) {
+          reject(err)
+        }
+
+        resolve()
+      } else {
+        reject(res)
+      }
+    })
+  })
+}
+
 TeamSpeak.on = (name, fn) => {
   TeamSpeak.__proto__.addEventListener(name, fn);
 };
@@ -301,29 +326,6 @@ socket.on("teamspeak-channeldelete", data => {
       detail: data
     })
   );
-});
-
-socket.on("teamspeak-reconnecterror", async err => {
-  Vue.prototype.$toast.error(err.message);
-
-  store.dispatch("clearStorage");
-
-  router.push({name: "login"});
-});
-
-socket.on("teamspeak-reconnected", async () => {
-  try {
-    let queryUser = await TeamSpeak.execute("whoami").then(list => list[0]);
-
-    if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
-
-    store.dispatch("saveConnection", {queryUser, connected: true});
-
-    // When there was a socket error and it reconnected automatically again
-    if(router.currentRoute.name === 'login') router.push({name: 'servers'})
-  } catch (err) {
-    Vue.prototype.$toast.error(err.message);
-  }
 });
 
 // When the teamspeak connection is closed manually.
