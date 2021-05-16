@@ -1,6 +1,7 @@
 const state = {
   rememberLogin: true,
-  notifications: true
+  notifications: true,
+  darkMode: true
 };
 
 const mutations = {
@@ -9,6 +10,9 @@ const mutations = {
   },
   setNotifications(state, status) {
     state.notifications = status
+  },
+  setDarkMode(state, status) {
+    state.darkMode = status
   }
 };
 

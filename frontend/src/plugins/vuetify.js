@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import '@mdi/font/css/materialdesignicons.css';
+import store from '@/store';
 
 Vue.use(Vuetify);
 
@@ -9,7 +10,7 @@ export default new Vuetify({
     iconfont: 'mdi',
   },
   theme: {
-    dark: true, // dark is default theme
+    dark: store.state.settings.darkMode,
     themes: {
       light: {
         primary: '#1976D2',
