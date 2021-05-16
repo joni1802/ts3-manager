@@ -97,7 +97,7 @@ export default {
         let {ftkey, port, size} = await this.initFileDownload()
         let url = this.getDownloadUrl(ftkey, port, size, name)
 
-        window.location = url
+        window.open(url)
       } catch(err) {
         this.$toast.error(err.message)
       }
