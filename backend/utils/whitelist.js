@@ -1,4 +1,4 @@
-const config = require("../config")
+const config = require("../config");
 
 /**
  * Check if the domain or ip of the TeamSpeak server is whitelisted.
@@ -6,14 +6,17 @@ const config = require("../config")
  * @param  {String} host IP or domain of the TeamSpeak server
  * @return {Boolean}
  */
-const check = host => {
-  if(!config.whitelist.length || config.whitelist.includes(host.toLowerCase())) {
-    return true
+const check = (host) => {
+  if (
+    !config.whitelist.length ||
+    config.whitelist.includes(host.toLowerCase())
+  ) {
+    return true;
   } else {
-    throw new Error("TeamSpeak server is not whitelisted")
+    throw new Error("TeamSpeak server is not whitelisted");
   }
-}
+};
 
 module.exports = {
-  check
-}
+  check,
+};

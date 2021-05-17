@@ -4,124 +4,122 @@
  * still handled by socket.io.
  */
 
-const config = require("../config")
-const express = require("express")
-const router = express.Router()
-const jwt = require("jsonwebtoken")
-const {TeamSpeak} = require("ts3-nodejs-library")
-const {logger, whitelist} = require("../utils")
-const {Socket} = require("net")
-const Busboy = require('busboy')
-const Path = require("path")
+const config = require("../config");
+const express = require("express");
+const router = express.Router();
+const jwt = require("jsonwebtoken");
+const { TeamSpeak } = require("ts3-nodejs-library");
+const { logger, whitelist } = require("../utils");
+const { Socket } = require("net");
+const Busboy = require("busboy");
+const Path = require("path");
 
 /**
  * Get the ip address or hostname of the TeamSpeak server by decoding the cookie
  * on every request.
  */
 router.use(async (req, res, next) => {
-  let {token, serverId} = req.cookies
-  let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-  let log = logger.child({client: ip})
+  let { token, serverId } = req.cookies;
+  let ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+  let log = logger.child({ client: ip });
 
-  res.locals.log = log
+  res.locals.log = log;
 
   try {
-    let decoded = jwt.verify(token, config.secret)
+    let decoded = jwt.verify(token, config.secret);
 
-    whitelist.check(decoded.host)
+    whitelist.check(decoded.host);
 
-    res.locals.host = decoded.host
+    res.locals.host = decoded.host;
 
-    next()
-  } catch(err) {
-    next(err)
+    next();
+  } catch (err) {
+    next(err);
   }
-})
+});
 
 /**
  * Download file from the server.
  */
 router.get("/download", async (req, res, next) => {
-  let {ftkey, port, size, name} = req.query
-  let {log, host} = res.locals
-  let socket = new Socket()
+  let { ftkey, port, size, name } = req.query;
+  let { log, host } = res.locals;
+  let socket = new Socket();
 
   try {
-    socket.connect(port, host)
+    socket.connect(port, host);
 
     socket.on("connect", () => {
-      res.setHeader("content-disposition", `attachment; filename=${name}`)
-      res.setHeader("content-length", size)
+      res.setHeader("content-disposition", `attachment; filename=${name}`);
+      res.setHeader("content-length", size);
 
-      socket.write(ftkey)
+      socket.write(ftkey);
 
-      log.info(`Downloading file ${name}`)
+      log.info(`Downloading file ${name}`);
 
-      socket.pipe(res)
-    })
+      socket.pipe(res);
+    });
 
-    socket.on("error", err => {
-      socket.destroy()
+    socket.on("error", (err) => {
+      socket.destroy();
 
-      next(err)
-    })
-  } catch(err) {
-    next(err)
+      next(err);
+    });
+  } catch (err) {
+    next(err);
   }
-})
+});
 
 /**
  * Upload file to the server
  */
 router.post("/upload", async (req, res, next) => {
-  let ftkey = req.headers['x-file-transfer-key']
-  let port = req.headers['x-file-transfer-port']
-  let {log, host} = res.locals
-  let busboy = new Busboy({headers: req.headers})
-  let socket = new Socket()
+  let ftkey = req.headers["x-file-transfer-key"];
+  let port = req.headers["x-file-transfer-port"];
+  let { log, host } = res.locals;
+  let busboy = new Busboy({ headers: req.headers });
+  let socket = new Socket();
 
   try {
     busboy.on("file", async (fieldname, file, filename, encoding, mimetype) => {
+      socket.setTimeout(5000);
 
-      socket.setTimeout(5000)
-
-      socket.connect(port, host)
+      socket.connect(port, host);
 
       socket.on("connect", () => {
-        socket.write(ftkey)
+        socket.write(ftkey);
 
-        log.info(`Start uploading file "${filename}"`)
+        log.info(`Start uploading file "${filename}"`);
 
-        file.pipe(socket)
-      })
+        file.pipe(socket);
+      });
 
       socket.on("error", async (err) => {
-        socket.destroy()
+        socket.destroy();
 
-        next(err)
-      })
+        next(err);
+      });
 
       socket.on("timeout", () => {
-        log.info(`Stopped uploading file "${filename}"`)
+        log.info(`Stopped uploading file "${filename}"`);
 
-        socket.end()
-      })
+        socket.end();
+      });
 
       busboy.on("finish", async () => {
-        log.info(`Finished uploading file "${filename}"`)
+        log.info(`Finished uploading file "${filename}"`);
 
-        socket.end()
+        socket.end();
 
-        res.sendStatus(200)
-      })
+        res.sendStatus(200);
+      });
+    });
 
-    })
-
-    req.pipe(busboy)
-  } catch(err) {
-    next(err)
+    req.pipe(busboy);
+  } catch (err) {
+    next(err);
   }
-})
+});
 
 /**
  * Handle errors.
@@ -129,11 +127,11 @@ router.post("/upload", async (req, res, next) => {
  * Otherwise express.js will not handle it as an error middleware.
  */
 router.use((error, req, res, next) => {
-  let {log} = res.locals
+  let { log } = res.locals;
 
-  log.error(error.message)
+  log.error(error.message);
 
-  res.status(400).send(error.message)
-})
+  res.status(400).send(error.message);
+});
 
-module.exports = router
+module.exports = router;

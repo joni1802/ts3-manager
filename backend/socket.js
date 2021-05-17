@@ -1,25 +1,29 @@
 const socket = {};
 
 socket.init = (server, corsOptions) => {
-  const config = require("./config")
-  const fs = require("fs")
+  const config = require("./config");
+  const fs = require("fs");
   const io = require("socket.io")(server, {
-    cors: corsOptions
-  })
+    cors: corsOptions,
+  });
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
-  const {logger, whitelist} = require("./utils");
-  const cookie = require("cookie")
-  const {TeamSpeak} = require("ts3-nodejs-library");
+  const { logger, whitelist } = require("./utils");
+  const cookie = require("cookie");
+  const { TeamSpeak } = require("ts3-nodejs-library");
 
   /**
    * Client connects automatically to the websocket server.
    */
-  io.on("connection", async socket => {
-    let ip = socket.handshake.headers["x-forwarded-for"] || socket.client.conn.remoteAddress;
-    let log = logger.child({client: ip});
-    let clientCookie = socket.handshake.headers.cookie ? cookie.parse(socket.handshake.headers.cookie) : {}
-    let ServerQuery = {}
+  io.on("connection", async (socket) => {
+    let ip =
+      socket.handshake.headers["x-forwarded-for"] ||
+      socket.client.conn.remoteAddress;
+    let log = logger.child({ client: ip });
+    let clientCookie = socket.handshake.headers.cookie
+      ? cookie.parse(socket.handshake.headers.cookie)
+      : {};
+    let ServerQuery = {};
 
     log.info("Socket.io connected");
 
@@ -30,19 +34,19 @@ socket.init = (server, corsOptions) => {
      * @param  {Function} fn  - socket.io callback function
      */
     const handleServerQueryError = (err, fn) => {
-      log.error(err.message)
+      log.error(err.message);
 
-      if(ServerQuery.query && ServerQuery.query.connected) {
+      if (ServerQuery.query && ServerQuery.query.connected) {
         fn({
           message: err.message,
           id: err.id,
-          connected: true
-        })
+          connected: true,
+        });
       } else {
         fn({
           message: err.message,
-          connected: false
-        })
+          connected: false,
+        });
       }
     };
 
@@ -67,13 +71,13 @@ socket.init = (server, corsOptions) => {
      * Register all available ServerQuery events.
      */
     const registerEvents = () => {
-      ServerQuery.on("error", err => {
+      ServerQuery.on("error", (err) => {
         log.error(err.stack);
 
         socket.emit("teamspeak-error", err);
       });
       ServerQuery.on("flooding", () => log.warn("Flooding"));
-      ServerQuery.on("debug", data => {
+      ServerQuery.on("debug", (data) => {
         if (data.type === "send") log.info(data.data);
       });
       ServerQuery.on("close", () => {
@@ -81,34 +85,36 @@ socket.init = (server, corsOptions) => {
 
         ServerQuery.removeAllListeners();
 
-        socket.emit("teamspeak-disconnect")
+        socket.emit("teamspeak-disconnect");
       });
-      ServerQuery.on("clientconnect", data =>
+      ServerQuery.on("clientconnect", (data) =>
         socket.emit("teamspeak-clientconnect", data)
       );
-      ServerQuery.on("clientdisconnect", data =>
+      ServerQuery.on("clientdisconnect", (data) =>
         socket.emit("teamspeak-clientdisconnect", data)
       );
-      ServerQuery.on("clientmoved", data =>
+      ServerQuery.on("clientmoved", (data) =>
         socket.emit("teamspeak-clientmoved", data)
       );
-      ServerQuery.on("tokenused", data => socket.emit("teamspeak-tokenused", data));
-      ServerQuery.on("textmessage", data =>
+      ServerQuery.on("tokenused", (data) =>
+        socket.emit("teamspeak-tokenused", data)
+      );
+      ServerQuery.on("textmessage", (data) =>
         socket.emit("teamspeak-textmessage", data)
       );
-      ServerQuery.on("serveredit", data =>
+      ServerQuery.on("serveredit", (data) =>
         socket.emit("teamspeak-serveredit", data)
       );
-      ServerQuery.on("channeledit", data =>
+      ServerQuery.on("channeledit", (data) =>
         socket.emit("teamspeak-channeledit", data)
       );
-      ServerQuery.on("channelcreate", data =>
+      ServerQuery.on("channelcreate", (data) =>
         socket.emit("teamspeak-channelcreate", data)
       );
-      ServerQuery.on("channelmoved", data =>
+      ServerQuery.on("channelmoved", (data) =>
         socket.emit("teamspeak-channelmoved", data)
       );
-      ServerQuery.on("channeldelete", data =>
+      ServerQuery.on("channeldelete", (data) =>
         socket.emit("teamspeak-channeldelete", data)
       );
     };
@@ -129,34 +135,34 @@ socket.init = (server, corsOptions) => {
     /**
      * Try to reconnect to the ServerQuery.
      */
-    socket.on("teamspeak-reconnect", async ({token, serverId}, fn) => {
+    socket.on("teamspeak-reconnect", async ({ token, serverId }, fn) => {
       try {
         let decoded = jwt.verify(token, config.secret);
 
-        whitelist.check(decoded.host)
+        whitelist.check(decoded.host);
 
         ServerQuery = await TeamSpeak.connect(decoded);
 
-        if (serverId) await ServerQuery.execute("use", {sid: serverId});
+        if (serverId) await ServerQuery.execute("use", { sid: serverId });
 
         registerEvents(ServerQuery, log, socket);
 
         log.info("ServerQuery reconnected");
 
-        handleResponse({reconnected: true}, fn)
+        handleResponse({ reconnected: true }, fn);
       } catch (err) {
         log.error(err.message);
 
-        handleServerQueryError(err, fn)
+        handleServerQueryError(err, fn);
       }
-    })
+    });
 
     /**
      * Connect to the ServerQuery and try to login.
      */
     socket.on("teamspeak-connect", async (options, fn) => {
       try {
-        whitelist.check(options.host)
+        whitelist.check(options.host);
 
         ServerQuery = await TeamSpeak.connect(options);
 
@@ -166,7 +172,7 @@ socket.init = (server, corsOptions) => {
 
         registerEvents(ServerQuery, log, socket);
 
-        fn({token});
+        fn({ token });
       } catch (err) {
         handleServerQueryError(err, fn);
       }
@@ -176,7 +182,7 @@ socket.init = (server, corsOptions) => {
      * Send command to the ServerQuery. The parameters and options are optional.
      */
     socket.on("teamspeak-execute", async (query, fn) => {
-      let {command, params, options} = query;
+      let { command, params, options } = query;
 
       try {
         let response = await ServerQuery.execute(command, params, options);
@@ -190,9 +196,9 @@ socket.init = (server, corsOptions) => {
     /**
      * Create a snapshot and send it back to the client.
      */
-    socket.on("teamspeak-createsnapshot", async fn => {
+    socket.on("teamspeak-createsnapshot", async (fn) => {
       try {
-        let response = await ServerQuery.execute('serversnapshotcreate');
+        let response = await ServerQuery.execute("serversnapshotcreate");
 
         handleResponse(response, fn);
       } catch (err) {
@@ -222,7 +228,7 @@ socket.init = (server, corsOptions) => {
     /**
      * Register TeamSpeak notifications.
      */
-    socket.on("teamspeak-registerevent", async ({event, id}, fn) => {
+    socket.on("teamspeak-registerevent", async ({ event, id }, fn) => {
       try {
         let response = await ServerQuery.registerEvent(event, id);
 
@@ -235,7 +241,7 @@ socket.init = (server, corsOptions) => {
     /**
      * Unregister TeamSpeak notifications.
      */
-    socket.on("teamspeak-unregisterevent", async fn => {
+    socket.on("teamspeak-unregisterevent", async (fn) => {
       try {
         let response = await ServerQuery.unregisterEvent();
 
@@ -250,15 +256,15 @@ socket.init = (server, corsOptions) => {
      * Bigger files are handled by the api route and are piped directly to the
      * ServerQuery socket to save RAM.
      */
-    socket.on("teamspeak-downloadfile", async ({path, cid, cpw}, fn) => {
+    socket.on("teamspeak-downloadfile", async ({ path, cid, cpw }, fn) => {
       try {
-        let buffer = await ServerQuery.downloadFile(path, cid, cpw)
+        let buffer = await ServerQuery.downloadFile(path, cid, cpw);
 
-        handleResponse(buffer.toString('base64'), fn)
-      } catch(err) {
-        handleServerQueryError(err, fn)
+        handleResponse(buffer.toString("base64"), fn);
+      } catch (err) {
+        handleServerQueryError(err, fn);
       }
-    })
+    });
 
     /**
      * When the client disconnects from the server.

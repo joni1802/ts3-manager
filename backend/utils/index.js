@@ -1,7 +1,7 @@
-const logger = require('./logger')
-const whitelist = require('./whitelist')
+const logger = require("./logger");
+const whitelist = require("./whitelist");
 
 module.exports = {
   logger,
-  whitelist
-}
+  whitelist,
+};
