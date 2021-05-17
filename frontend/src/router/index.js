@@ -6,7 +6,7 @@ import NProgress from "nprogress";
 
 const router = new VueRouter({
   mode: "history",
-  routes: routes
+  routes: routes,
 });
 
 router.beforeEach((to, from, next) => {
@@ -18,11 +18,11 @@ router.beforeEach((to, from, next) => {
     if (store.state.query.connected) {
       next();
     } else {
-      next({name: "login"});
+      next({ name: "login" });
     }
   } else {
     if (to.name === "login" && store.state.query.connected) {
-      next({name: "servers"});
+      next({ name: "servers" });
     } else {
       next();
     }

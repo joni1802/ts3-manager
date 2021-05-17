@@ -1,17 +1,17 @@
 import Vue from "vue";
 
 const state = {
-  messages: []
+  messages: [],
 };
 
 const getters = {
   unreadMessages: (state, _getters, rootState) => {
-    return state.messages.filter(message => {
+    return state.messages.filter((message) => {
       return (
         message.meta.unread && message.serverId === rootState.query.serverId
       );
     }).length;
-  }
+  },
 };
 
 const mutations = {
@@ -21,7 +21,7 @@ const mutations = {
 
     state.messages.push(message);
   },
-  markMessageAsRead(state, {target, targetmode}) {
+  markMessageAsRead(state, { target, targetmode }) {
     for (let i = 0; i < state.messages.length; i++) {
       if (
         state.messages[i].target === target &&
@@ -33,23 +33,23 @@ const mutations = {
   },
   removeAllMessages(state) {
     state.messages = [];
-  }
+  },
 };
 
 const actions = {
-  async handleReceivedMessages({dispatch, rootState}, notification) {
+  async handleReceivedMessages({ dispatch, rootState }, notification) {
     try {
       if (notification.invoker.clid !== rootState.query.queryUser.client_id) {
         dispatch("saveTextMessage", {
           targetmode: notification.targetmode,
           sender: {
             clid: notification.invoker.clid,
-            client_nickname: notification.invoker.client_nickname
+            client_nickname: notification.invoker.client_nickname,
           },
           text: notification.msg,
           meta: {
-            unread: true
-          }
+            unread: true,
+          },
         });
       }
     } catch (err) {
@@ -57,8 +57,8 @@ const actions = {
     }
   },
   async saveTextMessage(
-    {commit, rootState},
-    {targetmode, sender, text, target, meta}
+    { commit, rootState },
+    { targetmode, sender, text, target, meta }
   ) {
     try {
       if (!target) {
@@ -84,17 +84,17 @@ const actions = {
         targetmode,
         text,
         meta,
-        serverId: rootState.query.serverId
+        serverId: rootState.query.serverId,
       });
     } catch (err) {
       Vue.prototype.$toast.error(err.message);
     }
-  }
+  },
 };
 
 export default {
   state,
   getters,
   mutations,
-  actions
+  actions,
 };

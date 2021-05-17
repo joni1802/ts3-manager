@@ -32,11 +32,10 @@
 export default {
   computed: {
     files() {
-      return this.$store.state.uploads.files
-    }
-  }
-}
+      return this.$store.state.uploads.files;
+    },
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

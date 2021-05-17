@@ -1,6 +1,6 @@
-import TeamSpeak from "@/api/TeamSpeak"
-import Vue from "vue"
-import localForage from 'localforage'
+import TeamSpeak from "@/api/TeamSpeak";
+import Vue from "vue";
+import localForage from "localforage";
 
 /**
  * The avatar images are stored in IndexedDb because the local storage has a size limit of 5MB.
@@ -10,107 +10,114 @@ import localForage from 'localforage'
  */
 const db = localForage.createInstance({
   driver: localForage.INDEXEDDB,
-  name: 'files',
-  storeName: 'avatars'
-})
+  name: "files",
+  storeName: "avatars",
+});
 
 const state = {
   // Contains the client database id, information of the avatar file and the file itself as a base64
-  files: []
-}
+  files: [],
+};
 
 const mutations = {
   saveAvatar(state, avatar) {
-    state.files.push(avatar)
+    state.files.push(avatar);
   },
   removeAvatar(state, clientDbId) {
-    state.files = state.files.filter(avatar => avatar.clientDbId !== clientDbId)
-  }
-}
+    state.files = state.files.filter(
+      (avatar) => avatar.clientDbId !== clientDbId
+    );
+  },
+};
 
 const actions = {
   // synchronise IndexedDb database with the Vuex state
-  async initState({state, dispatch}) {
+  async initState({ state, dispatch }) {
     try {
       await db.iterate((value, key) => {
-        if(!state.files.find(avatar => avatar.clientDbId == key)) {
-          dispatch("saveAvatar", value)
+        if (!state.files.find((avatar) => avatar.clientDbId == key)) {
+          dispatch("saveAvatar", value);
         }
-      })
-    } catch(err) {
-      Vue.prototype.$toast.error(err.message)
+      });
+    } catch (err) {
+      Vue.prototype.$toast.error(err.message);
     }
   },
   getAvatarFileInfo(_context, name) {
     return TeamSpeak.execute("ftgetfileinfo", {
       cid: 0,
-      cpw: '', // maybe check if the server has a password is needed in this case
-      name
-    }).then(info => info[0])
+      cpw: "", // maybe check if the server has a password is needed in this case
+      name,
+    }).then((info) => info[0]);
   },
   getClientDbInfo(_context, clientDbId) {
     return TeamSpeak.execute("clientdbinfo", {
-      cldbid: clientDbId
-    }).then(info => info[0])
+      cldbid: clientDbId,
+    }).then((info) => info[0]);
   },
-  async saveAvatar({commit}, avatar) {
+  async saveAvatar({ commit }, avatar) {
     try {
-      commit('saveAvatar', avatar)
+      commit("saveAvatar", avatar);
 
       // IndexedDb key does not support numbers
-      await db.setItem(avatar.clientDbId.toString(), avatar)
-    } catch(err) {
-      Vue.prototype.$toast.error(err.message)
+      await db.setItem(avatar.clientDbId.toString(), avatar);
+    } catch (err) {
+      Vue.prototype.$toast.error(err.message);
     }
   },
-  async removeAvatar({commit}, clientDbId) {
+  async removeAvatar({ commit }, clientDbId) {
     try {
-      commit('removeAvatar', clientDbId)
+      commit("removeAvatar", clientDbId);
 
-      await db.removeItem(clientDbId.toString())
-    } catch(err) {
-      Vue.prototype.$toast.error(err.message)
+      await db.removeItem(clientDbId.toString());
+    } catch (err) {
+      Vue.prototype.$toast.error(err.message);
     }
   },
-  async getClientAvatars({dispatch, commit, state}, clientDbIdList) {
-    await dispatch("initState")
+  async getClientAvatars({ dispatch, commit, state }, clientDbIdList) {
+    await dispatch("initState");
 
-    for(let clientDbId of clientDbIdList) {
+    for (let clientDbId of clientDbIdList) {
       try {
         // The serveradmin has no database data
-        if(clientDbId !== 1) {
-          let clientDbInfo = await dispatch("getClientDbInfo", clientDbId)
+        if (clientDbId !== 1) {
+          let clientDbInfo = await dispatch("getClientDbInfo", clientDbId);
 
           // If client has an avatar
-          if(clientDbInfo.client_flag_avatar) {
-            let fileName = `/avatar_${clientDbInfo.client_base64HashClientUID}`
-            let avatarFileInfo = await dispatch("getAvatarFileInfo", fileName)
-            let currentAvatar = state.files.find(avatar => avatar.name === avatarFileInfo.name)
+          if (clientDbInfo.client_flag_avatar) {
+            let fileName = `/avatar_${clientDbInfo.client_base64HashClientUID}`;
+            let avatarFileInfo = await dispatch("getAvatarFileInfo", fileName);
+            let currentAvatar = state.files.find(
+              (avatar) => avatar.name === avatarFileInfo.name
+            );
 
             // Download new avatar file if the datetime has changed or it is not in the list
-            if(!currentAvatar || currentAvatar.datetime !== avatarFileInfo.datetime) {
-              let base64 = await TeamSpeak.downloadFile(fileName, 0, "")
+            if (
+              !currentAvatar ||
+              currentAvatar.datetime !== avatarFileInfo.datetime
+            ) {
+              let base64 = await TeamSpeak.downloadFile(fileName, 0, "");
 
-              dispatch("removeAvatar", clientDbId)
+              dispatch("removeAvatar", clientDbId);
               dispatch("saveAvatar", {
                 ...avatarFileInfo,
                 base64,
-                clientDbId
-              })
+                clientDbId,
+              });
             }
           } else {
-            dispatch("removeAvatar", clientDbId)
+            dispatch("removeAvatar", clientDbId);
           }
         }
-      } catch(err) {
-        Vue.prototype.$toast.error(err.message)
+      } catch (err) {
+        Vue.prototype.$toast.error(err.message);
       }
     }
-  }
-}
+  },
+};
 
 export default {
   state,
   mutations,
-  actions
-}
+  actions,
+};

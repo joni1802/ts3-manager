@@ -5,7 +5,7 @@ import NProgress from "nprogress";
 import Vue from "vue";
 
 // Polyfill for EventTarget because Safari has no constructor for it
-import EventTarget from '@ungap/event-target'
+import EventTarget from "@ungap/event-target";
 
 /**
  * The TeamSpeak Object sends the request to the server and finally receives the response from the ServerQuery.
@@ -17,19 +17,19 @@ import EventTarget from '@ungap/event-target'
 const TeamSpeak = Object.create(new EventTarget());
 
 const handleError = (error, resolve, reject) => {
-  if(error.connected) {
+  if (error.connected) {
     // Ignore empty result error e.g. an empty permissionlist
-    if(error.id === 1281) {
-      resolve([])
+    if (error.id === 1281) {
+      resolve([]);
     } else {
-      reject(error)
+      reject(error);
     }
   } else {
     store.dispatch("clearStorage");
 
-    router.push({name: "login"});
+    router.push({ name: "login" });
 
-    reject(error)
+    reject(error);
   }
 };
 
@@ -46,8 +46,8 @@ let handleResponse = (response, resolve, reject) => {
 };
 
 // Just for debugging the progress bar (NProgress)
-const throttleSocketConnection = time => {
-  return new Promise(resolve => {
+const throttleSocketConnection = (time) => {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
     }, time);
@@ -55,8 +55,8 @@ const throttleSocketConnection = time => {
 };
 
 // Middleware that handles the progressbar
-const setLoadingState = methods => {
-  methods.forEach(method => {
+const setLoadingState = (methods) => {
+  methods.forEach((method) => {
     let next = TeamSpeak[method];
     let timer = setTimeout(() => {
       store.commit("isLoading", false);
@@ -93,9 +93,9 @@ const setLoadingState = methods => {
   });
 };
 
-TeamSpeak.connect = params => {
+TeamSpeak.connect = (params) => {
   return new Promise((resolve, reject) => {
-    socket.emit("teamspeak-connect", params, response => {
+    socket.emit("teamspeak-connect", params, (response) => {
       if (response.token) {
         resolve(response);
       } else {
@@ -116,24 +116,24 @@ TeamSpeak.execute = (...args) => {
       {
         command,
         params,
-        options
+        options,
       },
-      response => handleResponse(response, resolve, reject)
+      (response) => handleResponse(response, resolve, reject)
     );
   });
 };
 
 TeamSpeak.createSnapshot = () => {
   return new Promise((resolve, reject) => {
-    socket.emit("teamspeak-createsnapshot", response =>
+    socket.emit("teamspeak-createsnapshot", (response) =>
       handleResponse(response, resolve, reject)
     );
   });
 };
 
-TeamSpeak.deploySnapshot = snapshot => {
+TeamSpeak.deploySnapshot = (snapshot) => {
   return new Promise((resolve, reject) => {
-    socket.emit("teamspeak-deploysnapshot", snapshot, response =>
+    socket.emit("teamspeak-deploysnapshot", snapshot, (response) =>
       handleResponse(response, resolve, reject)
     );
   });
@@ -151,14 +151,14 @@ TeamSpeak.fullClientDBList = async () => {
       (
         await TeamSpeak.execute("clientdblist", {
           start,
-          duration
+          duration,
         })
       ).length
     ) {
       fullClientDbList.push(
         ...(await TeamSpeak.execute("clientdblist", {
           start,
-          duration
+          duration,
         }))
       );
 
@@ -178,9 +178,9 @@ TeamSpeak.registerEvent = (event, id = undefined) => {
       "teamspeak-registerevent",
       {
         event,
-        id
+        id,
       },
-      response => handleResponse(response, resolve, reject)
+      (response) => handleResponse(response, resolve, reject)
     );
   });
 };
@@ -191,139 +191,145 @@ TeamSpeak.registerAllEvents = () => {
     TeamSpeak.registerEvent("textchannel"),
     TeamSpeak.registerEvent("textprivate"),
     TeamSpeak.registerEvent("server"),
-    TeamSpeak.registerEvent("channel", 0)
+    TeamSpeak.registerEvent("channel", 0),
   ]);
 };
 
 TeamSpeak.unregisterEvent = () => {
   return new Promise((resolve, reject) => {
-    socket.emit("teamspeak-unregisterevent", response =>
+    socket.emit("teamspeak-unregisterevent", (response) =>
       handleResponse(response, resolve, reject)
     );
   });
 };
 
-TeamSpeak.selectServer = sid => {
-  return TeamSpeak.execute("use", {sid})
+TeamSpeak.selectServer = (sid) => {
+  return TeamSpeak.execute("use", { sid })
     .then(() => store.dispatch("saveServerId", sid))
     .then(() => TeamSpeak.registerAllEvents())
     .then(() => TeamSpeak.execute("whoami"))
-    .then(userInfo => store.commit("saveUserInfo", userInfo[0]));
+    .then((userInfo) => store.commit("saveUserInfo", userInfo[0]));
 };
 
 TeamSpeak.downloadFile = (path, cid, cpw = "") => {
   return new Promise((resolve, reject) => {
-    socket.emit("teamspeak-downloadfile", {path, cid, cpw}, response => {
-      handleResponse(response, resolve, reject)
-    })
-  })
-}
+    socket.emit("teamspeak-downloadfile", { path, cid, cpw }, (response) => {
+      handleResponse(response, resolve, reject);
+    });
+  });
+};
 
 TeamSpeak.reconnect = () => {
   return new Promise((resolve, reject) => {
-    socket.emit("teamspeak-reconnect", {
-      token: store.state.query.token,
-      serverId: store.state.query.serverId
-    }, async res => {
-      if(res.reconnected) {
-        try {
-          let queryUser = await TeamSpeak.execute("whoami").then(list => list[0]);
+    socket.emit(
+      "teamspeak-reconnect",
+      {
+        token: store.state.query.token,
+        serverId: store.state.query.serverId,
+      },
+      async (res) => {
+        if (res.reconnected) {
+          try {
+            let queryUser = await TeamSpeak.execute("whoami").then(
+              (list) => list[0]
+            );
 
-          if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
+            if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
 
-          store.dispatch("saveConnection", {queryUser, connected: true});
-        } catch (err) {
-          reject(err)
+            store.dispatch("saveConnection", { queryUser, connected: true });
+          } catch (err) {
+            reject(err);
+          }
+
+          resolve();
+        } else {
+          reject(res);
         }
-
-        resolve()
-      } else {
-        reject(res)
       }
-    })
-  })
-}
+    );
+  });
+};
 
 TeamSpeak.on = (name, fn) => {
   TeamSpeak.__proto__.addEventListener(name, fn);
 };
 
-socket.on("teamspeak-textmessage", data => {
+socket.on("teamspeak-textmessage", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("textmessage", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-clientconnect", data => {
+socket.on("teamspeak-clientconnect", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("clientconnect", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-clientdisconnect", data => {
+socket.on("teamspeak-clientdisconnect", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("clientdisconnect", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-clientmoved", data => {
+socket.on("teamspeak-clientmoved", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("clientmoved", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-tokenused", data => {
+socket.on("teamspeak-tokenused", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("tokenused", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-serveredit", data => {
+socket.on("teamspeak-serveredit", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("serveredit", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-channeledit", data => {
+socket.on("teamspeak-channeledit", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("channeledit", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-channelcreate", data => {
+socket.on("teamspeak-channelcreate", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("channelcreate", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-channelmoved", data => {
+socket.on("teamspeak-channelmoved", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("channelmoved", {
-      detail: data
+      detail: data,
     })
   );
 });
 
-socket.on("teamspeak-channeldelete", data => {
+socket.on("teamspeak-channeldelete", (data) => {
   TeamSpeak.__proto__.dispatchEvent(
     new CustomEvent("channeldelete", {
-      detail: data
+      detail: data,
     })
   );
 });
@@ -331,16 +337,16 @@ socket.on("teamspeak-channeldelete", data => {
 // When the teamspeak connection is closed manually.
 // E.g. writing "quit" in the console
 socket.on("teamspeak-disconnect", () => {
-  store.dispatch("clearStorage")
+  store.dispatch("clearStorage");
 
-  router.push({name: "login"});
-})
+  router.push({ name: "login" });
+});
 
 setLoadingState([
   "execute",
   "createSnapshot",
   "deploySnapshot",
-  "selectServer"
+  "selectServer",
 ]);
 
 export default TeamSpeak;

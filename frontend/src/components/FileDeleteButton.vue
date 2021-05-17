@@ -1,6 +1,10 @@
 <template lang="html">
   <div>
-    <v-btn color="error" @click="dialog = true" :disabled="!!!selectedFiles.length">
+    <v-btn
+      color="error"
+      @click="dialog = true"
+      :disabled="!!!selectedFiles.length"
+    >
       <v-icon left>delete</v-icon>
       Remove
     </v-btn>
@@ -22,20 +26,20 @@
 </template>
 
 <script>
-import Path from "path-browserify"
+import Path from "path-browserify";
 
 export default {
-  props:{
+  props: {
     /**
      * All selected files, folder and channels
      * @type {Array.<TreeItem>}
      */
-    selectedFiles: Array
+    selectedFiles: Array,
   },
   data() {
     return {
-      dialog: false
-    }
+      dialog: false,
+    };
   },
   methods: {
     /**
@@ -45,18 +49,20 @@ export default {
      * @return {Array.<TreeItem>} - selected parent items
      */
     getRemoveList() {
-      let removeList = [...this.selectedFiles]
+      let removeList = [...this.selectedFiles];
 
       this.selectedFiles.forEach((file, index, array) => {
-        let parentFile = array.find(selectedFile => file.pid === selectedFile.id)
+        let parentFile = array.find(
+          (selectedFile) => file.pid === selectedFile.id
+        );
 
-        if(parentFile) {
-          delete removeList[index]
+        if (parentFile) {
+          delete removeList[index];
         }
-      })
+      });
 
       // reindex array
-      return removeList.filter(file => file)
+      return removeList.filter((file) => file);
     },
 
     /**
@@ -64,40 +70,39 @@ export default {
      * an event to update the directory.
      */
     async deleteFiles() {
-      let fileRemoveList = this.getRemoveList()
+      let fileRemoveList = this.getRemoveList();
 
       try {
-        for(let file of fileRemoveList) {
+        for (let file of fileRemoveList) {
           // if it is a file or folder
-          if(file.path !== undefined) {
+          if (file.path !== undefined) {
             await this.$TeamSpeak.execute("ftdeletefile", {
               cid: file.cid,
               cpw: "",
-              name: Path.join(file.path, file.name)
-            })
+              name: Path.join(file.path, file.name),
+            });
 
-          // if it is a channel
+            // if it is a channel
           } else {
-            for(let childFile of file.children) {
+            for (let childFile of file.children) {
               await this.$TeamSpeak.execute("ftdeletefile", {
                 cid: file.cid,
                 cpw: "",
-                name: Path.join(childFile.path, childFile.name)
-              })
+                name: Path.join(childFile.path, childFile.name),
+              });
             }
           }
 
-          this.$emit("filedelete", file)
+          this.$emit("filedelete", file);
         }
-      } catch(err) {
-        this.$toast.error(err.message)
+      } catch (err) {
+        this.$toast.error(err.message);
       }
 
-      this.dialog = false
-    }
-  }
-}
+      this.dialog = false;
+    },
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

@@ -1,6 +1,6 @@
 <template lang="html">
   <v-menu offset-y :close-on-content-click="false" max-width="400">
-    <template #activator="{on}">
+    <template #activator="{ on }">
       <v-btn icon v-on="on">
         <v-badge :value="uploadQueue.length">
           <template #badge>
@@ -20,10 +20,7 @@
 
         <v-list-item v-for="file in uploadQueue" :key="file.clientftfid">
           <v-list-item-avatar>
-            <v-progress-circular
-              :value="file.progress"
-              color="primary"
-            >
+            <v-progress-circular :value="file.progress" color="primary">
             </v-progress-circular>
           </v-list-item-avatar>
           <v-list-item-content>
@@ -32,11 +29,7 @@
           </v-list-item-content>
           <v-list-item-action>
             <div class="d-flex">
-              <v-btn
-                v-if="file.uploading"
-                icon
-                @click="pauseUpload()"
-              >
+              <v-btn v-if="file.uploading" icon @click="pauseUpload()">
                 <v-icon>mdi-pause</v-icon>
               </v-btn>
               <v-btn
@@ -65,7 +58,7 @@
 </template>
 
 <script>
-import axios, {CancelToken} from 'axios'
+import axios, { CancelToken } from "axios";
 
 export default {
   data() {
@@ -73,134 +66,148 @@ export default {
       queueWatcher: undefined,
       cancelUpload: {},
       loading: false,
-    }
+    };
   },
   computed: {
     uploadQueue() {
-      return this.$store.state.uploads.queue
-    }
+      return this.$store.state.uploads.queue;
+    },
   },
   methods: {
     getUploadUrl(cid, path) {
-      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
-      let url = new URL("/api/upload", base)
+      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin;
+      let url = new URL("/api/upload", base);
 
-      return url.href
+      return url.href;
     },
-    getFileInfo(cid, name, cpw = '') {
-      return this.$TeamSpeak.execute('ftgetfileinfo', {cid, name, cpw}).then(res => res[0])
+    getFileInfo(cid, name, cpw = "") {
+      return this.$TeamSpeak
+        .execute("ftgetfileinfo", { cid, name, cpw })
+        .then((res) => res[0]);
     },
-    initFileUpload(file, overwrite = 1, resume = 0, cpw = '') {
-      return this.$TeamSpeak.execute('ftinitupload', {
-        clientftfid: file.clientftfid,
-        name: file.filePath,
-        cid: file.cid,
-        size: file.fileSize,
-        cpw,
-        overwrite,
-        resume
-      })
-        .then(res => res[0])
+    initFileUpload(file, overwrite = 1, resume = 0, cpw = "") {
+      return this.$TeamSpeak
+        .execute("ftinitupload", {
+          clientftfid: file.clientftfid,
+          name: file.filePath,
+          cid: file.cid,
+          size: file.fileSize,
+          cpw,
+          overwrite,
+          resume,
+        })
+        .then((res) => res[0]);
     },
     watchQueue() {
-      this.queueWatcher = this.$watch('$store.state.uploads.queue', () => {
-        this.startUploadLoop()
-      })
+      this.queueWatcher = this.$watch("$store.state.uploads.queue", () => {
+        this.startUploadLoop();
+      });
     },
     unwatchQueue() {
-      this.queueWatcher()
+      this.queueWatcher();
     },
     getFileInQueue(clientftfid) {
-      return this.uploadQueue.find(file => file.clientftfid === clientftfid)
+      return this.uploadQueue.find((file) => file.clientftfid === clientftfid);
     },
     uploadFile(blob, clientftfid, ftkey, port, sendedBytes = 0) {
-      let formData = new FormData()
+      let formData = new FormData();
 
-      formData.append('file', blob)
+      formData.append("file", blob);
 
       return axios({
         headers: {
-          'x-file-transfer-key': ftkey,
-          'x-file-transfer-port': port
+          "x-file-transfer-key": ftkey,
+          "x-file-transfer-port": port,
         },
-        method: 'POST',
+        method: "POST",
         url: this.getUploadUrl(),
         withCredentials: true,
         data: formData,
-        onUploadProgress: e => {
-          let percentage = ((e.loaded + sendedBytes)/ (e.total + sendedBytes)) * 100
+        onUploadProgress: (e) => {
+          let percentage =
+            ((e.loaded + sendedBytes) / (e.total + sendedBytes)) * 100;
 
-          this.$store.commit('setFileUploadProgress', {clientftfid, percentage})
+          this.$store.commit("setFileUploadProgress", {
+            clientftfid,
+            percentage,
+          });
         },
-        cancelToken: new CancelToken(cancel => {
-          this.cancelUpload = cancel
-        })
-      })
+        cancelToken: new CancelToken((cancel) => {
+          this.cancelUpload = cancel;
+        }),
+      });
     },
     async startUploadLoop(clientTransferId) {
       try {
-        this.unwatchQueue()
+        this.unwatchQueue();
 
-        let clientftfid = clientTransferId ? clientTransferId : this.uploadQueue[0].clientftfid
-        let file = this.getFileInQueue(clientftfid)
+        let clientftfid = clientTransferId
+          ? clientTransferId
+          : this.uploadQueue[0].clientftfid;
+        let file = this.getFileInQueue(clientftfid);
 
-        file.uploading = true
+        file.uploading = true;
 
-        if(file.progress) {
-          let {ftkey, port} = await this.initFileUpload(file, 0, 1)
-          let {size} = await this.getFileInfo(file.cid, file.filePath)
+        if (file.progress) {
+          let { ftkey, port } = await this.initFileUpload(file, 0, 1);
+          let { size } = await this.getFileInfo(file.cid, file.filePath);
 
-          await this.uploadFile(file.blob.slice(size), clientftfid, ftkey, port, size)
+          await this.uploadFile(
+            file.blob.slice(size),
+            clientftfid,
+            ftkey,
+            port,
+            size
+          );
         } else {
-          let {ftkey, port} = await this.initFileUpload(file)
+          let { ftkey, port } = await this.initFileUpload(file);
 
-          await this.uploadFile(file.blob, clientftfid, ftkey, port)
+          await this.uploadFile(file.blob, clientftfid, ftkey, port);
         }
 
-        this.$store.commit('removeFileFromQueue', clientftfid)
+        this.$store.commit("removeFileFromQueue", clientftfid);
 
-        if(!this.uploadQueue.length) {
-          this.watchQueue()
+        if (!this.uploadQueue.length) {
+          this.watchQueue();
         } else {
-          this.startUploadLoop()
+          this.startUploadLoop();
         }
-      } catch(err) {
-        this.handleUploadError(err)
+      } catch (err) {
+        this.handleUploadError(err);
       }
     },
     pauseUpload() {
-      this.cancelUpload()
+      this.cancelUpload();
 
-      this.loading = true
+      this.loading = true;
 
       setTimeout(() => {
-        this.loading = false
-      }, 5000)
+        this.loading = false;
+      }, 5000);
     },
     removeUpload(clientftfid) {
-      this.$store.commit('removeFileFromQueue', clientftfid)
+      this.$store.commit("removeFileFromQueue", clientftfid);
     },
     handleUploadError(err) {
       // Hide error when upload got paused
-      if(err.constructor.name !== 'Cancel') {
-        this.$toast.error(err.message)
+      if (err.constructor.name !== "Cancel") {
+        this.$toast.error(err.message);
       }
 
-      this.$store.commit('resetUploadState')
-    }
+      this.$store.commit("resetUploadState");
+    },
   },
   created() {
-    this.watchQueue()
+    this.watchQueue();
   },
   beforeDestroy() {
     try {
-      this.cancelUpload()
-    } catch(err) {
+      this.cancelUpload();
+    } catch (err) {
       // Silent error
     }
-  }
-}
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

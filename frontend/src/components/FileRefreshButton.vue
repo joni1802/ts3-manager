@@ -12,15 +12,14 @@ export default {
      * Currently open folders
      * @type {Array.<TreeItem>}
      */
-    openFolders: Array
+    openFolders: Array,
   },
   methods: {
     refreshList() {
-      this.$emit("refresh", this.openFolders)
-    }
-  }
-}
+      this.$emit("refresh", this.openFolders);
+    },
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

@@ -29,12 +29,10 @@
               :key="key"
             >
               <template #prepend="{ item, open, active }">
-                <v-icon v-if="item.type !== 1" >
-                  {{ open || active ? 'mdi-folder-open' : 'mdi-folder' }}
+                <v-icon v-if="item.type !== 1">
+                  {{ open || active ? "mdi-folder-open" : "mdi-folder" }}
                 </v-icon>
-                <v-icon v-else>
-                  mdi-file
-                </v-icon>
+                <v-icon v-else> mdi-file </v-icon>
               </template>
               <template #label="{ item }">
                 <file-browser-file
@@ -76,22 +74,22 @@
  * @property {Array} [children]       - child items
  */
 
-import Path from "path-browserify"
+import Path from "path-browserify";
 
 export default {
   components: {
     FileBrowserFile: () => import("@/components/FileBrowserFile"),
     FileBrowserFolder: () => import("@/components/FileBrowserFolder"),
     FileDeleteButton: () => import("@/components/FileDeleteButton"),
-    FileRefreshButton: () => import("@/components/FileRefreshButton")
+    FileRefreshButton: () => import("@/components/FileRefreshButton"),
   },
   data() {
     return {
       folderList: [],
       selectedFiles: [],
       openFolders: [],
-      key: 0
-    }
+      key: 0,
+    };
   },
   methods: {
     /**
@@ -99,17 +97,16 @@ export default {
      * @return {Array.<TreeItem>}
      */
     getFolderList() {
-      return this.$TeamSpeak.execute("channellist")
-        .then(channels => {
-          return channels.map(channel => {
-            return {
-              id: channel.cid,
-              name: channel.channel_name,
-              cid: channel.cid,
-              children: []
-            }
-          })
-        })
+      return this.$TeamSpeak.execute("channellist").then((channels) => {
+        return channels.map((channel) => {
+          return {
+            id: channel.cid,
+            name: channel.channel_name,
+            cid: channel.cid,
+            children: [],
+          };
+        });
+      });
     },
 
     /**
@@ -119,11 +116,11 @@ export default {
      */
     async getChildItems(parentItem) {
       try {
-        let childItems = await this.getFileList(parentItem)
+        let childItems = await this.getFileList(parentItem);
 
-        parentItem.children = childItems
-      } catch(err) {
-        this.$toast.error(err.message)
+        parentItem.children = childItems;
+      } catch (err) {
+        this.$toast.error(err.message);
       }
     },
 
@@ -133,32 +130,34 @@ export default {
      * @param  {TreeItem}
      * @return {Array.<TreeItem>}
      */
-    getFileList({cid, type, path, name, id}) {
-      return this.$TeamSpeak.execute("ftgetfilelist", {
-        cid,
-        cpw: "",
-        path: path ? Path.join(path, name) : "/"
-      }).then(files => {
-        return files.map(file => {
-          let item = {
-            id: `${file.name}-${file.datetime}`,
-            pid: id,
-            name: file.name,
-            path: file.path,
-            cid: file.cid,
-            type: file.type,
-            datetime: file.datetime,
-            size: file.size
-          }
-
-          // Add possibilty to load more child items if it is a folder
-          if(file.type === 0) {
-            item.children = []
-          }
-
-          return item
+    getFileList({ cid, type, path, name, id }) {
+      return this.$TeamSpeak
+        .execute("ftgetfilelist", {
+          cid,
+          cpw: "",
+          path: path ? Path.join(path, name) : "/",
         })
-      })
+        .then((files) => {
+          return files.map((file) => {
+            let item = {
+              id: `${file.name}-${file.datetime}`,
+              pid: id,
+              name: file.name,
+              path: file.path,
+              cid: file.cid,
+              type: file.type,
+              datetime: file.datetime,
+              size: file.size,
+            };
+
+            // Add possibilty to load more child items if it is a folder
+            if (file.type === 0) {
+              item.children = [];
+            }
+
+            return item;
+          });
+        });
     },
 
     /**
@@ -166,14 +165,13 @@ export default {
      * @param  {TreeItem} item  - folder or file
      */
     async updateParentItem(item) {
-      if(item.path !== undefined) {
-        let parentItem = this.findParentItem(item.pid, this.folderList)
+      if (item.path !== undefined) {
+        let parentItem = this.findParentItem(item.pid, this.folderList);
 
-        await this.getChildItems(parentItem)
+        await this.getChildItems(parentItem);
       } else {
-        await this.getChildItems(item)
+        await this.getChildItems(item);
       }
-
     },
 
     /**
@@ -183,15 +181,15 @@ export default {
      * @return {TreeItem}               - folder or channel
      */
     findParentItem(pid, items) {
-      for(let item of items) {
-        if(item.id === pid) {
-          return item
+      for (let item of items) {
+        if (item.id === pid) {
+          return item;
         } else {
-          if(item.children && item.children.length) {
-            let parent = this.findParentItem(pid, item.children)
+          if (item.children && item.children.length) {
+            let parent = this.findParentItem(pid, item.children);
 
-            if(parent) {
-              return parent
+            if (parent) {
+              return parent;
             }
           }
         }
@@ -206,29 +204,28 @@ export default {
       try {
         // This is a workaround to force rerender of the list.
         // See {@link https://github.com/vuetifyjs/vuetify/issues/10587}
-        this.key = this.key + 1
+        this.key = this.key + 1;
 
-        this.folderList = await this.getFolderList()
+        this.folderList = await this.getFolderList();
 
-        for(let folder of openFolders) {
-          await this.updateParentItem(folder)
+        for (let folder of openFolders) {
+          await this.updateParentItem(folder);
 
-          this.openFolders.push(folder)
+          this.openFolders.push(folder);
         }
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toast.error(err.message);
       }
-    }
+    },
   },
   async created() {
     try {
-      this.folderList = await this.getFolderList()
+      this.folderList = await this.getFolderList();
     } catch (err) {
-      this.$toast.error(err.message)
+      this.$toast.error(err.message);
     }
-  }
-}
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

@@ -6,22 +6,22 @@ import router from "./router";
 // Socket connection to the backend
 const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
   withCredentials: true,
-  autoConnect: false
+  autoConnect: false,
 });
 
 // Go to login screen and set connection state to false
 const handleLogout = () => {
   store.commit("isConnected", false);
 
-  router.push({name: "login"});
-}
+  router.push({ name: "login" });
+};
 
-socket.on("error", err => {
+socket.on("error", (err) => {
   Vue.prototype.$toast.error(err.message);
 
-  handleLogout()
+  handleLogout();
 });
 
-socket.on("disconnect", handleLogout)
+socket.on("disconnect", handleLogout);
 
 export default socket;

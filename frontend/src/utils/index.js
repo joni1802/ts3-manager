@@ -1,5 +1,3 @@
-import secondsToDHMS from './secondsToDHMS'
+import secondsToDHMS from "./secondsToDHMS";
 
-export {
-  secondsToDHMS,
-}
+export { secondsToDHMS };

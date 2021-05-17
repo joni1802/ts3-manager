@@ -8,16 +8,20 @@
     :label="label"
     :disabled="disabled"
   >
-    <template #selection="{index, item}">
-      <v-chip v-if="index < maxVisibleChips" close @click:close="removeChip(item.value)">
+    <template #selection="{ index, item }">
+      <v-chip
+        v-if="index < maxVisibleChips"
+        close
+        @click:close="removeChip(item.value)"
+      >
         <!-- @input="removeChip(item.value)" -->
         <span>{{ item.text }}</span>
       </v-chip>
       <span v-if="index == maxVisibleChips" class="grey--text caption">
-        (+{{ value.length - maxVisibleChips}} others)
+        (+{{ value.length - maxVisibleChips }} others)
       </span>
     </template>
-    <template #item="{ item, attrs}">
+    <template #item="{ item, attrs }">
       <v-list-item-action>
         <v-checkbox v-model="attrs.inputValue"></v-checkbox>
       </v-list-item-action>
@@ -41,20 +45,20 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
     removeChip(value) {
-      let index = this.value.indexOf(value)
+      let index = this.value.indexOf(value);
 
-      this.value.splice(index, 1)
+      this.value.splice(index, 1);
 
-      this.$emit('input', this.value)
+      this.$emit("input", this.value);
     },
     changeValue(array) {
-      this.$emit('input', array)
-    }
-  }
-}
+      this.$emit("input", array);
+    },
+  },
+};
 </script>

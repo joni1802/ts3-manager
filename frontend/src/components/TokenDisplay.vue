@@ -1,5 +1,11 @@
 <template>
-  <v-text-field class="mt-5" label="Generated Privilege Key" :value="value" @input="$emit('input', $event)" readonly>
+  <v-text-field
+    class="mt-5"
+    label="Generated Privilege Key"
+    :value="value"
+    @input="$emit('input', $event)"
+    readonly
+  >
     <template #append v-if="value">
       <v-tooltip bottom>
         <template #activator="{ on }">
@@ -16,10 +22,10 @@ export default {
   props: ["value"],
   methods: {
     copyToClipboard() {
-      this.$clipboard(this.value)
+      this.$clipboard(this.value);
 
-      this.$toast.info("Token Copied To Clipboard")
+      this.$toast.info("Token Copied To Clipboard");
     },
-  }
-}
+  },
+};
 </script>

@@ -1,10 +1,7 @@
 <template lang="html">
   <v-list-item @click="$emit('click', client)">
     <v-list-item-avatar>
-      <client-avatar
-        :clientDbId="client.client_database_id"
-      >
-      </client-avatar>
+      <client-avatar :clientDbId="client.client_database_id"> </client-avatar>
     </v-list-item-avatar>
     <v-badge color="error" :value="!!badgeValue">
       <template #badge>
@@ -22,28 +19,27 @@
 <script>
 export default {
   components: {
-    ClientAvatar: () => import("@/components/ClientAvatar")
+    ClientAvatar: () => import("@/components/ClientAvatar"),
   },
   props: {
     client: Object,
     badgeValue: {
       type: [String, Number],
-      default: 0
-    }
+      default: 0,
+    },
   },
   computed: {
     statusIcon() {
       if (this.client.client_away === 1) {
-        return 'cancel_presentation'
+        return "cancel_presentation";
       } else if (this.client.client_output_muted === 1) {
-        return 'volume_off'
+        return "volume_off";
       } else if (this.client.client_input_muted === 1) {
-        return 'mic_off'
+        return "mic_off";
       }
-    }
+    },
   },
-}
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

@@ -1,144 +1,154 @@
 <template>
-<v-container>
-  <v-layout>
-    <v-flex xs12>
-      <permission-table type="Client Permissions" :grantedPermissions="clientPermissions" :editableContent="['permvalue', 'permskip']" @save="savePermission" @remove="removePermission" @loaded="init">
-        <template #selectMenu>
-          <v-flex sm3 xs12>
-            <v-autocomplete :items="clientSelection" v-model="selectedClient" @change="changeClient" label="Client" :disabled="$store.state.query.loading"></v-autocomplete>
-          </v-flex>
-        </template>
-      </permission-table>
-    </v-flex>
-  </v-layout>
-</v-container>
+  <v-container>
+    <v-layout>
+      <v-flex xs12>
+        <permission-table
+          type="Client Permissions"
+          :grantedPermissions="clientPermissions"
+          :editableContent="['permvalue', 'permskip']"
+          @save="savePermission"
+          @remove="removePermission"
+          @loaded="init"
+        >
+          <template #selectMenu>
+            <v-flex sm3 xs12>
+              <v-autocomplete
+                :items="clientSelection"
+                v-model="selectedClient"
+                @change="changeClient"
+                label="Client"
+                :disabled="$store.state.query.loading"
+              ></v-autocomplete>
+            </v-flex>
+          </template>
+        </permission-table>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
 export default {
   components: {
-    PermissionTable: () => import('@/components/PermissionTable.vue')
+    PermissionTable: () => import("@/components/PermissionTable.vue"),
   },
   data() {
     return {
       clientPermissions: [],
       clients: [],
       clientDbId: this.$route.params.cldbid,
-    }
+    };
   },
   computed: {
     clientSelection() {
-      return this.clients.map(client => {
+      return this.clients.map((client) => {
         return {
           text: client.client_nickname,
-          value: client.cldbid
-        }
-      })
+          value: client.cldbid,
+        };
+      });
     },
     selectedClient: {
       get() {
-        let client = this.clients.find(client => client.cldbid == this.clientDbId)
+        let client = this.clients.find(
+          (client) => client.cldbid == this.clientDbId
+        );
 
-        return client && {
-          text: client.client_nickname,
-          value: client.cldbid
-        }
+        return (
+          client && {
+            text: client.client_nickname,
+            value: client.cldbid,
+          }
+        );
       },
       set() {
         //
-      }
-    }
+      },
+    },
   },
   methods: {
     getClientPermissions() {
-      return this.$TeamSpeak.execute('clientpermlist', {
-        cldbid: this.clientDbId
-      })
+      return this.$TeamSpeak.execute("clientpermlist", {
+        cldbid: this.clientDbId,
+      });
     },
     getClientdblist() {
-      return this.$TeamSpeak.fullClientDBList()
+      return this.$TeamSpeak.fullClientDBList();
     },
     changeClient(cldbid) {
       this.$router.push({
-        name: 'permissions-client',
+        name: "permissions-client",
         params: {
-          cldbid: cldbid
-        }
-      })
+          cldbid: cldbid,
+        },
+      });
     },
     async savePermission(permissionValues) {
-      let {
-        permid,
-        permskip,
-        permvalue
-      } = permissionValues
+      let { permid, permskip, permvalue } = permissionValues;
 
       try {
-        await this.$TeamSpeak.execute('clientaddperm', {
+        await this.$TeamSpeak.execute("clientaddperm", {
           cldbid: this.clientDbId,
           permid: permid,
           permskip: +permskip,
-          permvalue: permvalue
-        })
+          permvalue: permvalue,
+        });
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toast.error(err.message);
       }
 
       try {
-        this.clientPermissions = await this.getClientPermissions()
+        this.clientPermissions = await this.getClientPermissions();
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toast.error(err.message);
       }
-
     },
     async removePermission(permissionValues) {
-      let {
-        permid
-      } = permissionValues
+      let { permid } = permissionValues;
 
       try {
-        await this.$TeamSpeak.execute('clientdelperm', {
+        await this.$TeamSpeak.execute("clientdelperm", {
           cldbid: this.clientDbId,
-          permid: permid
-        })
+          permid: permid,
+        });
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toast.error(err.message);
       }
 
       try {
-        this.clientPermissions = await this.getClientPermissions()
+        this.clientPermissions = await this.getClientPermissions();
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toast.error(err.message);
       }
     },
     async init() {
       try {
-        this.clients = await this.getClientdblist()
+        this.clients = await this.getClientdblist();
 
         if (!this.clientDbId) {
           this.$router.replace({
-            name: 'permissions-client',
+            name: "permissions-client",
             params: {
-              cldbid: this.clients[0].cldbid
-            }
-          })
+              cldbid: this.clients[0].cldbid,
+            },
+          });
         }
 
-        this.clientPermissions = await this.getClientPermissions()
+        this.clientPermissions = await this.getClientPermissions();
       } catch (err) {
-        this.$toast.error(err.message)
+        this.$toast.error(err.message);
       }
-    }
+    },
   },
   async beforeRouteUpdate(to, from, next) {
     try {
-      this.clientDbId = to.params.cldbid
-      this.clientPermissions = await this.getClientPermissions()
+      this.clientDbId = to.params.cldbid;
+      this.clientPermissions = await this.getClientPermissions();
     } catch (err) {
-      this.$toast.error(err.message)
+      this.$toast.error(err.message);
     }
 
-    next()
+    next();
   },
-}
+};
 </script>

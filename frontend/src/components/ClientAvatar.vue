@@ -14,33 +14,34 @@
 <script>
 export default {
   props: {
-    clientDbId: Number
+    clientDbId: Number,
   },
   data() {
     return {
-      dialog: false
-    }
+      dialog: false,
+    };
   },
   computed: {
     avatarURL() {
-      let file = this.$store.state.avatars.files.find(file => file.clientDbId === this.clientDbId)
+      let file = this.$store.state.avatars.files.find(
+        (file) => file.clientDbId === this.clientDbId
+      );
 
-      if(file && file.base64) {
-        return `data:image/png;base64, ${file.base64}`
+      if (file && file.base64) {
+        return `data:image/png;base64, ${file.base64}`;
       } else {
-        return
+        return;
       }
-    }
+    },
   },
   methods: {
     openDialog() {
-      if(this.avatarURL) {
-        this.dialog = true
+      if (this.avatarURL) {
+        this.dialog = true;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>

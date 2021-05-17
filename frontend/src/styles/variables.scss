@@ -1,19 +1,19 @@
 // https://vuetifyjs.com/en/customization/sass-variables
 
 $material-light: (
-  'background': #fafafa,
-  'app-bar': #fff,
+  "background": #fafafa,
+  "app-bar": #fff,
 );
 
 $material-dark: (
-  'background': #282a36,
-  'app-bar': #44475a,
-  'cards': #44475a,
-  'chips': #282a36,
-  'navigation-drawer': #44475a,
-  'table': (
-    'hover': #6272a4,
-    'group': #6272a4,
-    'active': #6272a4,
-  )
+  "background": #282a36,
+  "app-bar": #44475a,
+  "cards": #44475a,
+  "chips": #282a36,
+  "navigation-drawer": #44475a,
+  "table": (
+    "hover": #6272a4,
+    "group": #6272a4,
+    "active": #6272a4,
+  ),
 );

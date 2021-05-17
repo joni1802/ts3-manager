@@ -1,4 +1,4 @@
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 const state = {
   serverId: Cookies.get("serverId"),
@@ -26,53 +26,57 @@ const mutations = {
     state.serverId = id;
   },
   isLoggedOut(state, status) {
-    state.loggedOut = status
-  }
+    state.loggedOut = status;
+  },
 };
 
 const actions = {
-  saveToken({commit, rootState}, token) {
+  saveToken({ commit, rootState }, token) {
     Cookies.set("token", token, {
-      expires: rootState.settings.rememberLogin ? new Date(2147483647 * 1000) : ""
-    })
+      expires: rootState.settings.rememberLogin
+        ? new Date(2147483647 * 1000)
+        : "",
+    });
 
-    commit("setToken", token)
+    commit("setToken", token);
   },
-  removeToken({commit}) {
-    Cookies.remove("token")
+  removeToken({ commit }) {
+    Cookies.remove("token");
 
-    commit("setToken", null)
+    commit("setToken", null);
   },
-  saveServerId({commit, rootState}, sid) {
+  saveServerId({ commit, rootState }, sid) {
     Cookies.set("serverId", sid, {
-      expires: rootState.settings.rememberLogin ? new Date(2147483647 * 1000) : ""
-    })
+      expires: rootState.settings.rememberLogin
+        ? new Date(2147483647 * 1000)
+        : "",
+    });
 
-    commit("setServerId", sid)
+    commit("setServerId", sid);
   },
-  removeServerId({commit}) {
-    Cookies.remove("serverId")
+  removeServerId({ commit }) {
+    Cookies.remove("serverId");
 
-    commit("setServerId", null)
+    commit("setServerId", null);
   },
-  clearConnection({commit, rootState, dispatch}) {
+  clearConnection({ commit, rootState, dispatch }) {
     commit("isConnected", false);
     dispatch("removeServerId");
     commit("saveUserInfo", {});
 
     if (!rootState.settings.rememberLogin) dispatch("removeToken");
   },
-  saveConnection({commit, dispatch}, {serverId, queryUser, token}) {
+  saveConnection({ commit, dispatch }, { serverId, queryUser, token }) {
     commit("isConnected", true);
 
     if (serverId) dispatch("saveServerId", serverId);
     if (queryUser) commit("saveUserInfo", queryUser);
     if (token) dispatch("saveToken", token);
-  }
+  },
 };
 
 export default {
   state,
   mutations,
-  actions
+  actions,
 };

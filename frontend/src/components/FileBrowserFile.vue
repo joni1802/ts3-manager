@@ -40,22 +40,28 @@
       </v-list>
     </v-menu>
 
-    <file-rename-dialog v-model="renameDialog" :item="item" @filerename="$emit('filerename', item)"></file-rename-dialog>
-    <file-delete-dialog v-model="deleteDialog" :item="item" @filedelete="$emit('filedelete', item)"></file-delete-dialog>
+    <file-rename-dialog
+      v-model="renameDialog"
+      :item="item"
+      @filerename="$emit('filerename', item)"
+    ></file-rename-dialog>
+    <file-delete-dialog
+      v-model="deleteDialog"
+      :item="item"
+      @filedelete="$emit('filedelete', item)"
+    ></file-delete-dialog>
   </div>
 </template>
 
 <script>
-import fileTransfer from "@/mixins/fileTransfer"
+import fileTransfer from "@/mixins/fileTransfer";
 
 export default {
   components: {
     FileRenameDialog: () => import("@/components/FileRenameDialog"),
-    FileDeleteDialog: () => import("@/components/FileDeleteDialog")
+    FileDeleteDialog: () => import("@/components/FileDeleteDialog"),
   },
-  mixins: [
-    fileTransfer
-  ],
+  mixins: [fileTransfer],
   props: {
     /**
      * File
@@ -67,44 +73,45 @@ export default {
     return {
       renameDialog: false,
       deleteDialog: false,
-      newFileName: ""
-    }
+      newFileName: "",
+    };
   },
   methods: {
     getDownloadUrl(ftkey, port, size, name) {
-      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin
-      let url = new URL("/api/download", base)
+      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin;
+      let url = new URL("/api/download", base);
 
-      url.searchParams.append("ftkey", ftkey)
-      url.searchParams.append("port", port)
-      url.searchParams.append("size", size)
-      url.searchParams.append("name", name)
+      url.searchParams.append("ftkey", ftkey);
+      url.searchParams.append("port", port);
+      url.searchParams.append("size", size);
+      url.searchParams.append("name", name);
 
-      return url.href
+      return url.href;
     },
     initFileDownload(cpw = "", seekpos = 0) {
-      return this.$TeamSpeak.execute("ftinitdownload", {
-        clientftfid: this.getClientFileTransferId(),
-        name: this.getFilePath(this.item.path, this.item.name),
-        cid: this.item.cid,
-        cpw,
-        seekpos
-      }).then(res => res[0])
+      return this.$TeamSpeak
+        .execute("ftinitdownload", {
+          clientftfid: this.getClientFileTransferId(),
+          name: this.getFilePath(this.item.path, this.item.name),
+          cid: this.item.cid,
+          cpw,
+          seekpos,
+        })
+        .then((res) => res[0]);
     },
     async downloadFile() {
       try {
-        let {name} = this.item
-        let {ftkey, port, size} = await this.initFileDownload()
-        let url = this.getDownloadUrl(ftkey, port, size, name)
+        let { name } = this.item;
+        let { ftkey, port, size } = await this.initFileDownload();
+        let url = this.getDownloadUrl(ftkey, port, size, name);
 
-        window.open(url)
-      } catch(err) {
-        this.$toast.error(err.message)
+        window.open(url);
+      } catch (err) {
+        this.$toast.error(err.message);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>
