@@ -93,6 +93,11 @@ export default {
           route: { name: "servers" },
         },
         {
+          title: "Dashboard",
+          icon: "mdi-view-dashboard",
+          route: { name: "dashboard" },
+        },
+        {
           title: "File Browser",
           icon: "mdi-folder",
           route: { name: "files" },

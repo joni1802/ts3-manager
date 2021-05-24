@@ -1,5 +1,13 @@
 export default [
   {
+    path: "/dashboard",
+    component: () => import("@/components/Dashboard"),
+    name: "dashboard",
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/file/upload/:cid",
     component: () => import("@/components/FileUpload"),
     name: "file-upload",
@@ -275,14 +283,14 @@ export default [
       requiresAuth: true,
     },
   },
-  // {
-  //   path: "/test",
-  //   component: () => import("@/components/Test"),
-  //   name: "test",
-  //   meta: {
-  //     requiresAuth: false
-  //   }
-  // },
+  {
+    path: "/test",
+    component: () => import("@/components/Test"),
+    name: "test",
+    meta: {
+      requiresAuth: false,
+    },
+  },
   {
     path: "*",
     component: () => import("@/components/NotFound"),
