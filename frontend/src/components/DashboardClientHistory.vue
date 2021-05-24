@@ -1,8 +1,8 @@
 <template lang="html">
   <v-card>
-    <v-card-title>📈 Client History</v-card-title>
+    <v-card-title>Client Connections History</v-card-title>
     <v-card-text>
-      <canvas v-if="logView.length" ref="chart" height="200"></canvas>
+      <canvas v-if="loaded" ref="chart" height="200"></canvas>
       <span v-else>Loading Data...</span>
     </v-card-text>
   </v-card>
@@ -14,6 +14,10 @@ import Chart from "chart.js/auto";
 export default {
   props: {
     logView: Array,
+    loaded: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     clientConnections() {
@@ -58,13 +62,13 @@ export default {
     },
   },
   methods: {
-    initChart() {
+    renderChart() {
       let chart = new Chart(this.$refs.chart, {
         type: "line",
         data: {
           datasets: [
             {
-              label: "Online Clients",
+              label: "Unique Client Connections",
               backgroundColor: "#ff79c6",
               borderColor: "#ff79c6",
               data: this.clientConnections,
@@ -92,16 +96,12 @@ export default {
       });
     },
   },
-  watch: {
-    logView: {
-      immediate: true,
-      handler(logs) {
-        // Wait for $refs
-        this.$nextTick(() => {
-          logs.length && this.initChart();
-        });
-      },
-    },
+  mounted() {
+    let watchLogView = this.$watch("loaded", (loaded) => {
+      if (loaded) {
+        this.renderChart();
+      }
+    });
   },
 };
 </script>

@@ -2,7 +2,18 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <dashboard-client-history :logView="logView"></dashboard-client-history>
+        <dashboard-client-history
+          :logView="logView"
+          :loaded="logViewLoaded"
+        ></dashboard-client-history>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="4">
+        <dashboard-clients-online
+          :clientDbList="clientDbList"
+          :loaded="clientDbListLoaded"
+        ></dashboard-clients-online>
       </v-col>
     </v-row>
   </v-container>
@@ -14,10 +25,14 @@ import sleep from "@/utils/sleep";
 export default {
   components: {
     DashboardClientHistory: () => import("@/components/DashboardClientHistory"),
+    DashboardClientsOnline: () => import("@/components/DashboardClientsOnline"),
   },
   data() {
     return {
       logView: [],
+      logViewLoaded: false,
+      clientDbList: [],
+      clientDbListLoaded: false,
     };
   },
   methods: {
@@ -78,16 +93,28 @@ export default {
 
       return logView.slice(0, index);
     },
+    getClientDbList() {
+      return this.$TeamSpeak.fullClientDBList();
+    },
   },
   async created() {
     try {
+      // await sleep(1000); // just for debuging
+
       let date = new Date();
 
+      // Show log messages of the last 30 days
       date.setDate(date.getDate() - 30);
 
-      await sleep(2000); // just for testing in devolopment
-
       this.logView = await this.getLogView(date);
+
+      this.logViewLoaded = true;
+
+      // await sleep(1000);
+
+      this.clientDbList = await this.getClientDbList();
+
+      this.clientDbListLoaded = true;
     } catch (err) {
       this.$toast.error(err.message);
     }
