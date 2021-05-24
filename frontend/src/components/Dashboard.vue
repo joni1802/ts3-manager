@@ -18,7 +18,11 @@
       <v-col cols="4">
         <dashboard-clients-online
           :clientList="clientList"
+          :serverInfo="serverInfo"
         ></dashboard-clients-online>
+      </v-col>
+      <v-col cols="4">
+        <dashboard-server-info :serverInfo="serverInfo"></dashboard-server-info>
       </v-col>
     </v-row>
   </v-container>
@@ -33,6 +37,7 @@ export default {
     DashboardTotalConnections: () =>
       import("@/components/DashboardTotalConnections"),
     DashboardClientsOnline: () => import("@/components/DashboardClientsOnline"),
+    DashboardServerInfo: () => import("@/components/DashboardServerInfo"),
   },
   data() {
     return {
@@ -41,6 +46,7 @@ export default {
       clientDbList: [],
       clientDbListLoaded: false,
       clientList: [],
+      serverInfo: {},
     };
   },
   methods: {
@@ -107,6 +113,9 @@ export default {
     getClientList() {
       return this.$TeamSpeak.execute("clientlist", {}, ["-voice", "-away"]);
     },
+    getServerInfo() {
+      return this.$TeamSpeak.execute("serverinfo").then((res) => res[0]);
+    },
   },
   async created() {
     try {
@@ -128,6 +137,8 @@ export default {
       this.clientDbListLoaded = true;
 
       this.clientList = await this.getClientList();
+
+      this.serverInfo = await this.getServerInfo();
     } catch (err) {
       this.$toast.error(err.message);
     }

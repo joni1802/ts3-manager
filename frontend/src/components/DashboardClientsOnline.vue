@@ -1,6 +1,9 @@
+<!-- prettier-ignore -->
 <template lang="html">
   <v-card>
-    <v-card-title>Clients Online</v-card-title>
+    <v-card-title>
+      Clients Online ({{ serverInfo.virtualserver_clientsonline }}/{{serverInfo.virtualserver_maxclients}})
+    </v-card-title>
     <v-card-text>
       <v-list>
         <v-list-item
@@ -25,12 +28,14 @@
 </template>
 
 <script>
+// virtualserver_maxclients
 export default {
   components: {
     ClientAvatar: () => import("@/components/ClientAvatar"),
   },
   props: {
     clientList: Array,
+    serverInfo: Object,
   },
 };
 </script>
