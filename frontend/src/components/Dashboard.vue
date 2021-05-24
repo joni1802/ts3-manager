@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import sleep from "@/utils/sleep";
+
 export default {
   components: {
     DashboardClientHistory: () => import("@/components/DashboardClientHistory"),
@@ -44,10 +46,11 @@ export default {
     async getLogView(date) {
       let logView = [];
       let lastPosition = undefined;
-      let lastDate = new Date();
+      let lastDate = undefined;
+      let stop = false;
 
       try {
-        while (date.getTime() < lastDate.getTime()) {
+        while (!stop) {
           let logs = await this.$TeamSpeak.execute("logview", {
             instance: 0,
             reverse: 1,
@@ -57,11 +60,13 @@ export default {
 
           let parsedLogs = this.getParsedLogs(logs);
 
-          lastPosition = logs[0].last_pos;
+          logView.push(...parsedLogs);
 
+          lastPosition = logs[0].last_pos;
           lastDate = parsedLogs[parsedLogs.length - 1].timestamp;
 
-          logView.push(...parsedLogs);
+          if (logs[0].last_pos === 0) stop = true;
+          if (lastDate.getTime() < date.getTime()) stop = true;
         }
       } catch (err) {
         this.$toast.error(err.message);
@@ -74,17 +79,20 @@ export default {
       return logView.slice(0, index);
     },
   },
-  async mounted() {
+  async created() {
     try {
       let date = new Date();
 
       date.setDate(date.getDate() - 30);
+
+      await sleep(2000); // just for testing in devolopment
 
       this.logView = await this.getLogView(date);
     } catch (err) {
       this.$toast.error(err.message);
     }
   },
+  async mounted() {},
 };
 </script>
 

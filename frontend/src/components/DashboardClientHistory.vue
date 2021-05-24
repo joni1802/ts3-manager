@@ -2,7 +2,8 @@
   <v-card>
     <v-card-title>📈 Client History</v-card-title>
     <v-card-text>
-      <canvas ref="chart" height="200"></canvas>
+      <canvas v-if="logView.length" ref="chart" height="200"></canvas>
+      <span v-else>Loading Data...</span>
     </v-card-text>
   </v-card>
 </template>
@@ -28,7 +29,7 @@ export default {
           ...msg.match(regex).groups,
           timestamp,
         }))
-        // order log messages by date {2021-03-21: [{clientDbId, clientNickname, timestamp}]}
+        // // order log messages by date {2021-03-21: [{clientDbId, clientNickname, timestamp}]}
         .reduce((acc, log) => {
           let dateString = `${log.timestamp.getFullYear()}-${
             log.timestamp.getMonth() + 1
@@ -57,7 +58,7 @@ export default {
     },
   },
   methods: {
-    initChart(logs) {
+    initChart() {
       let chart = new Chart(this.$refs.chart, {
         type: "line",
         data: {
@@ -66,7 +67,7 @@ export default {
               label: "Online Clients",
               backgroundColor: "#ff79c6",
               borderColor: "#ff79c6",
-              data: logs,
+              data: this.clientConnections,
               cubicInterpolationMode: "monotone",
               color: "rgb(255, 99, 132)",
             },
@@ -92,8 +93,14 @@ export default {
     },
   },
   watch: {
-    clientConnections(logs) {
-      this.initChart(logs);
+    logView: {
+      immediate: true,
+      handler(logs) {
+        // Wait for $refs
+        this.$nextTick(() => {
+          logs.length && this.initChart();
+        });
+      },
     },
   },
 };
