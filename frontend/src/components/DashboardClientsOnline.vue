@@ -1,81 +1,36 @@
 <template lang="html">
   <v-card>
-    <v-card-title>Most Total Connections</v-card-title>
+    <v-card-title>Clients Online</v-card-title>
     <v-card-text>
-      <canvas v-if="loaded" ref="chart"></canvas>
-      <span v-else>Loading Data...</span>
+      <v-list>
+        <v-list-item
+          v-for="client in clientList"
+          :key="client.client_database_id"
+        >
+          <v-list-item-avatar>
+            <client-avatar
+              :clientDbId="client.client_database_id"
+            ></client-avatar>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ client.client_nickname }}
+              <!-- <v-icon>{{ statusIcon }}</v-icon> -->
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import Chart from "chart.js/auto";
-
 export default {
+  components: {
+    ClientAvatar: () => import("@/components/ClientAvatar"),
+  },
   props: {
-    clientDbList: Array,
-    loaded: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    mostActiveClients() {
-      return this.clientDbList.sort(
-        (a, b) => b.client_totalconnections - a.client_totalconnections
-      );
-    },
-  },
-  methods: {
-    renderChart() {
-      console.log("render chart");
-
-      let chart = new Chart(this.$refs.chart, {
-        type: "bar",
-        data: {
-          datasets: [
-            {
-              label: "Total Connections",
-              backgroundColor: "#ff79c6",
-              borderColor: "#ff79c6",
-              data: this.mostActiveClients,
-              // cubicInterpolationMode: "monotone",
-            },
-          ],
-        },
-        options: {
-          maintainAspectRatio: false,
-          indexAxis: "y",
-          parsing: {
-            yAxisKey: "client_nickname",
-            xAxisKey: "client_totalconnections",
-          },
-          elements: {
-            bar: {
-              borderRadius: "4",
-            },
-          },
-          // plugins: {
-          //   legend: {
-          //     position: "right",
-          //   },
-          // },
-        },
-      });
-    },
-  },
-  mounted() {
-    let watchClientDbList = this.$watch(
-      "loaded",
-      (loaded) => {
-        if (loaded) {
-          this.renderChart();
-        }
-      },
-      {
-        immediate: true,
-      }
-    );
+    clientList: Array,
   },
 };
 </script>

@@ -10,9 +10,14 @@
     </v-row>
     <v-row>
       <v-col cols="4">
-        <dashboard-clients-online
+        <dashboard-total-connections
           :clientDbList="clientDbList"
           :loaded="clientDbListLoaded"
+        ></dashboard-total-connections>
+      </v-col>
+      <v-col cols="4">
+        <dashboard-clients-online
+          :clientList="clientList"
         ></dashboard-clients-online>
       </v-col>
     </v-row>
@@ -25,6 +30,8 @@ import sleep from "@/utils/sleep";
 export default {
   components: {
     DashboardClientHistory: () => import("@/components/DashboardClientHistory"),
+    DashboardTotalConnections: () =>
+      import("@/components/DashboardTotalConnections"),
     DashboardClientsOnline: () => import("@/components/DashboardClientsOnline"),
   },
   data() {
@@ -33,6 +40,7 @@ export default {
       logViewLoaded: false,
       clientDbList: [],
       clientDbListLoaded: false,
+      clientList: [],
     };
   },
   methods: {
@@ -96,6 +104,9 @@ export default {
     getClientDbList() {
       return this.$TeamSpeak.fullClientDBList();
     },
+    getClientList() {
+      return this.$TeamSpeak.execute("clientlist", {}, ["-voice", "-away"]);
+    },
   },
   async created() {
     try {
@@ -115,6 +126,8 @@ export default {
       this.clientDbList = await this.getClientDbList();
 
       this.clientDbListLoaded = true;
+
+      this.clientList = await this.getClientList();
     } catch (err) {
       this.$toast.error(err.message);
     }

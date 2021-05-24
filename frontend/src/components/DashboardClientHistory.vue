@@ -26,6 +26,7 @@ export default {
         /^client connected \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
 
       let temp = this.logView
+        .reverse()
         // filters all "client connected" log messages
         .filter(({ msg }) => regex.test(msg))
         // parse log messages into an object {clientDbId, clientNickname, timestamp}
