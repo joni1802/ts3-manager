@@ -23,6 +23,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      primaryColor: this.$vuetify.theme.currentTheme.primary,
+    };
+  },
   computed: {
     clientConnections() {
       let regex =
@@ -82,20 +87,24 @@ export default {
   },
   methods: {
     renderChart() {
+      Chart.defaults.color = "white";
+      Chart.defaults.backgroundColor = "#ff79c6";
+      Chart.defaults.borderColor = "#ff79c6";
+
       let chart = new Chart(this.$refs.chart, {
         type: "bar",
         data: {
           datasets: [
             {
               label: "Time spent (hours)",
-              backgroundColor: "#ff79c6",
-              borderColor: "#ff79c6",
+              // backgroundColor: "orange", //this.primaryColor,
+              // borderColor: this.primaryColor,
               data: this.clientConnections,
             },
           ],
         },
         options: {
-          // maintainAspectRatio: false,
+          responsive: true,
           indexAxis: "y",
           parsing: {
             xAxisKey: "totalConnectionTime",
@@ -106,11 +115,18 @@ export default {
               borderRadius: "4",
             },
           },
-          // plugins: {
-          //   legend: {
-          //     reverse: true,
-          //   },
-          // },
+          scales: {
+            y: {
+              grid: {
+                color: "#4c5067",
+              },
+            },
+            x: {
+              grid: {
+                color: "#4c5067",
+              },
+            },
+          },
         },
       });
     },

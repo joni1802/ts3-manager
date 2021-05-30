@@ -19,77 +19,108 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      primaryColor: this.$vuetify.theme.currentTheme.primary,
+    };
+  },
   computed: {
     clientConnections() {
       let obj = {};
       let regex =
         /^client connected \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
 
-      let temp = this.logView
-        .reverse()
-        // filters all "client connected" log messages
-        .filter(({ msg }) => regex.test(msg))
-        // parse log messages into an object {clientDbId, clientNickname, timestamp}
-        .map(({ msg, timestamp }) => ({
-          ...msg.match(regex).groups,
-          timestamp,
-        }))
-        // // order log messages by date {2021-03-21: [{clientDbId, clientNickname, timestamp}]}
-        .reduce((acc, log) => {
-          let dateString = `${log.timestamp.getFullYear()}-${
-            log.timestamp.getMonth() + 1
-          }-${log.timestamp.getDate()}`;
+      return (
+        this.logView
+          .reverse()
+          // filters all "client connected" log messages
+          .filter(({ msg }) => regex.test(msg))
+          // parse log messages into an object {clientDbId, clientNickname, timestamp}
+          .map(({ msg, timestamp }) => {
+            let { clientDbId, clientNickname } = msg.match(regex).groups;
 
-          if (!acc[dateString]) {
-            acc[dateString] = [];
-          }
+            return {
+              clientDbId,
+              clientNickname,
+              timestamp,
+            };
+          })
+          // // order log messages by date [{date, clients: [{clientDbId, clientNickname}]}]
+          .reduce((acc, { clientDbId, clientNickname, timestamp }) => {
+            let currentTimestamp = new Date(
+              timestamp.getFullYear(),
+              timestamp.getMonth(),
+              timestamp.getDate()
+            );
 
-          let foundClient = acc[dateString].find(
-            (log2) => log2.clientDbId === log.clientDbId
-          );
+            let index = acc.findIndex(
+              (connection) =>
+                connection.date.getTime() === currentTimestamp.getTime()
+            );
 
-          if (!foundClient) {
-            acc[dateString].push(log);
-          }
+            if (index === -1) {
+              let arrLength = acc.push({
+                date: currentTimestamp,
+                localeDateString: currentTimestamp.toLocaleDateString(),
+                clients: [],
+              });
 
-          return acc;
-        }, {});
+              index = arrLength - 1;
+            }
 
-      for (let prop in temp) {
-        obj[prop] = temp[prop].length;
-      }
+            if (
+              !acc[index].clients.find(
+                (client) => client.clientDbId === clientDbId
+              )
+            ) {
+              acc[index].clients.push({ clientDbId, clientNickname });
+            }
 
-      return obj;
+            return acc;
+          }, [])
+          .sort((a, b) => a.date.getTime() - b.date.getTime())
+      );
     },
   },
   methods: {
     renderChart() {
+      Chart.defaults.color = "white";
+      Chart.defaults.backgroundColor = "#ff79c6";
+      Chart.defaults.borderColor = "#ff79c6";
+
       let chart = new Chart(this.$refs.chart, {
         type: "line",
         data: {
           datasets: [
             {
               label: "Unique Client Connections",
-              backgroundColor: "#ff79c6",
-              borderColor: "#ff79c6",
+              // backgroundColor: "#ff79c6",
+              // borderColor: "#ff79c6",
               data: this.clientConnections,
               cubicInterpolationMode: "monotone",
-              color: "rgb(255, 99, 132)",
             },
           ],
         },
         options: {
           maintainAspectRatio: false,
+          parsing: {
+            xAxisKey: "localeDateString",
+            yAxisKey: "clients.length",
+          },
+          // legend: {
+          //   labels: {
+          //     color: "#282a36",
+          //   },
+          // },
           scales: {
             y: {
               grid: {
-                // color: "#282a36",
+                color: "#4c5067",
               },
-              // beginAtZero: true,
             },
             x: {
               grid: {
-                // color: "#282a36",
+                color: "#4c5067",
               },
             },
           },
