@@ -9,19 +9,19 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="4">
+      <v-col cols="6">
         <dashboard-total-connections
-          :clientDbList="clientDbList"
-          :loaded="clientDbListLoaded"
+          :logView="logView"
+          :loaded="logViewLoaded"
         ></dashboard-total-connections>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="3">
         <dashboard-clients-online
           :clientList="clientList"
           :serverInfo="serverInfo"
         ></dashboard-clients-online>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="3">
         <dashboard-server-info :serverInfo="serverInfo"></dashboard-server-info>
       </v-col>
     </v-row>
@@ -101,14 +101,13 @@ export default {
         this.$toast.error(err.message);
       }
 
+      return logView;
+
       let index = logView.findIndex(
         (log) => log.timestamp.getTime() <= date.getTime()
       );
 
       return logView.slice(0, index);
-    },
-    getClientDbList() {
-      return this.$TeamSpeak.fullClientDBList();
     },
     getClientList() {
       return this.$TeamSpeak.execute("clientlist", {}, ["-voice", "-away"]);
@@ -127,14 +126,11 @@ export default {
       date.setDate(date.getDate() - 30);
 
       this.logView = await this.getLogView(date);
+      // this.logView = await this.getLogView();
 
       this.logViewLoaded = true;
 
       // await sleep(1000);
-
-      this.clientDbList = await this.getClientDbList();
-
-      this.clientDbListLoaded = true;
 
       this.clientList = await this.getClientList();
 

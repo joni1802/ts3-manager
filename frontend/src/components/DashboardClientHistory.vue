@@ -98,11 +98,17 @@ export default {
     },
   },
   mounted() {
-    let watchLogView = this.$watch("loaded", (loaded) => {
-      if (loaded) {
-        this.renderChart();
+    let watchLogView = this.$watch(
+      "loaded",
+      (loaded) => {
+        if (loaded) {
+          this.renderChart();
+        }
+      },
+      {
+        immediate: true,
       }
-    });
+    );
   },
 };
 </script>
