@@ -9,9 +9,10 @@
 </template>
 
 <script>
-import Chart from "chart.js/auto";
+import chart from "@/mixins/chart";
 
 export default {
+  mixins: [chart],
   props: {
     logView: Array,
     numberOfClients: {
@@ -22,11 +23,6 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      primaryColor: this.$vuetify.theme.currentTheme.primary,
-    };
   },
   computed: {
     clientConnections() {
@@ -85,58 +81,30 @@ export default {
         .slice(0, this.numberOfClients);
     },
   },
-  methods: {
-    renderChart() {
-      Chart.defaults.color = "white";
-      Chart.defaults.backgroundColor = "#ff79c6";
-      Chart.defaults.borderColor = "#ff79c6";
-
-      let chart = new Chart(this.$refs.chart, {
-        type: "bar",
-        data: {
-          datasets: [
-            {
-              label: "Time spent (hours)",
-              // backgroundColor: "orange", //this.primaryColor,
-              // borderColor: this.primaryColor,
-              data: this.clientConnections,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          indexAxis: "y",
-          parsing: {
-            xAxisKey: "totalConnectionTime",
-            yAxisKey: "clientNickname",
-          },
-          elements: {
-            bar: {
-              borderRadius: "4",
-            },
-          },
-          scales: {
-            y: {
-              grid: {
-                color: "#4c5067",
-              },
-            },
-            x: {
-              grid: {
-                color: "#4c5067",
-              },
-            },
-          },
-        },
-      });
-    },
-  },
   mounted() {
     let watchClientDbList = this.$watch(
       "loaded",
       (loaded) => {
         if (loaded) {
-          this.renderChart();
+          this.renderChart(this.$refs.chart, {
+            type: "bar",
+            data: {
+              datasets: [
+                {
+                  label: "Time spent (hours)",
+                  data: this.clientConnections,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              indexAxis: "y",
+              parsing: {
+                xAxisKey: "totalConnectionTime",
+                yAxisKey: "clientNickname",
+              },
+            },
+          });
         }
       },
       {

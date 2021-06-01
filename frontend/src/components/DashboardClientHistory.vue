@@ -9,20 +9,16 @@
 </template>
 
 <script>
-import Chart from "chart.js/auto";
+import chart from "@/mixins/chart";
 
 export default {
+  mixins: [chart],
   props: {
     logView: Array,
     loaded: {
       type: Boolean,
       default: false,
     },
-  },
-  data() {
-    return {
-      primaryColor: this.$vuetify.theme.currentTheme.primary,
-    };
   },
   computed: {
     clientConnections() {
@@ -82,58 +78,30 @@ export default {
       );
     },
   },
-  methods: {
-    renderChart() {
-      Chart.defaults.color = "white";
-      Chart.defaults.backgroundColor = "#ff79c6";
-      Chart.defaults.borderColor = "#ff79c6";
-
-      let chart = new Chart(this.$refs.chart, {
-        type: "line",
-        data: {
-          datasets: [
-            {
-              label: "Unique Client Connections",
-              // backgroundColor: "#ff79c6",
-              // borderColor: "#ff79c6",
-              data: this.clientConnections,
-              cubicInterpolationMode: "monotone",
-            },
-          ],
-        },
-        options: {
-          maintainAspectRatio: false,
-          parsing: {
-            xAxisKey: "localeDateString",
-            yAxisKey: "clients.length",
-          },
-          // legend: {
-          //   labels: {
-          //     color: "#282a36",
-          //   },
-          // },
-          scales: {
-            y: {
-              grid: {
-                color: "#4c5067",
-              },
-            },
-            x: {
-              grid: {
-                color: "#4c5067",
-              },
-            },
-          },
-        },
-      });
-    },
-  },
   mounted() {
     let watchLogView = this.$watch(
       "loaded",
       (loaded) => {
         if (loaded) {
-          this.renderChart();
+          this.renderChart(this.$refs.chart, {
+            type: "line",
+            data: {
+              datasets: [
+                {
+                  label: "Unique Client Connections",
+                  data: this.clientConnections,
+                  cubicInterpolationMode: "monotone",
+                },
+              ],
+            },
+            options: {
+              maintainAspectRatio: false,
+              parsing: {
+                xAxisKey: "localeDateString",
+                yAxisKey: "clients.length",
+              },
+            },
+          });
         }
       },
       {
