@@ -9,19 +9,19 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12" xl="6" lg="8">
         <dashboard-total-connections
           :logView="logView"
           :loaded="logViewLoaded"
         ></dashboard-total-connections>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="12" xl="3" lg="4" md="6">
         <dashboard-clients-online
           :clientList="clientList"
           :serverInfo="serverInfo"
         ></dashboard-clients-online>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="12" xl="3" lg="4" md="6">
         <dashboard-server-info :serverInfo="serverInfo"></dashboard-server-info>
       </v-col>
     </v-row>
