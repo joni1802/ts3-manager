@@ -10,10 +10,10 @@
     </v-row>
     <v-row>
       <v-col cols="12" xl="6" lg="8">
-        <dashboard-total-connections
+        <dashboard-connection-time
           :logView="logView"
           :loaded="logViewLoaded"
-        ></dashboard-total-connections>
+        ></dashboard-connection-time>
       </v-col>
       <v-col cols="12" xl="3" lg="4" md="6">
         <dashboard-clients-online
@@ -34,8 +34,8 @@ import sleep from "@/utils/sleep";
 export default {
   components: {
     DashboardClientHistory: () => import("@/components/DashboardClientHistory"),
-    DashboardTotalConnections: () =>
-      import("@/components/DashboardTotalConnections"),
+    DashboardConnectionTime: () =>
+      import("@/components/DashboardConnectionTime"),
     DashboardClientsOnline: () => import("@/components/DashboardClientsOnline"),
     DashboardServerInfo: () => import("@/components/DashboardServerInfo"),
   },
