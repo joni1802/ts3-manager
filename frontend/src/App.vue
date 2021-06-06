@@ -2,7 +2,8 @@
   <v-app>
     <app-shell></app-shell>
     <v-main>
-      <router-view></router-view>
+      <!-- Reload current route when another server is selected -->
+      <router-view :key="$store.state.query.serverId"></router-view>
     </v-main>
   </v-app>
 </template>

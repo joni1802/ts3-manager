@@ -3,15 +3,16 @@
     <v-app-bar app>
       <v-app-bar-nav-icon
         @click="drawer = !drawer"
-        v-if="validPage"
+        v-if="connected"
       ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
+      <server-selection v-if="connected"></server-selection>
       <dark-mode-switch></dark-mode-switch>
-      <file-upload-icon v-if="$store.state.query.connected"></file-upload-icon>
-      <bell-icon v-if="$store.state.query.connected"></bell-icon>
+      <file-upload-icon v-if="connected"></file-upload-icon>
+      <bell-icon v-if="connected"></bell-icon>
     </v-app-bar>
 
-    <v-navigation-drawer app v-model="drawer" v-if="validPage" width="300">
+    <v-navigation-drawer app v-model="drawer" v-if="connected" width="300">
       <v-list dense class="pt-2" subheader nav>
         <logo></logo>
         <v-divider></v-divider>
@@ -81,6 +82,7 @@ export default {
     BellIcon: () => import("@/components/BellIcon"),
     FileUploadIcon: () => import("@/components/FileUploadIcon"),
     Logo: () => import("@/components/Logo"),
+    ServerSelection: () => import("@/components/ServerSelection"),
   },
   data() {
     return {
@@ -88,14 +90,14 @@ export default {
       drawer: null,
       menuEntries: [
         {
-          title: "Server List",
-          icon: "dns",
-          route: { name: "servers" },
-        },
-        {
           title: "Dashboard",
           icon: "mdi-view-dashboard",
           route: { name: "dashboard" },
+        },
+        {
+          title: "Server List",
+          icon: "dns",
+          route: { name: "servers" },
         },
         {
           title: "File Browser",
@@ -197,12 +199,8 @@ export default {
     };
   },
   computed: {
-    validPage() {
-      if (this.$route.name === "login" || this.$route.name === "404") {
-        return false;
-      } else {
-        return true;
-      }
+    connected() {
+      return this.$store.state.query.connected;
     },
   },
   methods: {
