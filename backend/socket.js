@@ -158,7 +158,8 @@ socket.init = (server, corsOptions) => {
     });
 
     /**
-     * Connect to the ServerQuery and try to login.
+     * Connect and login to the ServerQuery.
+     * Try to pick the first available server
      */
     socket.on("teamspeak-connect", async (options, fn) => {
       try {
@@ -172,7 +173,21 @@ socket.init = (server, corsOptions) => {
 
         registerEvents(ServerQuery, log, socket);
 
-        fn({ token });
+        let serverList = await ServerQuery.execute("serverlist");
+
+        let onlineServer = serverList.find(
+          (server) => server.virtualserver_status === "online"
+        );
+
+        if (onlineServer) {
+          await ServerQuery.execute("use", {
+            sid: onlineServer.virtualserver_id,
+          });
+
+          fn({ token, sid: onlineServer.virtualserver_id });
+        } else {
+          fn({ token });
+        }
       } catch (err) {
         handleServerQueryError(err, fn);
       }
@@ -260,7 +275,7 @@ socket.init = (server, corsOptions) => {
       try {
         let buffer = await ServerQuery.downloadFile(path, cid, cpw);
 
-        handleResponse(buffer.toString("base64"), fn);
+        handleResponse(buffer.toString("base64"), fn); // handleResponse(buffer, fn);
       } catch (err) {
         handleServerQueryError(err, fn);
       }
