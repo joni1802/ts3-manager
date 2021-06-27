@@ -5,6 +5,8 @@
         <dashboard-client-history
           :logView="logView"
           :loaded="logViewLoaded"
+          :days="daysPicker"
+          @change-days="testEvent"
         ></dashboard-client-history>
       </v-col>
     </v-row>
@@ -47,9 +49,18 @@ export default {
       clientDbListLoaded: false,
       clientList: [],
       serverInfo: {},
+      daysPicker: [
+        { text: "Last 30 Days", value: 30 },
+        { text: "Last 60 Days", value: 60 },
+        { text: "Last 90 Days", value: 90 },
+        { text: "All Days", value: 0 },
+      ],
     };
   },
   methods: {
+    testEvent(e) {
+      console.log(e);
+    },
     getLocaleDate(timestamp) {
       let localeDate = new Date(timestamp);
       let milliseconds =
@@ -123,7 +134,8 @@ export default {
       let date = new Date();
 
       // Show log messages of the last 30 days
-      date.setDate(date.getDate() - 30);
+      // date.setDate(date.getDate() - 30);
+      date.setDate();
 
       this.logView = await this.getLogView(date);
       // this.logView = await this.getLogView();

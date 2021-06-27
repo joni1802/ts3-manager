@@ -1,6 +1,16 @@
 <template lang="html">
   <v-card>
-    <v-card-title>Client Connections History</v-card-title>
+    <v-card-title>
+      <v-row>
+        <v-col>Client Connections History</v-col>
+        <v-col cols="12" sm="4" md="3">
+          <v-select
+            :items="days"
+            @change="$emit('change-days', $event)"
+          ></v-select>
+        </v-col>
+      </v-row>
+    </v-card-title>
     <v-card-text>
       <canvas v-if="loaded" ref="chart" height="200"></canvas>
       <span v-else>Loading Data...</span>
@@ -19,6 +29,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    days: Array,
   },
   computed: {
     clientConnections() {
