@@ -172,6 +172,31 @@ TeamSpeak.fullClientDBList = async () => {
   return fullClientDbList;
 };
 
+// To-Do: After 400 lines flooding warnings
+TeamSpeak.fullLogView = async (instance = 0) => {
+  let allLogs = [];
+  let lastPosition = undefined;
+
+  try {
+    while (lastPosition !== 0) {
+      let logs = await TeamSpeak.execute("logview", {
+        instance,
+        reverse: 1,
+        lines: 100,
+        begin_pos: lastPosition,
+      });
+
+      lastPosition = logs[0].last_pos;
+
+      allLogs.push(...logs);
+    }
+  } catch (err) {
+    throw err;
+  }
+
+  return allLogs;
+};
+
 TeamSpeak.registerEvent = (event, id = undefined) => {
   return new Promise((resolve, reject) => {
     socket.emit(
