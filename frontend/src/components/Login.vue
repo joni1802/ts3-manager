@@ -166,13 +166,9 @@ export default {
         this.$store.commit("isConnected", true);
         this.$store.commit("isLoggedOut", false);
 
-        if (sid) {
-          this.$store.dispatch("saveServerId", sid);
+        if (sid) this.$store.dispatch("saveServerId", sid);
 
-          this.$router.push({ name: "dashboard" });
-        } else {
-          this.$router.push({ name: "servers" });
-        }
+        this.$router.push({ name: "servers" });
       } catch (err) {
         this.$toast.error(err.message);
       }

@@ -31,7 +31,12 @@
 </template>
 
 <script>
-import sleep from "@/utils/sleep";
+/**
+ * The dashboard is a work in progress and maybe will be replaced by another solution.
+ * The following problems need to be addressed:
+ * - flooding issues when downloading all logs files
+ * - long loading times
+ * - logs are removed when restarten the server */
 
 export default {
   components: {

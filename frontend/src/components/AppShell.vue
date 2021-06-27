@@ -90,11 +90,6 @@ export default {
       drawer: null,
       menuEntries: [
         {
-          title: "Dashboard",
-          icon: "mdi-view-dashboard",
-          route: { name: "dashboard" },
-        },
-        {
           title: "Server List",
           icon: "dns",
           route: { name: "servers" },
