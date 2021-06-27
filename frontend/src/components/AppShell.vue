@@ -16,60 +16,63 @@
       <v-list dense class="pt-2" subheader nav>
         <logo></logo>
         <v-divider></v-divider>
-        <v-list-item
-          v-for="(entry, i) in menuEntries"
-          v-if="!entry.submenu"
-          :key="i"
-          @click="pushRoute(entry)"
-          :class="{ 'v-list-item--active': $route.name === entry.route.name }"
-        >
-          <v-list-item-icon>
-            <v-badge
-              color="error"
-              :value="entry.title === 'Chat' && $store.getters.unreadMessages"
-            >
-              <template #badge>
-                <span>{{ $store.getters.unreadMessages }}</span>
-              </template>
-              <v-icon>{{ entry.icon }}</v-icon>
-            </v-badge>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ entry.title }}
-              <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
 
-        <v-list-group v-else no-action :prepend-icon="entry.icon">
-          <template #activator>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ entry.title }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
+        <!-- Avoid v-if with v-for https://v3.vuejs.org/style-guide/#avoid-v-if-with-v-for-essential -->
+        <template v-for="(entry, i) in menuEntries">
           <v-list-item
-            v-for="(subEntry, j) in entry.submenu"
-            :key="j"
-            @click="pushRoute(subEntry)"
-            :class="{
-              'v-list-item--active': $route.name === subEntry.route.name,
-            }"
+            :key="i"
+            v-if="!entry.submenu"
+            @click="pushRoute(entry)"
+            :class="{ 'v-list-item--active': $route.name === entry.route.name }"
           >
             <v-list-item-icon>
-              <v-icon>{{ subEntry.icon }}</v-icon>
+              <v-badge
+                color="error"
+                :value="entry.title === 'Chat' && $store.getters.unreadMessages"
+              >
+                <template #badge>
+                  <span>{{ $store.getters.unreadMessages }}</span>
+                </template>
+                <v-icon>{{ entry.icon }}</v-icon>
+              </v-badge>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                {{ subEntry.title }}
+                {{ entry.title }}
+                <v-icon v-if="entry.experimental">mdi-test-tube</v-icon>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-        </v-list-group>
+
+          <v-list-group v-else :key="i" no-action :prepend-icon="entry.icon">
+            <template #activator>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ entry.title }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+            <v-list-item
+              v-for="(subEntry, j) in entry.submenu"
+              :key="j"
+              @click="pushRoute(subEntry)"
+              :class="{
+                'v-list-item--active': $route.name === subEntry.route.name,
+              }"
+            >
+              <v-list-item-icon>
+                <v-icon>{{ subEntry.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ subEntry.title }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-group>
+        </template>
       </v-list>
     </v-navigation-drawer>
   </div>
