@@ -6,7 +6,6 @@
         v-if="connected"
       ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
-      <server-selection v-if="connected"></server-selection>
       <dark-mode-switch></dark-mode-switch>
       <file-upload-icon v-if="connected"></file-upload-icon>
       <bell-icon v-if="connected"></bell-icon>
