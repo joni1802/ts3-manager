@@ -4,56 +4,64 @@
       <v-flex xs12>
         <v-card>
           <v-card-title>
-            <v-layout wrap justify-space-between>
-              <v-flex xs12 sm5 md4>
-                <v-layout wrap>
-                  <v-flex>
-                    <v-checkbox
-                      v-model="levels.critical"
-                      label="Critical"
-                    ></v-checkbox>
-                  </v-flex>
-                  <v-flex>
-                    <v-checkbox
-                      v-model="levels.errors"
-                      label="Errors"
-                    ></v-checkbox>
-                  </v-flex>
-                  <v-flex>
-                    <v-checkbox
-                      v-model="levels.warning"
-                      label="Warning"
-                    ></v-checkbox>
-                  </v-flex>
-                  <v-flex>
-                    <v-checkbox v-model="levels.info" label="Info"></v-checkbox>
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-              <v-flex xs12 sm5 md3>
+            <v-row align="center">
+              <v-col cols="3" xl="1">
+                <v-checkbox
+                  v-model="levels.critical"
+                  label="Critical"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="3" xl="1">
+                <v-checkbox v-model="levels.errors" label="Errors"></v-checkbox>
+              </v-col>
+              <v-col cols="3" xl="1">
+                <v-checkbox
+                  v-model="levels.warning"
+                  label="Warning"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="3" xl="1">
+                <v-checkbox v-model="levels.info" label="Info"></v-checkbox>
+              </v-col>
+              <v-col cols="12" sm="6" xl="3">
                 <v-select
                   :items="timezones"
                   v-model="selectedTimezone"
                   label="Timestamp"
                 ></v-select>
-              </v-flex>
-              <v-flex xs12 sm5 md3>
+              </v-col>
+              <v-col cols="12" sm="6" xl="4">
                 <v-text-field label="Filter" v-model="filter"></v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+              <v-col cols="12" xl="1">
+                <v-btn color="primary">Reload</v-btn>
+              </v-col>
+            </v-row>
           </v-card-title>
+
           <v-card-text>
             <v-data-table
-              :items="logItems"
+              :items="parsedLogView"
               :headers="headers"
               :no-data-text="
                 $store.state.query.loading ? '...loading' : $vuetify.noDataText
               "
-              :footer-props="{ 'items-per-page-options': rowsPerPage }"
+              hide-default-footer
               :search="filter"
+              :items-per-page="itemsPerPage"
             >
+              <!-- <template #item.level="{ item }">
+                <v-chip :color="levelColors[item.level.toLowerCase()]">{{
+                  item.level
+                }}</v-chip>
+              </template> -->
             </v-data-table>
           </v-card-text>
+          <v-card-actions>
+            <v-row justify="center">
+              <v-btn color="primary" @click="loadMoreLogs">Load More</v-btn>
+            </v-row>
+          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -64,32 +72,43 @@
 export default {
   data() {
     return {
-      logs: [],
-      rowsPerPage: [50, 75, -1],
+      logView: [],
+      lastPosition: undefined,
+      itemsPerPage: -1,
       filter: "",
       headers: [
         {
           text: "Timestamp",
           value: "timestamp",
+          sortable: false,
         },
         {
           text: "Level",
           value: "level",
+          sortable: false,
         },
         {
           text: "Channel",
           value: "channel",
+          sortable: false,
         },
         {
           text: "Message",
           value: "msg",
+          sortable: false,
         },
       ],
       levels: {
         critical: true,
         errors: true,
-        warning: true,
+        warnings: true,
         info: true,
+      },
+      levelColors: {
+        critical: "error",
+        errors: "error",
+        warnings: "#ffb86c",
+        info: "info",
       },
       selectedTimezone: "local",
       timezones: [
@@ -109,8 +128,8 @@ export default {
      * Parse original log string into a javascript object.
      * @return {Array}
      */
-    logItems() {
-      let allLogs = this.logs.map(({ l }) => {
+    parsedLogView() {
+      let parsedLogView = this.logView.map(({ l }) => {
         let [timestamp, level, channel, sid, ...msg] = l.split("|");
 
         return {
@@ -118,23 +137,23 @@ export default {
             this.selectedTimezone === "utc"
               ? this.getUTCDateString(timestamp)
               : this.getLocaleDateString(timestamp),
-          level,
-          channel,
-          sid,
+          level: level.trim(),
+          channel: channel.trim(),
+          sid: parseInt(sid),
           /** @see {@link https://github.com/joni1802/ts3-manager/issues/26} */
           msg: msg.join("|"),
         };
       });
 
-      // Filter array by level
-      return allLogs.filter((log) => {
-        switch (log.level.trim().toLowerCase()) {
+      // Filter array by level#
+      return parsedLogView.filter((log) => {
+        switch (log.level.toLowerCase()) {
           case "critical":
             return this.levels.critical;
           case "errors":
             return this.levels.errors;
-          case "warning":
-            return this.levels.warning;
+          case "warnings":
+            return this.levels.warnings;
           case "info":
             return this.levels.info;
         }
@@ -142,9 +161,32 @@ export default {
     },
   },
   methods: {
-    getServerLogs() {
-      return this.$TeamSpeak.execute("logview");
+    /**
+     * Get max. 100 lines from the log. Start at the last returned position.
+     * @return {Array} 100 log lines
+     */
+    async getLogView() {
+      return this.$TeamSpeak.execute("logview", {
+        instance: 0,
+        reverse: 1,
+        lines: 100,
+        begin_pos: this.lastPosition,
+      });
     },
+
+    /**
+     * Load the next 100 logs lines.
+     */
+    async loadMoreLogs() {
+      try {
+        let moreLogs = await this.getLogView();
+
+        this.logView.push(...moreLogs);
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
+    },
+
     /**
      * Add the local timezone offset to the Javascript date object.
      * The TeamSpeak timestamp is always the UTC time.
@@ -191,12 +233,18 @@ export default {
   },
   async created() {
     try {
-      this.logs = await this.getServerLogs();
-
-      console.log(this.logs);
+      this.logView = await this.getLogView();
     } catch (err) {
       this.$toast.error(err.message);
     }
+  },
+  watch: {
+    /**
+     * Save the last returned log position.
+     */
+    logView(logView) {
+      this.lastPosition = logView[logView.length - 1].last_pos;
+    },
   },
 };
 </script>
