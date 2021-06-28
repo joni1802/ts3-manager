@@ -4,27 +4,90 @@
       <v-flex md6 sm8 xs12 offset-md3 offset-sm2>
         <v-card>
           <v-list>
-            <v-list-item
-              v-for="group in groups"
-              :key="group[Object.keys(group)[0]]"
-            >
-              <v-list-item-content>
-                <v-list-item-title>{{ group.name }}</v-list-item-title>
-                <v-list-item-subtitle
-                  >({{ group[Object.keys(group)[0]] }})</v-list-item-subtitle
-                >
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn icon ripple @click="editGroup(group)">
-                  <v-icon>edit</v-icon>
-                </v-btn>
-              </v-list-item-action>
-              <v-list-item-action>
-                <v-btn icon ripple @click="confirmDeletion(group)">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
+            <template v-if="regularGroups.length">
+              <v-subheader>Regular Groups</v-subheader>
+              <v-list-item
+                v-for="regularGroup in regularGroups"
+                :key="regularGroup.sgid || regularGroup.cgid"
+              >
+                <v-list-item-content>
+                  <v-list-item-title>{{ regularGroup.name }}</v-list-item-title>
+                  <v-list-item-subtitle
+                    >({{
+                      regularGroup.sgid || regularGroup.cgid
+                    }})</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn icon ripple @click="editGroup(regularGroup)">
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+                <v-list-item-action>
+                  <v-btn icon ripple @click="confirmDeletion(regularGroup)">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
+
+            <template v-if="templateGroups.length">
+              <v-subheader>Template Groups</v-subheader>
+              <v-list-item
+                v-for="templateGroup in templateGroups"
+                :key="templateGroup.sgid || templateGroup.cgid"
+              >
+                <v-list-item-content>
+                  <v-list-item-title>{{
+                    templateGroup.name
+                  }}</v-list-item-title>
+                  <v-list-item-subtitle
+                    >({{
+                      templateGroup.sgid || templateGroup.cgid
+                    }})</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn icon ripple @click="editGroup(templateGroup)">
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+                <v-list-item-action>
+                  <v-btn icon ripple @click="confirmDeletion(templateGroup)">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
+
+            <template v-if="serverQueryGroups.length">
+              <v-subheader>ServerQuery Groups</v-subheader>
+              <v-list-item
+                v-for="serverQueryGroup in serverQueryGroups"
+                :key="serverQueryGroup.sgid || serverQueryGroup.cgid"
+              >
+                <v-list-item-content>
+                  <v-list-item-title>{{
+                    serverQueryGroup.name
+                  }}</v-list-item-title>
+                  <v-list-item-subtitle
+                    >({{
+                      serverQueryGroup.sgid || serverQueryGroup.cgid
+                    }})</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn icon ripple @click="editGroup(serverQueryGroup)">
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+                <v-list-item-action>
+                  <v-btn icon ripple @click="confirmDeletion(serverQueryGroup)">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
           </v-list>
         </v-card>
       </v-flex>
@@ -65,6 +128,11 @@
           <v-card-title> Add Group </v-card-title>
           <v-card-text>
             <v-text-field v-model="groupName" label="Group Name"></v-text-field>
+            <v-select
+              label="Group Type"
+              :items="groupTypes"
+              v-model="selectedGroupType"
+            ></v-select>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -91,7 +159,24 @@ export default {
       groupName: "",
       selectedGroup: {},
       forceDeletion: false, // Delete group even if there are clients
+      selectedGroupType: 1,
+      groupTypes: [
+        { text: "Regular Group", value: 1 },
+        { text: "Template Group", value: 0 },
+        { text: "ServerQuery Group", value: 2 },
+      ],
     };
+  },
+  computed: {
+    regularGroups() {
+      return this.groups.filter((group) => group.type === 1);
+    },
+    templateGroups() {
+      return this.groups.filter((group) => group.type === 0);
+    },
+    serverQueryGroups() {
+      return this.groups.filter((group) => group.type === 2);
+    },
   },
   methods: {
     confirmDeletion(group) {
@@ -103,7 +188,7 @@ export default {
       this.removeDialog = false;
     },
     addGroup() {
-      this.$emit("add", this.groupName);
+      this.$emit("add", this.groupName, this.selectedGroupType);
       this.groupName = "";
       this.addDialog = false;
     },

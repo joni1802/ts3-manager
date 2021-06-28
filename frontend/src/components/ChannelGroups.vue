@@ -1,6 +1,6 @@
 <template>
   <group-list
-    :groups="regularChannelGroups"
+    :groups="channelGroups"
     @add="addChannelGroup"
     @remove="removeChannelGroup"
     @edit="editChannelGroup"
@@ -17,18 +17,13 @@ export default {
       channelGroups: [],
     };
   },
-  computed: {
-    regularChannelGroups() {
-      return this.channelGroups.filter((group) => group.type === 1);
-    },
-  },
   methods: {
     getChannelGroupList() {
       return this.$TeamSpeak.execute("channelgrouplist");
     },
-    async addChannelGroup(name) {
+    async addChannelGroup(name, type) {
       try {
-        await this.$TeamSpeak.execute("channelgroupadd", { name: name });
+        await this.$TeamSpeak.execute("channelgroupadd", { name, type });
       } catch (err) {
         this.$toast.error(err.message);
       }

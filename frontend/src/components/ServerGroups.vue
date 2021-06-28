@@ -1,6 +1,6 @@
 <template>
   <group-list
-    :groups="regularServerGroups"
+    :groups="serverGroups"
     @add="addServerGroup"
     @remove="removeServerGroup"
     @edit="editServerGroup"
@@ -17,20 +17,15 @@ export default {
       serverGroups: [],
     };
   },
-  computed: {
-    regularServerGroups() {
-      return this.serverGroups.filter((group) => group.type === 1);
-    },
-  },
   methods: {
     getServerGroupList() {
       return this.$TeamSpeak.execute("servergrouplist").then((list) => {
         return list;
       });
     },
-    async addServerGroup(name) {
+    async addServerGroup(name, type) {
       try {
-        await this.$TeamSpeak.execute("servergroupadd", { name: name });
+        await this.$TeamSpeak.execute("servergroupadd", { name, type });
 
         this.serverGroups = await this.getServerGroupList();
       } catch (err) {
