@@ -7,21 +7,31 @@
             <v-row align="center">
               <v-col cols="3" xl="1">
                 <v-checkbox
-                  v-model="levels.critical"
-                  label="Critical"
+                  v-model="level.debug"
+                  label="Debug"
+                  color="primary"
                 ></v-checkbox>
-              </v-col>
-              <v-col cols="3" xl="1">
-                <v-checkbox v-model="levels.errors" label="Errors"></v-checkbox>
               </v-col>
               <v-col cols="3" xl="1">
                 <v-checkbox
-                  v-model="levels.warning"
-                  label="Warning"
+                  v-model="level.error"
+                  label="Errors"
+                  color="error"
                 ></v-checkbox>
               </v-col>
               <v-col cols="3" xl="1">
-                <v-checkbox v-model="levels.info" label="Info"></v-checkbox>
+                <v-checkbox
+                  v-model="level.warning"
+                  label="Warnings"
+                  color="warning"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="3" xl="1">
+                <v-checkbox
+                  v-model="level.info"
+                  label="Info"
+                  color="info"
+                ></v-checkbox>
               </v-col>
               <v-col cols="12" sm="6" xl="3">
                 <v-select
@@ -34,7 +44,7 @@
                 <v-text-field label="Filter" v-model="filter"></v-text-field>
               </v-col>
               <v-col cols="12" xl="1">
-                <v-btn color="primary">Reload</v-btn>
+                <v-btn color="primary" @click="reloadLogView">Reload</v-btn>
               </v-col>
             </v-row>
           </v-card-title>
@@ -50,16 +60,21 @@
               :search="filter"
               :items-per-page="itemsPerPage"
             >
-              <!-- <template #item.level="{ item }">
+              <template #item.level="{ item }">
                 <v-chip :color="levelColors[item.level.toLowerCase()]">{{
                   item.level
                 }}</v-chip>
-              </template> -->
+              </template>
             </v-data-table>
           </v-card-text>
           <v-card-actions>
             <v-row justify="center">
-              <v-btn color="primary" @click="loadMoreLogs">Load More</v-btn>
+              <v-btn
+                color="primary"
+                @click="loadMoreLogs"
+                :disabled="!lastPosition"
+                >Load More</v-btn
+              >
             </v-row>
           </v-card-actions>
         </v-card>
@@ -98,16 +113,16 @@ export default {
           sortable: false,
         },
       ],
-      levels: {
-        critical: true,
-        errors: true,
-        warnings: true,
+      level: {
+        debug: true,
+        error: true,
+        warning: true,
         info: true,
       },
       levelColors: {
-        critical: "error",
-        errors: "error",
-        warnings: "#ffb86c",
+        debug: "primary",
+        error: "error",
+        warning: "warning",
         info: "info",
       },
       selectedTimezone: "local",
@@ -148,14 +163,14 @@ export default {
       // Filter array by level#
       return parsedLogView.filter((log) => {
         switch (log.level.toLowerCase()) {
-          case "critical":
-            return this.levels.critical;
-          case "errors":
-            return this.levels.errors;
-          case "warnings":
-            return this.levels.warnings;
+          case "debug":
+            return this.level.debug;
+          case "error":
+            return this.level.error;
+          case "warning":
+            return this.level.warning;
           case "info":
-            return this.levels.info;
+            return this.level.info;
         }
       });
     },
@@ -165,12 +180,12 @@ export default {
      * Get max. 100 lines from the log. Start at the last returned position.
      * @return {Array} 100 log lines
      */
-    async getLogView() {
+    async getLogView(beginPosition) {
       return this.$TeamSpeak.execute("logview", {
         instance: 0,
         reverse: 1,
         lines: 100,
-        begin_pos: this.lastPosition,
+        begin_pos: beginPosition,
       });
     },
 
@@ -179,9 +194,17 @@ export default {
      */
     async loadMoreLogs() {
       try {
-        let moreLogs = await this.getLogView();
+        let moreLogs = await this.getLogView(this.lastPosition);
 
         this.logView.push(...moreLogs);
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
+    },
+
+    async reloadLogView() {
+      try {
+        this.logView = await this.getLogView();
       } catch (err) {
         this.$toast.error(err.message);
       }
