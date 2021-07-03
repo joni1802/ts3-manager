@@ -10,13 +10,11 @@
               label="Name"
               :disabled="$store.state.query.loading"
             ></v-text-field>
-            <autocomplete-select-chips
-              v-model="selectedClients"
-              :items="availableClients"
-              :maxVisibleChips="maxVisibleClients"
-              label="Members"
+            <group-client-list
+              v-model="serverGroupClients"
+              :clientDbList="clients"
               :disabled="$store.state.query.loading"
-            ></autocomplete-select-chips>
+            ></group-client-list>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -46,8 +44,7 @@
 <script>
 export default {
   components: {
-    AutocompleteSelectChips: () =>
-      import("@/components/AutocompleteSelectChips"),
+    GroupClientList: () => import("@/components/GroupClientList"),
   },
   data() {
     return {
@@ -62,16 +59,6 @@ export default {
     };
   },
   computed: {
-    selectedClients: {
-      get() {
-        return this.serverGroupClients.map((client) => client.cldbid);
-      },
-      set(clientDbIds) {
-        this.serverGroupClients = this.clients.filter((client) =>
-          clientDbIds.includes(client.cldbid)
-        );
-      },
-    },
     availableClients() {
       return this.clients.map((client) => {
         return {
@@ -91,11 +78,6 @@ export default {
     },
   },
   methods: {
-    removeSelectedClient(cldbid) {
-      let index = this.selectedClients.indexOf(cldbid);
-
-      this.selectedClients.splice(index, 1);
-    },
     getServerGroup() {
       return this.$TeamSpeak
         .execute("servergrouplist")
@@ -124,7 +106,11 @@ export default {
     },
     async removeMembers() {
       let clientRemoveList = this.currentServerGroupClients.filter(
-        (client) => !this.selectedClients.includes(client.cldbid)
+        (currentClient) => {
+          return !this.serverGroupClients.find(
+            (client) => currentClient.cldbid === client.cldbid
+          );
+        }
       );
 
       for (let client of clientRemoveList) {
@@ -135,12 +121,11 @@ export default {
       }
     },
     async addMembers() {
-      let currentClientDbIds = this.currentServerGroupClients.map(
-        (client) => client.cldbid
-      );
-      let clientAddList = this.serverGroupClients.filter(
-        (client) => !currentClientDbIds.includes(client.cldbid)
-      );
+      let clientAddList = this.serverGroupClients.filter((client) => {
+        return !this.currentServerGroupClients.find(
+          (currentClient) => client.cldbid === currentClient.cldbid
+        );
+      });
 
       for (let client of clientAddList) {
         await this.$TeamSpeak.execute("servergroupaddclient", {
