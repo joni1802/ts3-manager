@@ -29,6 +29,8 @@
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
+
+              <v-divider></v-divider>
             </template>
 
             <template v-if="templateGroups.length">
@@ -48,7 +50,7 @@
                   >
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon ripple @click="editGroup(templateGroup)">
+                  <v-btn icon ripple disabled>
                     <v-icon>edit</v-icon>
                   </v-btn>
                 </v-list-item-action>
@@ -61,6 +63,8 @@
             </template>
 
             <template v-if="serverQueryGroups.length">
+              <v-divider></v-divider>
+
               <v-subheader>ServerQuery Groups</v-subheader>
               <v-list-item
                 v-for="serverQueryGroup in serverQueryGroups"
