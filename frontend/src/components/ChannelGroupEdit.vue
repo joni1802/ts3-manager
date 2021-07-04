@@ -16,13 +16,11 @@
               v-model="selectedChannel"
               :disabled="$store.state.query.loading"
             ></v-autocomplete>
-            <autocomplete-select-chips
-              :disabled="disabled || $store.state.query.loading"
+            <group-client-list
               v-model="selectedClients"
-              :items="clientSelection"
-              :maxVisibleChips="maxVisibleClients"
-              label="Members"
-            ></autocomplete-select-chips>
+              :clientDbList="clients"
+              :disabled="disabled || $store.state.query.loading"
+            ></group-client-list>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -39,8 +37,7 @@
 <script>
 export default {
   components: {
-    AutocompleteSelectChips: () =>
-      import("@/components/AutocompleteSelectChips"),
+    GroupClientList: () => import("@/components/GroupClientList"),
   },
   data() {
     return {
@@ -123,12 +120,12 @@ export default {
       }
     },
     async changeMembers(list, cgid) {
-      for (let clientDbId of list) {
+      for (let client of list) {
         try {
           await this.$TeamSpeak.execute("setclientchannelgroup", {
             cgid: cgid,
             cid: this.selectedChannel,
-            cldbid: clientDbId,
+            cldbid: client.cldbid,
           });
         } catch (err) {
           this.$toast.error(err.message);
@@ -137,23 +134,22 @@ export default {
     },
     // Remove means: put client in the default channel group of the virtual server
     async removeMembers() {
-      let clientRemoveList = this.currentClients.filter(
-        (cldbid) => !this.selectedClients.includes(cldbid)
-      );
+      let clientRemoveList = this.currentClients.filter((currentClient) => {
+        return !this.selectedClients.find(
+          (client) => client.cldbid === currentClient.cldbid
+        );
+      });
 
       await this.changeMembers(clientRemoveList, this.defaultChannelGroupId);
     },
     async addMembers() {
-      let clientAddList = this.selectedClients.filter(
-        (cldbid) => !this.currentClients.includes(cldbid)
-      );
+      let clientAddList = this.selectedClients.filter((client) => {
+        return !this.currentClients.find(
+          (currentClient) => currentClient.cldbid === client.cldbid
+        );
+      });
 
       await this.changeMembers(clientAddList, this.channelGroupId);
-    },
-    async getMemberDbIds() {
-      let channelGroupClients = await this.getChannelGroupClientList();
-
-      return channelGroupClients.map((client) => client.cldbid);
     },
     async save(e) {
       try {
@@ -178,7 +174,7 @@ export default {
           try {
             // It is possible to just rename the group without selecting a specific channel
             if (this.selectedChannel) {
-              this.selectedClients = await this.getMemberDbIds();
+              this.selectedClients = await this.getChannelGroupClientList();
               this.currentClients = [...this.selectedClients];
             }
           } catch (err) {
@@ -202,7 +198,7 @@ export default {
     async selectedChannel() {
       this.disabled = false;
 
-      this.selectedClients = await this.getMemberDbIds();
+      this.selectedClients = await this.getChannelGroupClientList();
       this.currentClients = [...this.selectedClients];
     },
   },

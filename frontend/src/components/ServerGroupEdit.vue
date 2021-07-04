@@ -84,13 +84,9 @@ export default {
         .then((list) => list.find((group) => group.sgid == this.serverGroupId));
     },
     getServerGroupClientList() {
-      return this.$TeamSpeak.execute(
-        "servergroupclientlist",
-        {
-          sgid: this.serverGroupId,
-        },
-        ["-names"]
-      );
+      return this.$TeamSpeak.execute("servergroupclientlist", {
+        sgid: this.serverGroupId,
+      });
     },
     getClientDbList() {
       return this.$TeamSpeak.fullClientDBList();

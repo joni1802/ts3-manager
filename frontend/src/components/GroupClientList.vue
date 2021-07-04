@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined>
+  <v-card outlined :disabled="disabled">
     <v-card-subtitle>Members</v-card-subtitle>
 
     <v-card-text>
@@ -50,7 +50,7 @@
                 <v-list-item
                   v-for="client in availableClients"
                   :key="client.cldbid"
-                  :value="client"
+                  :value="client.cldbid"
                 >
                   <template #default="{ active }">
                     <v-list-item-action>
@@ -98,8 +98,13 @@
 <script>
 export default {
   props: {
-    value: Array, // server or channel group client list
+    /**
+     * Ids of the clients which are member of the server or channel group.
+     * @type {{cldbid: Number}[]}
+     */
+    value: Array,
     clientDbList: Array,
+    disabled: Boolean,
   },
   data() {
     return {
@@ -112,12 +117,12 @@ export default {
   },
   computed: {
     availableClients() {
-      return this.clientDbList.filter((dbClient) => {
-        let regex = new RegExp(
-          this.escapeRegex(this.availableClientsFilter),
-          "i"
-        );
+      let regex = new RegExp(
+        this.escapeRegex(this.availableClientsFilter),
+        "i"
+      );
 
+      return this.clientDbList.filter((dbClient) => {
         return (
           !this.value.find((client) => client.cldbid === dbClient.cldbid) &&
           regex.test(dbClient.client_nickname)
@@ -125,20 +130,20 @@ export default {
       });
     },
     clientGroupList() {
-      return this.value.filter((client) => {
-        let regex = new RegExp(
-          this.escapeRegex(this.clientGroupListFilter),
-          "i"
-        );
+      let regex = new RegExp(this.escapeRegex(this.clientGroupListFilter), "i");
 
-        return regex.test(client.client_nickname);
+      return this.clientDbList.filter((dbClient) => {
+        return (
+          this.value.find(({ cldbid }) => cldbid === dbClient.cldbid) &&
+          regex.test(dbClient.client_nickname)
+        );
       });
     },
   },
   methods: {
     removeClients() {
       let clients = this.value.filter(
-        (client) => !this.removeSelection.includes(client.cldbid)
+        ({ cldbid }) => !this.removeSelection.includes(cldbid)
       );
 
       this.$emit("input", clients);
@@ -146,7 +151,7 @@ export default {
     addClients() {
       let clients = this.value;
 
-      clients.push(...this.addSelection);
+      clients.push(...this.addSelection.map((cldbid) => ({ cldbid })));
 
       this.$emit("input", clients);
 
