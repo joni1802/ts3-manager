@@ -12,7 +12,10 @@
             ></v-text-field>
             <v-textarea label="Description" v-model="description"></v-textarea>
             <v-autocomplete
-              :items="availableGroups"
+              :items="availableServerGroups"
+              item-text="name"
+              item-value="sgid"
+              :item-disabled="checkDefaultGroup"
               chips
               label="Servergroups"
               multiple
@@ -40,23 +43,32 @@ export default {
       selectedGroups: [],
       description: "",
       redirection: "",
+      defaultServerGroupId: undefined,
     };
   },
   computed: {
-    standardGroups() {
-      return this.servergroups.filter((group) => group.type === 1);
-    },
-    availableGroups() {
-      return this.standardGroups.map((group) => {
-        return {
-          text: group.name,
-          value: group.sgid,
-          disabled: group.sgid === 8 ? true : false, // Disable the Guest Group to prevent errors
-        };
-      });
+    // Only show server groups based on the client type
+    availableServerGroups() {
+      // normale client
+      if (this.client.client_type === 0) {
+        return this.servergroups.filter(({ type }) => type === 1);
+      }
+
+      // ServerQuery client
+      if (this.client.client_type === 1) {
+        return this.servergroups.filter(({ type }) => type === 2);
+      }
     },
   },
   methods: {
+    checkDefaultGroup({ sgid }) {
+      return sgid === this.defaultServerGroupId;
+    },
+    getDefaultServerGroupId() {
+      return this.$TeamSpeak
+        .execute("serverinfo")
+        .then((info) => info[0].virtualserver_default_server_group);
+    },
     getClientInfo() {
       return this.$TeamSpeak
         .execute("clientinfo", { clid: this.clientId })
@@ -65,21 +77,18 @@ export default {
     getServergroupList() {
       return this.$TeamSpeak.execute("servergrouplist");
     },
-    save() {
+    async save() {
       try {
-        this.changeDescription();
-        this.addServergroups();
-        this.removeServergroups();
+        await this.changeDescription();
+        await this.addServergroups();
+        await this.removeServergroups();
 
         this.$toast.success("Client updated");
       } catch (err) {
         this.$toast.error(err.message);
       }
 
-      // This timeout is needed because the teamspeak server is to slow and will give you wrong result back
-      setTimeout(() => {
-        this.init();
-      }, 1000);
+      this.init();
     },
     getClientServergroups() {
       return this.client.client_servergroups;
@@ -133,6 +142,8 @@ export default {
         this.client = await this.getClientInfo();
 
         this.servergroups = await this.getServergroupList();
+        this.defaultServerGroupId = await this.getDefaultServerGroupId();
+
         this.selectedGroups = this.getClientServergroups();
         this.description = this.getClientDescription();
       } catch (err) {
