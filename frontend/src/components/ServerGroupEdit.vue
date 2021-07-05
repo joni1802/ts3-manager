@@ -13,7 +13,11 @@
             <group-client-list
               v-model="serverGroupClients"
               :clientDbList="clients"
-              :disabled="$store.state.query.loading"
+              :disabled="
+                $store.state.query.loading ||
+                serverGroup.type === 0 ||
+                serverGroup.type === 2
+              "
             ></group-client-list>
           </v-card-text>
           <v-card-actions>

@@ -50,7 +50,7 @@
                   >
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon ripple disabled>
+                  <v-btn icon ripple @click="editGroup(templateGroup)">
                     <v-icon>edit</v-icon>
                   </v-btn>
                 </v-list-item-action>
