@@ -12,15 +12,27 @@
             ></v-text-field>
             <v-textarea label="Description" v-model="description"></v-textarea>
             <v-autocomplete
-              :items="regularServerGroups"
+              :items="availableServerGroups"
               item-text="name"
               item-value="sgid"
-              :item-disabled="checkDefaultGroup"
+              :item-disabled="notSelectableGroup"
               chips
               label="Servergroups"
               multiple
               v-model="selectedGroups"
-            ></v-autocomplete>
+            >
+              <template #item="{ item, attrs }">
+                <v-list-item-action>
+                  <v-checkbox v-model="attrs.inputValue"></v-checkbox>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    getServerGroupTypeName(item.type)
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </template>
+            </v-autocomplete>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -47,18 +59,36 @@ export default {
     };
   },
   computed: {
-    /**
-     * You can only add clients to regular server groups.
-     * @see {@link https://forum.teamspeak.com/threads/125241-Regular-Group-Type-VS-Server-Query-Group-Type-What-Is-It-Used-For?p=431057#post431057}
-     * @see {@link https://community.teamspeak.com/t/how-can-i-add-a-group-template/9390/2}
-     */
-    regularServerGroups() {
-      return this.servergroups.filter(({ type }) => type === 1);
+    // Clients can only be member of a regular or a ServerQuery group.
+    // Order the groups by the type. Regular groups are listed first.
+    availableServerGroups() {
+      return this.servergroups
+        .filter(({ type }) => type === 1 || type === 2)
+        .sort((a, b) => a.type - b.type);
     },
   },
   methods: {
-    checkDefaultGroup({ sgid }) {
-      return sgid === this.defaultServerGroupId;
+    getServerGroupTypeName(num) {
+      switch (num) {
+        case 1:
+          return "Regular Group";
+        case 2:
+          return "ServerQuery Group";
+      }
+    },
+    /**
+     * You can only add clients to regular server groups. Except the default guest group.
+     * @see {@link https://forum.teamspeak.com/threads/125241-Regular-Group-Type-VS-Server-Query-Group-Type-What-Is-It-Used-For?p=431057#post431057}
+     * @see {@link https://community.teamspeak.com/t/how-can-i-add-a-group-template/9390/2}
+     */
+    notSelectableGroup({ sgid, type }) {
+      if (sgid === this.defaultServerGroupId) {
+        return true;
+      } else if (type === 2) {
+        return true;
+      } else {
+        return false;
+      }
     },
     getDefaultServerGroupId() {
       return this.$TeamSpeak
