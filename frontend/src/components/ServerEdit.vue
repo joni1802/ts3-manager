@@ -44,7 +44,7 @@
               <v-expansion-panel>
                 <v-expansion-panel-header> Host </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card>
+                  <v-card outlined>
                     <v-card-subtitle>Host Message</v-card-subtitle>
                     <v-card-text>
                       <v-text-field
@@ -59,7 +59,7 @@
                       ></v-select>
                     </v-card-text>
                   </v-card>
-                  <v-card class="mt-2">
+                  <v-card class="mt-2" outlined>
                     <v-card-subtitle>Host Banner</v-card-subtitle>
                     <v-card-text>
                       <v-text-field
@@ -93,7 +93,7 @@
                       </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-card class="my-2">
+                  <v-card class="my-2" outlined>
                     <v-card-subtitle>Host Button</v-card-subtitle>
                     <v-card-text>
                       <v-text-field
@@ -118,7 +118,7 @@
               <v-expansion-panel>
                 <v-expansion-panel-header> Transfers </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card class="">
+                  <v-card outlined>
                     <v-card-subtitle>Upload</v-card-subtitle>
                     <v-card-text>
                       <v-text-field
@@ -145,7 +145,7 @@
                       </v-text-field>
                     </v-card-text>
                   </v-card>
-                  <v-card class="my-2">
+                  <v-card class="my-2" outlined>
                     <v-card-subtitle>Download</v-card-subtitle>
                     <v-card-text>
                       <v-text-field
@@ -179,7 +179,7 @@
                   Anti-Flood
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card class="mb-2">
+                  <v-card class="mb-2" outlined>
                     <v-card-text>
                       <v-text-field
                         label="Reduced point per tick"
@@ -212,7 +212,7 @@
               <v-expansion-panel>
                 <v-expansion-panel-header> Security </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card class="mb-2">
+                  <v-card class="mb-2" outlined>
                     <v-card-text>
                       <v-text-field
                         label="Needed Security Level"
@@ -234,7 +234,7 @@
               <v-expansion-panel>
                 <v-expansion-panel-header> Misc </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card class="">
+                  <v-card outlined>
                     <v-card-subtitle>Default Groups</v-card-subtitle>
                     <v-card-text>
                       <v-autocomplete
@@ -286,7 +286,7 @@
                       </v-autocomplete>
                     </v-card-text>
                   </v-card>
-                  <v-card class="mt-2">
+                  <v-card class="mt-2" outlined>
                     <v-card-subtitle>Complain</v-card-subtitle>
                     <v-card-text>
                       <v-layout justify-space-between wrap>
@@ -331,7 +331,7 @@
                       </v-layout>
                     </v-card-text>
                   </v-card>
-                  <v-card class="my-2">
+                  <v-card class="my-2" outlined>
                     <v-card-text>
                       <v-text-field
                         label="Min clients in channel before silence"
@@ -373,7 +373,7 @@
               <v-expansion-panel>
                 <v-expansion-panel-header> Logs </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card class="mb-2">
+                  <v-card class="mb-2" outlined>
                     <v-card-subtitle>Enable Logging For</v-card-subtitle>
                     <v-card-text>
                       <v-checkbox
