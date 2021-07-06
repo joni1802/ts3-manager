@@ -12,7 +12,7 @@
             ></v-text-field>
             <v-textarea label="Description" v-model="description"></v-textarea>
             <v-autocomplete
-              :items="availableServerGroups"
+              :items="regularServerGroups"
               item-text="name"
               item-value="sgid"
               :item-disabled="checkDefaultGroup"
@@ -47,17 +47,13 @@ export default {
     };
   },
   computed: {
-    // Only show server groups based on the client type
-    availableServerGroups() {
-      // normale client
-      if (this.client.client_type === 0) {
-        return this.servergroups.filter(({ type }) => type === 1);
-      }
-
-      // ServerQuery client
-      if (this.client.client_type === 1) {
-        return this.servergroups.filter(({ type }) => type === 2);
-      }
+    /**
+     * You can only add clients to regular server groups.
+     * @see {@link https://forum.teamspeak.com/threads/125241-Regular-Group-Type-VS-Server-Query-Group-Type-What-Is-It-Used-For?p=431057#post431057}
+     * @see {@link https://community.teamspeak.com/t/how-can-i-add-a-group-template/9390/2}
+     */
+    regularServerGroups() {
+      return this.servergroups.filter(({ type }) => type === 1);
     },
   },
   methods: {
