@@ -62,11 +62,13 @@ export default {
         await this.$TeamSpeak.execute("servergroupcopy", {
           ssgid: sourceGroup.sgid,
           tsgid: overwriteGroup ? targetGroup.sgid : 0,
-          // Even though the parameter "name" is ignored, you have to send a value.
+          // Even though the parameter "name" is ignored, when a target group is selected, it needs a value.
           // Otherwise the ServerQuery will throw an error.
-          name: overwriteGroup ? "bla" : targetGroupName,
+          name: targetGroupName,
           type: groupType,
         });
+
+        this.serverGroups = await this.getServerGroupList();
       } catch (err) {
         this.$toast.error(err.message);
       }

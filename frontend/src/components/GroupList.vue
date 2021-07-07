@@ -185,6 +185,7 @@
               label="Copy Group"
               :items="groups"
               v-model="selectedGroup"
+              :item-disabled="disabledSourceGroup"
               return-object
               item-text="name"
             >
@@ -232,7 +233,7 @@
             <v-select
               label="Target Group Type"
               :items="groupTypes"
-              v-model="selectedGroupType"
+              v-model="selectedTargetGroupType"
               :disabled="overwriteGroup"
             ></v-select>
           </v-card-text>
@@ -270,6 +271,7 @@ export default {
       ],
       overwriteGroup: false,
       selectedTargetGroup: {},
+      selectedTargetGroupType: 1,
       targetGroupName: "",
     };
   },
@@ -283,14 +285,6 @@ export default {
     serverQueryGroups() {
       return this.groups.filter((group) => group.type === 2);
     },
-    // targetGroupName: {
-    //   get() {
-    //     return this.selectedTargetGroup.name;
-    //   },
-    //   set(name) {
-    //     this.selectedTargetGroup.name = name;
-    //   },
-    // },
   },
   methods: {
     openCopyDialog(group) {
@@ -305,9 +299,15 @@ export default {
         this.selectedTargetGroup,
         this.targetGroupName,
         this.overwriteGroup,
-        this.selectedGroupType
+        this.selectedTargetGroupType
       );
       this.copyDialog = false;
+    },
+    disabledSourceGroup(group) {
+      return (
+        (group.sgid && group.sgid === this.selectedTargetGroup.sgid) ||
+        (group.cgid && group.cgid === this.selectedTargetGroup.cgid)
+      );
     },
     disabledTargetGroup(group) {
       return (
@@ -330,6 +330,18 @@ export default {
     },
     editGroup(group) {
       this.$emit("edit", group);
+    },
+  },
+  watch: {
+    selectedTargetGroup(group) {
+      this.targetGroupName = group.name;
+      this.selectedTargetGroupType = group.type;
+    },
+    overwriteGroup(overwrite) {
+      if (overwrite) {
+        this.targetGroupName = this.selectedTargetGroup.name;
+        this.selectedTargetGroupType = this.selectedTargetGroup.type;
+      }
     },
   },
 };
