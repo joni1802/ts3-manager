@@ -4,6 +4,7 @@
     @add="addServerGroup"
     @remove="removeServerGroup"
     @edit="editServerGroup"
+    @copy="copyServerGroup"
   ></group-list>
 </template>
 
@@ -49,6 +50,26 @@ export default {
         name: "servergroup-edit",
         params: { sgid: group.sgid },
       });
+    },
+    async copyServerGroup(
+      sourceGroup,
+      targetGroup,
+      targetGroupName,
+      overwriteGroup,
+      groupType
+    ) {
+      try {
+        await this.$TeamSpeak.execute("servergroupcopy", {
+          ssgid: sourceGroup.sgid,
+          tsgid: overwriteGroup ? targetGroup.sgid : 0,
+          // Even though the parameter "name" is ignored, you have to send a value.
+          // Otherwise the ServerQuery will throw an error.
+          name: overwriteGroup ? "bla" : targetGroupName,
+          type: groupType,
+        });
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
     },
   },
   async created() {

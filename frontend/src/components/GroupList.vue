@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-layout>
-      <v-flex md6 sm8 xs12 offset-md3 offset-sm2>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="8" lg="6" xl="4">
         <v-card>
           <v-list>
             <template v-if="regularGroups.length">
@@ -19,14 +19,24 @@
                   >
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon ripple @click="editGroup(regularGroup)">
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-btn icon ripple @click="confirmDeletion(regularGroup)">
-                    <v-icon>delete</v-icon>
-                  </v-btn>
+                  <v-menu>
+                    <template #activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="editGroup(regularGroup)">
+                        <v-list-item-title> Edit Group </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openCopyDialog(regularGroup)">
+                        <v-list-item-title> Copy Group </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="confirmDeletion(regularGroup)">
+                        <v-list-item-title> Delete Group </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </v-list-item-action>
               </v-list-item>
 
@@ -50,14 +60,24 @@
                   >
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon ripple @click="editGroup(templateGroup)">
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-btn icon ripple @click="confirmDeletion(templateGroup)">
-                    <v-icon>delete</v-icon>
-                  </v-btn>
+                  <v-menu>
+                    <template #activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="editGroup(templateGroup)">
+                        <v-list-item-title> Edit Group </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openCopyDialog(templateGroup)">
+                        <v-list-item-title> Copy Group </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="confirmDeletion(templateGroup)">
+                        <v-list-item-title> Delete Group </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </v-list-item-action>
               </v-list-item>
             </template>
@@ -81,20 +101,30 @@
                   >
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-btn icon ripple @click="editGroup(serverQueryGroup)">
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-                <v-list-item-action>
-                  <v-btn icon ripple @click="confirmDeletion(serverQueryGroup)">
-                    <v-icon>delete</v-icon>
-                  </v-btn>
+                  <v-menu>
+                    <template #activator="{ on, attrs }">
+                      <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item @click="editGroup(serverQueryGroup)">
+                        <v-list-item-title> Edit Group </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="openCopyDialog(serverQueryGroup)">
+                        <v-list-item-title> Copy Group </v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="confirmDeletion(serverQueryGroup)">
+                        <v-list-item-title> Delete Group </v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </v-list-item-action>
               </v-list-item>
             </template>
           </v-list>
         </v-card>
-      </v-flex>
+      </v-col>
       <v-btn
         fab
         color="primary"
@@ -147,7 +177,75 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-layout>
+      <v-dialog v-model="copyDialog" max-width="500px">
+        <v-card>
+          <v-card-title>Copy Group</v-card-title>
+          <v-card-text>
+            <v-select
+              label="Copy Group"
+              :items="groups"
+              v-model="selectedGroup"
+              return-object
+              item-text="name"
+            >
+              <template #item="{ item }">
+                <v-list-item-content>
+                  <v-list-item-title>{{ item.name }}</v-list-item-title>
+                  <v-list-item-subtitle
+                    >({{ item.sgid || item.cgid }})</v-list-item-subtitle
+                  >
+                </v-list-item-content>
+              </template>
+            </v-select>
+            <v-row class="px-3">
+              <v-checkbox
+                label="Overwrite"
+                hide-details
+                class="mr-3 shrink"
+                v-model="overwriteGroup"
+              ></v-checkbox>
+              <v-select
+                label="Target Group"
+                :disabled="!overwriteGroup"
+                :items="regularGroups"
+                item-text="name"
+                :item-disabled="disabledTargetGroup"
+                return-object
+                v-model="selectedTargetGroup"
+              >
+                <template #item="{ item }">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.name }}</v-list-item-title>
+                    <v-list-item-subtitle
+                      >({{ item.sgid || item.cgid }})</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
+                </template>
+              </v-select>
+            </v-row>
+            <v-text-field
+              label="Target Group Name"
+              :disabled="overwriteGroup"
+              v-model="targetGroupName"
+              autofocus
+            ></v-text-field>
+            <v-select
+              label="Target Group Type"
+              :items="groupTypes"
+              v-model="selectedGroupType"
+              :disabled="overwriteGroup"
+            ></v-select>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="copyGroup">OK</v-btn>
+            <v-btn text color="primary" @click="copyDialog = false"
+              >Cancel</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </v-container>
 </template>
 
@@ -160,6 +258,7 @@ export default {
     return {
       removeDialog: false,
       addDialog: false,
+      copyDialog: false,
       groupName: "",
       selectedGroup: {},
       forceDeletion: false, // Delete group even if there are clients
@@ -169,6 +268,9 @@ export default {
         { text: "Template Group", value: 0 },
         { text: "ServerQuery Group", value: 2 },
       ],
+      overwriteGroup: false,
+      selectedTargetGroup: {},
+      targetGroupName: "",
     };
   },
   computed: {
@@ -181,8 +283,38 @@ export default {
     serverQueryGroups() {
       return this.groups.filter((group) => group.type === 2);
     },
+    // targetGroupName: {
+    //   get() {
+    //     return this.selectedTargetGroup.name;
+    //   },
+    //   set(name) {
+    //     this.selectedTargetGroup.name = name;
+    //   },
+    // },
   },
   methods: {
+    openCopyDialog(group) {
+      this.selectedGroup = group;
+      this.copyDialog = true;
+      this.overwriteGroup = false;
+    },
+    copyGroup() {
+      this.$emit(
+        "copy",
+        this.selectedGroup,
+        this.selectedTargetGroup,
+        this.targetGroupName,
+        this.overwriteGroup,
+        this.selectedGroupType
+      );
+      this.copyDialog = false;
+    },
+    disabledTargetGroup(group) {
+      return (
+        (group.sgid && group.sgid === this.selectedGroup.sgid) ||
+        (group.cgid && group.cgid === this.selectedGroup.cgid)
+      );
+    },
     confirmDeletion(group) {
       this.selectedGroup = group;
       this.removeDialog = true;
