@@ -4,6 +4,7 @@
     @add="addChannelGroup"
     @remove="removeChannelGroup"
     @edit="editChannelGroup"
+    @copy="copyChannelGroup"
   ></group-list>
 </template>
 
@@ -55,6 +56,32 @@ export default {
         name: "channelgroup-edit",
         params: { cgid: group.cgid },
       });
+    },
+    async copyChannelGroup(
+      sourceGroup,
+      targetGroup,
+      targetGroupName,
+      overwriteGroup,
+      groupType
+    ) {
+      try {
+        await this.$TeamSpeak.execute("channelgroupcopy", {
+          scgid: sourceGroup.cgid,
+          tcgid: overwriteGroup ? targetGroup.cgid : 0,
+          // Even though the parameter "name" is ignored, when a target group is selected, it needs a value.
+          // Otherwise the ServerQuery will throw an error.
+          name: targetGroupName,
+          type: groupType,
+        });
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
+
+      try {
+        this.channelGroups = await this.getChannelGroupList();
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
     },
   },
   async created() {
