@@ -67,7 +67,11 @@ export default {
           name: targetGroupName,
           type: groupType,
         });
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
 
+      try {
         this.serverGroups = await this.getServerGroupList();
       } catch (err) {
         this.$toast.error(err.message);
