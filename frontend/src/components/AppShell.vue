@@ -132,7 +132,7 @@ export default {
           route: { name: "bans" },
         },
         {
-          title: "Console",
+          title: "Server Query",
           icon: "mdi-console",
           route: { name: "console" },
         },
