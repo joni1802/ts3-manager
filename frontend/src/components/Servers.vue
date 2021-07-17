@@ -115,8 +115,6 @@
 </template>
 
 <script>
-import { secondsToDHMS } from "@/utils";
-
 export default {
   beforeRouteEnter(to, from, next) {
     next(async (vm) => {
@@ -207,6 +205,14 @@ export default {
     },
   },
   methods: {
+    secondsToDHMS(seconds) {
+      return {
+        days: (seconds / 86400) >> 0,
+        hours: ((seconds % 86400) / 3600) >> 0,
+        minutes: ((seconds % 3600) / 60) >> 0,
+        seconds: seconds % 60 >> 0,
+      };
+    },
     async changeServerStatus(server) {
       if (this.isOffline(server.virtualserver_status)) {
         await this.startServer(server.virtualserver_id);
@@ -281,7 +287,7 @@ export default {
       return status === "offline" ? true : false;
     },
     calcUptime(seconds) {
-      let time = secondsToDHMS(seconds);
+      let time = this.secondsToDHMS(seconds);
 
       return `${time.days}:${time.hours < 10 ? "0" + time.hours : time.hours}:${
         time.minutes < 10 ? "0" + time.minutes : time.minutes
