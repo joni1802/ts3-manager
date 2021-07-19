@@ -3,6 +3,9 @@ import Vue from "vue";
 import store from "./store";
 import router from "./router";
 
+let connectErrorToast = {};
+let connectErrorShown = false;
+
 // Socket connection to the backend
 const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
   withCredentials: true,
@@ -16,10 +19,28 @@ const handleLogout = () => {
   router.push({ name: "login" });
 };
 
-socket.on("error", (err) => {
-  Vue.prototype.$toast.error(err.message);
+let stuff = {};
+
+socket.on("connect_error", (err) => {
+  if (!connectErrorShown) {
+    connectErrorToast = Vue.prototype.$toast.error(err.message, {
+      duration: 0,
+    });
+
+    connectErrorShown = true;
+  }
 
   handleLogout();
+});
+
+socket.on("connect", () => {
+  if (connectErrorShown) {
+    connectErrorToast.dismiss();
+
+    Vue.prototype.$toast.success("Reconnected");
+
+    connectErrorShown = false;
+  }
 });
 
 socket.on("disconnect", handleLogout);
