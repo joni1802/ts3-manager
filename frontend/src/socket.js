@@ -19,8 +19,6 @@ const handleLogout = () => {
   router.push({ name: "login" });
 };
 
-let stuff = {};
-
 socket.on("connect_error", (err) => {
   if (!connectErrorShown) {
     connectErrorToast = Vue.prototype.$toast.error(err.message, {
