@@ -107,7 +107,7 @@ export default {
           route: { name: "snapshot" },
         },
         {
-          title: "Token",
+          title: "Privilege Keys",
           icon: "mdi-key",
           route: { name: "tokens" },
         },
