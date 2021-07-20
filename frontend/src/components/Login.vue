@@ -154,7 +154,7 @@ export default {
       this.loading = true;
 
       try {
-        let { token, sid } = await this.connectTeamSpeak({
+        let { token } = await this.connectTeamSpeak({
           host: this.form.host,
           queryport: this.form.queryport,
           protocol: this.form.ssh ? "ssh" : "raw",
@@ -165,8 +165,6 @@ export default {
         this.$store.dispatch("saveToken", token);
         this.$store.commit("isConnected", true);
         this.$store.commit("isLoggedOut", false);
-
-        if (sid) this.$store.dispatch("saveServerId", sid);
 
         this.$router.push({ name: "servers" });
       } catch (err) {

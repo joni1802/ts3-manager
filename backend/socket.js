@@ -173,21 +173,7 @@ socket.init = (server, corsOptions) => {
 
         registerEvents(ServerQuery, log, socket);
 
-        let serverList = await ServerQuery.execute("serverlist");
-
-        let onlineServer = serverList.find(
-          (server) => server.virtualserver_status === "online"
-        );
-
-        if (onlineServer) {
-          await ServerQuery.execute("use", {
-            sid: onlineServer.virtualserver_id,
-          });
-
-          fn({ token, sid: onlineServer.virtualserver_id });
-        } else {
-          fn({ token });
-        }
+        fn({ token });
       } catch (err) {
         handleServerQueryError(err, fn);
       }
