@@ -10,7 +10,7 @@
               'd-md-flex': true,
             }"
           >
-            <v-list subheader class="my-2">
+            <v-list subheader class="my-2" width="100%">
               <v-subheader>Channels</v-subheader>
               <v-list-item-group :value="selectedChannelItem">
                 <channel
@@ -36,6 +36,7 @@
               >
               </client>
             </v-list>
+            <v-divider vertical></v-divider>
           </div>
 
           <div
