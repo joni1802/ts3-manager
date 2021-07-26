@@ -5,6 +5,7 @@
     :value="value"
     @input="$emit('input', $event)"
     readonly
+    outlined
   >
     <template #append v-if="value">
       <v-tooltip bottom>
