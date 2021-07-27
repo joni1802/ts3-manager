@@ -112,6 +112,11 @@ export default {
           route: { name: "tokens" },
         },
         {
+          title: "API Keys",
+          icon: "mdi-shield-key",
+          route: { name: "apikeys" },
+        },
+        {
           title: "Chat",
           icon: "mail_outline",
           route: { name: "chat" },

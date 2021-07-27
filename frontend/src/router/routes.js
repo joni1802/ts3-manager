@@ -40,6 +40,22 @@ export default [
     },
   },
   {
+    path: "/apikeys",
+    component: () => import("@/components/ApiKeys"),
+    name: "apikeys",
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/apikey/add",
+    component: () => import("@/components/ApiKeyAdd"),
+    name: "apikey-add",
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/console",
     component: () => import("@/components/Console"),
     name: "console",
