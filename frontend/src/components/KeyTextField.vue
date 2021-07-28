@@ -1,7 +1,7 @@
 <template>
   <v-text-field
     class="mt-5"
-    label="Generated Privilege Key"
+    :label="label"
     :value="value"
     @input="$emit('input', $event)"
     readonly
@@ -12,7 +12,7 @@
         <template #activator="{ on }">
           <v-icon v-on="on" @click="copyToClipboard">mdi-content-copy</v-icon>
         </template>
-        <span>Copy Token To Clipboard</span>
+        <span>Copy To Clipboard</span>
       </v-tooltip>
     </template>
   </v-text-field>
@@ -20,12 +20,15 @@
 
 <script>
 export default {
-  props: ["value"],
+  props: {
+    value: String,
+    label: String,
+  },
   methods: {
     copyToClipboard() {
       this.$clipboard(this.value);
 
-      this.$toast.info("Token Copied To Clipboard");
+      this.$toast.info("Copied To Clipboard");
     },
   },
 };

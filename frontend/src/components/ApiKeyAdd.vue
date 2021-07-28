@@ -36,7 +36,10 @@
                 </v-list-item-content>
               </template>
             </v-autocomplete>
-            <token-display v-model="apiKey"></token-display>
+            <key-text-field
+              v-model="apiKey"
+              label="Generated API Key"
+            ></key-text-field>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -59,7 +62,7 @@
 <script>
 export default {
   components: {
-    TokenDisplay: () => import("@/components/TokenDisplay"),
+    KeyTextField: () => import("@/components/KeyTextField"),
   },
   data() {
     return {

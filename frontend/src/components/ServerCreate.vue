@@ -34,7 +34,10 @@
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
-                  <token-display v-model="token"></token-display>
+                  <key-text-field
+                    v-model="token"
+                    label="Generated Server Token"
+                  ></key-text-field>
                 </v-flex>
               </v-layout>
             </v-form>
@@ -55,7 +58,7 @@
 <script>
 export default {
   components: {
-    TokenDisplay: () => import("@/components/TokenDisplay"),
+    KeyTextField: () => import("@/components/KeyTextField"),
   },
   data() {
     return {

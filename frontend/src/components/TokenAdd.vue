@@ -34,7 +34,10 @@
               label="Description"
               v-model="tokenDescription"
             ></v-textarea>
-            <token-display v-model="token"></token-display>
+            <key-text-field
+              v-model="token"
+              label="Generated Privilege Key"
+            ></key-text-field>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -56,7 +59,7 @@
 <script>
 export default {
   components: {
-    TokenDisplay: () => import("@/components/TokenDisplay"),
+    KeyTextField: () => import("@/components/KeyTextField"),
   },
   data() {
     return {
