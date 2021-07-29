@@ -7,7 +7,7 @@
             <v-btn
               color="error"
               :disabled="!selectedKeys.length"
-              @click="removeApiKeys"
+              @click="deleteDialog = true"
             >
               <v-icon left>delete</v-icon>
               Remove
@@ -32,6 +32,19 @@
     <v-btn fab color="primary" fixed bottom right dark @click="addApiKey">
       <v-icon>add</v-icon>
     </v-btn>
+    <v-dialog v-model="deleteDialog" max-width="500px">
+      <v-card>
+        <v-card-title> Delete API Key </v-card-title>
+        <v-card-text>
+          Do you really want to delete the selected API key(s)?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text color="primary" @click="deleteDialog = false">No</v-btn>
+          <v-btn text color="primary" @click="removeApiKeys">Yes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -68,6 +81,7 @@ export default {
       apiKeys: [],
       dbClients: [],
       selectedKeys: [],
+      deleteDialog: false,
     };
   },
   computed: {
@@ -105,6 +119,8 @@ export default {
         for (let key of this.selectedKeys) {
           await this.$TeamSpeak.execute("apikeydel", { id: key.id });
         }
+
+        this.deleteDialog = false;
       } catch (err) {
         this.$toast.error(err.message);
       }
