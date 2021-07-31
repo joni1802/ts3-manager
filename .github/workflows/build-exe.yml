@@ -14,16 +14,13 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            build-script: build-win-exe
-            file: win-exe.exe
+            file: server.exe
             file-name: ts3-manager-win-x64-${{ github.event.release.tag_name }}.exe
           - os: ubuntu-latest
-            build-script: build-linux-exe
-            file: linux-exe
+            file: server
             file-name: ts3-manager-linux-x64-${{ github.event.release.tag_name }}
           - os: macos-latest
-            build-script: build-macos-exe
-            file: macos-exe
+            file: server
             file-name: ts3-manager-macos-x64-${{ github.event.release.tag_name }}
 
     steps:
@@ -33,20 +30,16 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 12.x
+          node-version: 16.x
       - run: |
-          cd ./frontend
           npm install
-          npm run build
-          cd ../backend
-          npm install
-          npm run ${{ matrix.build-script }} --if-present
+          npm run build --if-present
 
       - name: Upload binaries
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: backend/${{ matrix.file }}
+          file: packages/server/${{ matrix.file }}
           asset_name: ${{ matrix.file-name }}
           tag: ${{ github.ref }}
           overwrite: true
