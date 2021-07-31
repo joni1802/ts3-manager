@@ -30,14 +30,13 @@ yarn-error.log*
 *.bak
 
 # Compiled frontend (Vue.js)
-/frontend/dist
+dist
 
 # Password store for local testing
 .pw
 
 # Test files
 test.js
-/frontend/src/components/Test*
 
 # Executables created with zeit/pkg
 *.exe

@@ -20,13 +20,13 @@ app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
-app.use(express.static(path.join(__dirname, "../frontend/dist/")));
+app.use(express.static(path.join(__dirname, "../ui/dist/")));
 
 app.use("/api", routes.api);
 
 app.get("/*", (req, res) => {
   // path must be absolute or specify root to res.sendFile
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.sendFile(path.join(__dirname, "../ui/dist/index.html"));
 });
 
 const server = app.listen(config.port, () => {

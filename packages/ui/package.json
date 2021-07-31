@@ -1,5 +1,5 @@
 {
-  "name": "ts3-manager-frontend",
+  "name": "@ts3-manager/ui",
   "version": "v2.1.0",
   "private": true,
   "scripts": {
