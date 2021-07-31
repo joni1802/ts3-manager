@@ -110,5 +110,5 @@ export default {
 </script>
 
 <style lang="css">
-@import "../../../../node_modules/xterm/css/xterm.css";
+@import "~xterm/css/xterm.css";
 </style>
