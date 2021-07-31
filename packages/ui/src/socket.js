@@ -16,7 +16,9 @@ const socket = io(process.env.VUE_APP_WEBSOCKET_URI, {
 const handleLogout = () => {
   store.commit("isConnected", false);
 
-  router.push({ name: "login" });
+  if (router.currentRoute.name !== "login") {
+    router.push({ name: "login" });
+  }
 };
 
 socket.on("connect_error", (err) => {
@@ -26,9 +28,9 @@ socket.on("connect_error", (err) => {
     });
 
     connectErrorShown = true;
-  }
 
-  handleLogout();
+    handleLogout();
+  }
 });
 
 socket.on("connect", () => {
