@@ -1,18 +1,16 @@
 # package local-echo needs git for installation
 # alpine image of node does not have git installed
-FROM node:12 AS build
+FROM node:16 AS build
 
 # create the directory "app" inside the docker image and set it to the default directory
 WORKDIR /app
 
 # copy the files into the workdir (node_modules are excluded by ignore file)
-COPY ./frontend ./frontend
+COPY ./packages/ui .
 
-# only set frontend env here
-ENV FRONTEND_DIR ./frontend
+# download all the packages for the ui and build app for production with minification
+RUN npm install && npm run build 
 
-# download all the packages for the frontend and build app for production with minification
-RUN npm --prefix ${FRONTEND_DIR} install ${FRONTEND_DIR} && npm run build --prefix ${FRONTEND_DIR}
 
 FROM node:lts-alpine
 
@@ -21,23 +19,22 @@ FROM node:lts-alpine
 ENV PORT 8080
 
 # set directory for frontend and backend
-ENV BACKEND_DIR ./backend
-ENV FRONTEND_DIR ./frontend
+ENV SERVER_DIR ./packages/server
 
 ENV NODE_ENV=production
 
 WORKDIR /app
 
 # only copy the relevant dist and backend files
-COPY --from=build /app/frontend/dist /app/frontend/dist
-COPY ./backend ./backend
+COPY --from=build /app/dist ./packages/ui/dist
+COPY ./packages/server ./packages/server
 
 # download all the packages for the backend
-RUN npm --prefix ${BACKEND_DIR} install ${BACKEND_DIR}
+RUN npm --prefix ${SERVER_DIR} install ${SERVER_DIR}
 
 # the webserver port
 EXPOSE ${PORT}
 
 # starts the webserver (backend)
 # info: in the exec form it is not possible to access environment variables
-CMD ["npm", "start", "--prefix", "./backend"]
+CMD ["npm", "start", "--prefix", "./packages/server"]
