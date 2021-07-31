@@ -5,8 +5,12 @@
   ],
   "scripts": {
     "dev": "concurrently --kill-others --names \"FRONTEND,BACKEND\" -c \"bgGreen.black,bgMagenta.black\" \"npm run serve --workspace=@ts3-manager/ui\" \"npm run dev --workspace=@ts3-manager/server\"",
-    "build": "npm run ui:build && pkg ./packages/server/",
-    "ui:build": "npm run build --workspace=@ts3-manager/ui"
+    "build": "npm run build --workspace=@ts3-manager/ui --workspace=@ts3-manager/server",
+    "server:start": "npm run start --workspace=@ts3-manager/server",
+    "server:dev": "npm run dev --workspace=@ts3-manager/server",
+    "server:build": "npm run build --workspace=@ts3-manager/server",
+    "ui:build": "npm run build --workspace=@ts3-manager/ui",
+    "ui:serve": "npm run serve --workspace=@ts3-manager/ui"
   },
   "postcss": {
     "plugins": {
@@ -14,7 +18,6 @@
     }
   },
   "devDependencies": {
-    "concurrently": "^6.2.0",
-    "pkg": "^4.4.9"
+    "concurrently": "^6.2.0"
   }
 }

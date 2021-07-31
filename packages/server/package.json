@@ -8,9 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build-linux-exe": "pkg . -t node12-linux -o linux-exe",
-    "build-win-exe": "pkg . -t node12-win -o win-exe.exe",
-    "build-macos-exe": "pkg . -t node12-macos -o macos-exe"
+    "build": "pkg . --target node14"
   },
   "author": "J.F.",
   "license": "ISC",
@@ -29,7 +27,7 @@
   },
   "pkg": {
     "scripts": "utils/*.js",
-    "assets": "../frontend/dist/**/**/*"
+    "assets": "../ui/dist/**/**/*"
   },
   "bin": "app.js",
   "devDependencies": {
