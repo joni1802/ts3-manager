@@ -136,6 +136,7 @@ export default {
           value: "local",
         },
       ],
+      scrolledBottom: false,
     };
   },
   computed: {
@@ -253,10 +254,37 @@ export default {
 
       return `${year}.${month}.${day} ${hours}:${minutes}:${seconds}`;
     },
+    checkScrolledBottom() {
+      let documentHeight = document.body.offsetHeight;
+      let documentScrolled = window.innerHeight + window.pageYOffset;
+
+      return documentScrolled >= documentHeight - 100;
+    },
+    loadMoreLogsOnScroll() {
+      this.scrolledBottom = this.checkScrolledBottom();
+
+      console.log(this.scrolledBottom);
+
+      if (this.scrolledBottom) {
+        console.log("load more logs");
+        this.loadMoreLogs();
+
+        // to-do prevent double firing loadMoreLogs on fast loading
+        // maybe with recursion and {once: true}
+      }
+    },
+    addEventListener() {
+      document.addEventListener("scroll", this.loadMoreLogsOnScroll);
+    },
+    removeEventListener() {
+      document.removeEventListener("scroll", this.loadMoreLogsOnScroll);
+    },
   },
   async created() {
     try {
       this.logView = await this.getLogView();
+
+      this.addEventListener();
     } catch (err) {
       this.$toast.error(err.message);
     }
@@ -268,6 +296,11 @@ export default {
     logView(logView) {
       this.lastPosition = logView[logView.length - 1].last_pos;
     },
+  },
+  beforeRouteLeave(from, to, next) {
+    this.removeEventListener();
+
+    next();
   },
 };
 </script>
