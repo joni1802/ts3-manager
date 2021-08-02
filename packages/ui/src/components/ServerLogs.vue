@@ -67,16 +67,6 @@
               </template>
             </v-data-table>
           </v-card-text>
-          <v-card-actions>
-            <v-row justify="center">
-              <v-btn
-                color="primary"
-                @click="loadMoreLogs"
-                :disabled="!lastPosition"
-                >Load More</v-btn
-              >
-            </v-row>
-          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -199,7 +189,7 @@ export default {
 
         this.logView.push(...moreLogs);
       } catch (err) {
-        this.$toast.error(err.message);
+        throw err;
       }
     },
 
@@ -260,23 +250,25 @@ export default {
 
       return documentScrolled >= documentHeight - 100;
     },
-    loadMoreLogsOnScroll() {
-      this.scrolledBottom = this.checkScrolledBottom();
+    async loadMoreLogsOnScroll() {
+      try {
+        this.scrolledBottom = this.checkScrolledBottom();
 
-      console.log(this.scrolledBottom);
+        if (this.scrolledBottom && this.lastPosition > 0) {
+          await this.loadMoreLogs();
+        }
 
-      if (this.scrolledBottom) {
-        console.log("load more logs");
-        this.loadMoreLogs();
-
-        // to-do prevent double firing loadMoreLogs on fast loading
-        // maybe with recursion and {once: true}
+        this.addScrollEventListener();
+      } catch (err) {
+        this.$toast.error(err.message);
       }
     },
-    addEventListener() {
-      document.addEventListener("scroll", this.loadMoreLogsOnScroll);
+    addScrollEventListener() {
+      document.addEventListener("scroll", this.loadMoreLogsOnScroll, {
+        once: true,
+      });
     },
-    removeEventListener() {
+    removeScrollEventListener() {
       document.removeEventListener("scroll", this.loadMoreLogsOnScroll);
     },
   },
@@ -284,7 +276,7 @@ export default {
     try {
       this.logView = await this.getLogView();
 
-      this.addEventListener();
+      this.addScrollEventListener();
     } catch (err) {
       this.$toast.error(err.message);
     }
@@ -298,7 +290,7 @@ export default {
     },
   },
   beforeRouteLeave(from, to, next) {
-    this.removeEventListener();
+    this.removeScrollEventListener();
 
     next();
   },
