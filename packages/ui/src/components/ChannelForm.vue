@@ -70,7 +70,7 @@
                   More Options
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-card>
+                  <v-card outlined>
                     <v-card-text>
                       <v-layout wrap>
                         <v-flex xs12>
