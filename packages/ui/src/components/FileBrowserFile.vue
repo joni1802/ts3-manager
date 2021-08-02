@@ -6,7 +6,7 @@
           <v-list-item-content>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
             <v-list-item-subtitle>
-              {{ Math.round(item.size / 1024).toLocaleString() }} Kibibytes
+              {{ fileSize }}
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -76,6 +76,11 @@ export default {
       newFileName: "",
     };
   },
+  computed: {
+    fileSize() {
+      return this.formatBytes(this.item.size);
+    },
+  },
   methods: {
     getDownloadUrl(ftkey, port, size, name) {
       let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin;
@@ -109,6 +114,18 @@ export default {
       } catch (err) {
         this.$toast.error(err.message);
       }
+    },
+    // Shamelessly copied from stackoverflow
+    formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return "0 Bytes";
+
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
     },
   },
 };
