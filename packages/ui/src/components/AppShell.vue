@@ -97,14 +97,34 @@ export default {
           route: { name: "servers" },
         },
         {
+          title: "Server Viewer",
+          icon: "remove_red_eye",
+          route: { name: "serverviewer" },
+        },
+        {
+          title: "Chat",
+          icon: "mail_outline",
+          route: { name: "chat" },
+        },
+        {
           title: "File Browser",
           icon: "mdi-folder",
           route: { name: "files" },
         },
         {
+          title: "Server Log",
+          icon: "mdi-file-document-outline",
+          route: { name: "logs" },
+        },
+        {
           title: "Backup/Restore",
           icon: "settings_backup_restore",
           route: { name: "snapshot" },
+        },
+        {
+          title: "Server Query",
+          icon: "mdi-console",
+          route: { name: "console" },
         },
         {
           title: "Privilege Keys",
@@ -117,39 +137,20 @@ export default {
           route: { name: "apikeys" },
         },
         {
-          title: "Chat",
-          icon: "mail_outline",
-          route: { name: "chat" },
-        },
-        {
-          title: "Server Viewer",
-          icon: "remove_red_eye",
-          route: { name: "serverviewer" },
-        },
-        {
-          title: "List All Clients",
-          icon: "person",
-          route: { name: "clients" },
-        },
-        {
           title: "Ban List",
           icon: "not_interested",
           route: { name: "bans" },
-        },
-        {
-          title: "Server Query",
-          icon: "mdi-console",
-          route: { name: "console" },
         },
         {
           title: "Complaints List",
           icon: "warning",
           route: { name: "complaints" },
         },
+
         {
-          title: "Server Log",
-          icon: "mdi-file-document-outline",
-          route: { name: "logs" },
+          title: "List All Clients",
+          icon: "person",
+          route: { name: "clients" },
         },
         {
           title: "Server Groups",
