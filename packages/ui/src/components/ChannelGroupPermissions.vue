@@ -12,13 +12,24 @@
         >
           <template #selectMenu>
             <v-flex sm3 xs12>
-              <v-autocomplete
-                :items="channelGroupSelection"
-                v-model="selectedChannelGroup"
+              <v-select
+                :items="allGroups"
+                v-model="selectedGroupId"
                 @change="changeChannelGroup"
                 label="Channel Group"
                 :disabled="$store.state.query.loading"
-              ></v-autocomplete>
+                item-text="name"
+                item-value="cgid"
+              >
+                <template #item="{ item }">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.name }}</v-list-item-title>
+                    <v-list-item-subtitle>
+                      ({{ item.cgid }})
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </v-select>
             </v-flex>
           </template>
         </permission-table>
@@ -36,38 +47,36 @@ export default {
     return {
       permissions: [],
       channelGroups: [],
-      channelGroupId: this.$route.params.cgid,
+      selectedGroupId: parseInt(this.$route.params.cgid),
     };
   },
   computed: {
-    normalChannelGroups() {
+    allGroups() {
+      return [
+        { header: "Regular Groups" },
+        ...this.regularGroups,
+        { divider: true },
+        { header: "Template Groups" },
+        ...this.templateGroups,
+        { divider: true },
+        { header: "ServerQuery Groups" },
+        ...this.serverQueryGroups,
+      ];
+    },
+    regularGroups() {
       return this.channelGroups.filter((group) => group.type === 1);
     },
-    channelGroupSelection() {
-      return this.normalChannelGroups.map((group) => {
-        return {
-          text: group.name,
-          value: group.cgid,
-        };
-      });
+    templateGroups() {
+      return this.channelGroups.filter((group) => group.type === 0);
     },
-    selectedChannelGroup: {
-      get() {
-        let channelGroup = this.channelGroups.find(
-          (group) => group.cgid == this.channelGroupId
-        );
-
-        return channelGroup && channelGroup.cgid;
-      },
-      set() {
-        // Empty
-      },
+    serverQueryGroups() {
+      return this.channelGroups.filter((group) => group.type === 2);
     },
   },
   methods: {
     getChannelGroupPermList() {
       return this.$TeamSpeak.execute("channelgrouppermlist", {
-        cgid: this.channelGroupId,
+        cgid: this.selectedGroupId,
       });
     },
     getChannelGroupList() {
@@ -78,7 +87,7 @@ export default {
 
       try {
         await this.$TeamSpeak.execute("channelgroupaddperm", {
-          cgid: this.channelGroupId,
+          cgid: this.selectedGroupId,
           permid: permid,
           permvalue: permvalue,
         });
@@ -97,7 +106,7 @@ export default {
 
       try {
         await this.$TeamSpeak.execute("channelgroupdelperm", {
-          cgid: this.channelGroupId,
+          cgid: this.selectedGroupId,
           permid: permid,
         });
       } catch (err) {
@@ -122,11 +131,11 @@ export default {
       try {
         this.channelGroups = await this.getChannelGroupList();
 
-        if (!this.channelGroupId) {
+        if (!this.selectedGroupId) {
           this.$router.replace({
             name: "permissions-channelgroup",
             params: {
-              cgid: this.normalChannelGroups[0].cgid,
+              cgid: this.channelGroups[0].cgid,
             },
           });
         }
@@ -139,7 +148,7 @@ export default {
   },
   async beforeRouteUpdate(to, from, next) {
     try {
-      this.channelGroupId = to.params.cgid;
+      this.selectedGroupId = parseInt(to.params.cgid);
       this.permissions = await this.getChannelGroupPermList();
     } catch (err) {
       this.$toast.error(err.message);
