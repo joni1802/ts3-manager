@@ -185,6 +185,7 @@
               v-model="selectedGroup"
               :item-disabled="disabledSourceGroup"
               return-object
+              :item-value="allGroups[0].sgid ? 'sgid' : 'cgid'"
               item-text="name"
             >
               <template #item="{ item }">
@@ -210,6 +211,7 @@
                 item-text="name"
                 :item-disabled="disabledTargetGroup"
                 return-object
+                :item-value="allGroups[0].sgid ? 'sgid' : 'cgid'"
                 v-model="selectedTargetGroup"
               >
                 <template #item="{ item }">
