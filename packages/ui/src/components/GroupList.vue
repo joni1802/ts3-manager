@@ -12,11 +12,9 @@
               >
                 <v-list-item-content>
                   <v-list-item-title>{{ regularGroup.name }}</v-list-item-title>
-                  <v-list-item-subtitle
-                    >({{
-                      regularGroup.sgid || regularGroup.cgid
-                    }})</v-list-item-subtitle
-                  >
+                  <v-list-item-subtitle>
+                    ({{ regularGroup.sgid || regularGroup.cgid }})
+                  </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-menu>
@@ -183,7 +181,7 @@
           <v-card-text>
             <v-select
               label="Copy Group"
-              :items="groups"
+              :items="allGroups"
               v-model="selectedGroup"
               :item-disabled="disabledSourceGroup"
               return-object
@@ -192,9 +190,9 @@
               <template #item="{ item }">
                 <v-list-item-content>
                   <v-list-item-title>{{ item.name }}</v-list-item-title>
-                  <v-list-item-subtitle
-                    >({{ item.sgid || item.cgid }})</v-list-item-subtitle
-                  >
+                  <v-list-item-subtitle>
+                    ({{ item.sgid || item.cgid }})
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </template>
             </v-select>
@@ -208,7 +206,7 @@
               <v-select
                 label="Target Group"
                 :disabled="!overwriteGroup"
-                :items="regularGroups"
+                :items="allGroups"
                 item-text="name"
                 :item-disabled="disabledTargetGroup"
                 return-object
@@ -217,9 +215,9 @@
                 <template #item="{ item }">
                   <v-list-item-content>
                     <v-list-item-title>{{ item.name }}</v-list-item-title>
-                    <v-list-item-subtitle
-                      >({{ item.sgid || item.cgid }})</v-list-item-subtitle
-                    >
+                    <v-list-item-subtitle>
+                      ({{ item.sgid || item.cgid }})
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-select>
@@ -276,6 +274,18 @@ export default {
     };
   },
   computed: {
+    allGroups() {
+      return [
+        { header: "Regular Groups" },
+        ...this.regularGroups,
+        { divider: true },
+        { header: "Template Groups" },
+        ...this.templateGroups,
+        { divider: true },
+        { header: "ServerQuery Groups" },
+        ...this.serverQueryGroups,
+      ];
+    },
     regularGroups() {
       return this.groups.filter((group) => group.type === 1);
     },
@@ -330,6 +340,16 @@ export default {
     },
     editGroup(group) {
       this.$emit("edit", group);
+    },
+    getGroupType(type) {
+      switch (type) {
+        case 0:
+          return "Template Group";
+        case 1:
+          return "Regular Group";
+        case 2:
+          return "ServerQuery Group";
+      }
     },
   },
   watch: {
