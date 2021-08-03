@@ -12,13 +12,24 @@
         >
           <template #selectMenu>
             <v-flex sm3 xs12>
-              <v-autocomplete
-                :items="groupSelection"
-                v-model="selectedGroup"
+              <v-select
+                :items="allGroups"
+                v-model="selectedGroupId"
                 @change="changeGroup"
                 label="Server Group"
                 :disabled="$store.state.query.loading"
-              ></v-autocomplete>
+                item-text="name"
+                item-value="sgid"
+              >
+                <template #item="{ item }">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.name }}</v-list-item-title>
+                    <v-list-item-subtitle
+                      >({{ item.sgid }})</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
+                </template>
+              </v-select>
             </v-flex>
           </template>
         </permission-table>
@@ -36,45 +47,36 @@ export default {
     return {
       serverGroupPermissions: [],
       servergroups: [],
-      servergroupId: this.$route.params.sgid,
+      selectedGroupId: parseInt(this.$route.params.sgid),
     };
   },
   computed: {
-    regularServerGroups() {
-      return this.servergroups.filter((servergroup) => servergroup.type === 1);
+    allGroups() {
+      return [
+        { header: "Regular Groups" },
+        ...this.regularGroups,
+        { divider: true },
+        { header: "Template Groups" },
+        ...this.templateGroups,
+        { divider: true },
+        { header: "ServerQuery Groups" },
+        ...this.serverQueryGroups,
+      ];
     },
-    groupSelection() {
-      return this.regularServerGroups.map((servergroup) => {
-        return {
-          text: servergroup.name,
-          value: servergroup.sgid,
-        };
-      });
+    regularGroups() {
+      return this.servergroups.filter((group) => group.type === 1);
     },
-    selectedGroup: {
-      get() {
-        let servergroup = this.servergroups.find(
-          (servergroup) => servergroup.sgid == this.servergroupId
-        );
-
-        // && to prevent "undefined" error on first load
-        return (
-          servergroup && {
-            text: servergroup.name,
-            value: servergroup.sgid,
-          }
-        );
-      },
-      set(sgid) {
-        // the setter is doing nothing
-        // but if it is not set there would be an error in the console
-      },
+    templateGroups() {
+      return this.servergroups.filter((group) => group.type === 0);
+    },
+    serverQueryGroups() {
+      return this.servergroups.filter((group) => group.type === 2);
     },
   },
   methods: {
     getServergroupPermissions() {
       return this.$TeamSpeak.execute("servergrouppermlist", {
-        sgid: this.servergroupId,
+        sgid: this.selectedGroupId,
       });
     },
     getServergrouplist() {
@@ -92,7 +94,7 @@ export default {
       let { permid, permnegated, permskip, permvalue } = permissionValues;
 
       let params = {
-        sgid: this.servergroupId,
+        sgid: this.selectedGroupId,
         permid: permid,
         permnegated: +permnegated, // unary + operator to convert boolean into number
         permskip: +permskip,
@@ -115,7 +117,7 @@ export default {
       let { permid } = permissionValues;
 
       let params = {
-        sgid: this.servergroupId,
+        sgid: this.selectedGroupId,
         permid: permid,
       };
 
@@ -135,11 +137,11 @@ export default {
       try {
         this.servergroups = await this.getServergrouplist();
 
-        if (!this.servergroupId) {
+        if (!this.selectedGroupId) {
           this.$router.replace({
             name: "permissions-servergroup",
             params: {
-              sgid: this.regularServerGroups[0].sgid,
+              sgid: this.servergroups[0].sgid,
             },
           });
         }
@@ -152,7 +154,7 @@ export default {
   },
   async beforeRouteUpdate(to, from, next) {
     try {
-      this.servergroupId = to.params.sgid;
+      this.selectedGroupId = parseInt(to.params.sgid);
       this.serverGroupPermissions = await this.getServergroupPermissions();
     } catch (err) {
       this.$toast.error(err.message);
