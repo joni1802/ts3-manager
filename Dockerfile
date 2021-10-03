@@ -6,10 +6,12 @@ FROM node:16 AS build
 WORKDIR /app
 
 # copy the files into the workdir (node_modules are excluded by ignore file)
-COPY ./packages/ui .
+COPY . .
+
+ENV UI_DIR ./packages/ui
 
 # download all the packages for the ui and build app for production with minification
-RUN npm install && npm run build 
+RUN npm install --prefix ${UI_DIR} && npm run --prefix ${UI_DIR} build
 
 
 FROM node:lts-alpine
@@ -26,11 +28,11 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 # only copy the relevant dist and backend files
-COPY --from=build /app/dist ./packages/ui/dist
+COPY --from=build /app/packages/ui/dist ./packages/ui/dist
 COPY ./packages/server ./packages/server
 
 # download all the packages for the backend
-RUN npm --prefix ${SERVER_DIR} install ${SERVER_DIR}
+RUN npm install --prefix ${SERVER_DIR}
 
 # the webserver port
 EXPOSE ${PORT}
