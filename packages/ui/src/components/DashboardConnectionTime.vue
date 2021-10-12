@@ -1,6 +1,17 @@
 <template lang="html">
   <v-card>
-    <v-card-title>Most Active Clients</v-card-title>
+    <v-card-title>
+      <v-row>
+        <v-col>Most Active Clients</v-col>
+        <v-col cols="12" sm="4" md="3">
+          <v-select
+            :value="selectedDays"
+            :items="days"
+            @change="changeDays"
+          ></v-select>
+        </v-col>
+      </v-row>
+    </v-card-title>
     <v-card-text>
       <canvas v-if="loaded" ref="chart"></canvas>
       <span v-else>Loading Data...</span>
@@ -23,13 +34,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    days: Array,
+  },
+  data() {
+    return {
+      selectedDays: 30,
+    };
+  },
+  methods: {
+    changeDays(days) {
+      this.selectedDays = days; // to-do: used for filtering in clientConnections
+
+      this.$emit("change-days", days);
+    },
   },
   computed: {
     clientConnections() {
       let regex =
         /^client (?<action>connected|disconnected) \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
+      // copy the original array and reverse it
+      let logView = [...this.logView].reverse();
 
-      return this.logView
+      return logView
         .filter(({ msg }) => regex.test(msg))
         .map(({ msg, timestamp }) => {
           let { clientDbId, clientNickname, action } = msg.match(regex).groups;

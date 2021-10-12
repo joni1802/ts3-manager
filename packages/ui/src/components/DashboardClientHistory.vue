@@ -5,8 +5,9 @@
         <v-col>Client Connections History</v-col>
         <v-col cols="12" sm="4" md="3">
           <v-select
+            :value="selectedDays"
             :items="days"
-            @change="$emit('change-days', $event)"
+            @change="changeDays"
           ></v-select>
         </v-col>
       </v-row>
@@ -31,15 +32,28 @@ export default {
     },
     days: Array,
   },
+  data() {
+    return {
+      selectedDays: 30,
+    };
+  },
+  methods: {
+    changeDays(days) {
+      this.selectedDays = days; // to-do: used for filtering in clientConnections
+
+      this.$emit("change-days", days);
+    },
+  },
   computed: {
     clientConnections() {
       let obj = {};
       let regex =
         /^client connected \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
+      // copy the original array and reverse it
+      let logView = [...this.logView].reverse();
 
       return (
-        this.logView
-          .reverse()
+        logView
           // filters all "client connected" log messages
           .filter(({ msg }) => regex.test(msg))
           // parse log messages into an object {clientDbId, clientNickname, timestamp}

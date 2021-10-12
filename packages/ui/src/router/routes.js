@@ -1,5 +1,13 @@
 export default [
   {
+    path: "/dashboard",
+    component: () => import("@/components/Dashboard"),
+    name: "dashboard",
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/file/upload/:cid",
     component: () => import("@/components/FileUpload"),
     name: "file-upload",

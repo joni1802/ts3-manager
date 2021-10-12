@@ -1,12 +1,80 @@
 <template lang="html">
   <v-container>
+    <!-- <v-row justify="end">
+      <v-col cols="4" style="background: orange">
+        <div>Hey</div>
+      </v-col>
+    </v-row> -->
+    <v-row>
+      <v-col cols="3">
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="48">info</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Version</v-list-item-title>
+                <v-list-item-subtitle>3.6.7</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+      <v-col cols="3">
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="48">info</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Version</v-list-item-title>
+                <v-list-item-subtitle>3.6.7</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+      <v-col cols="3">
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="48">info</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Version</v-list-item-title>
+                <v-list-item-subtitle>3.6.7</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+      <v-col cols="3">
+        <v-card>
+          <v-list>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="48">info</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Version</v-list-item-title>
+                <v-list-item-subtitle>3.6.7</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <v-row>
       <v-col cols="12">
         <dashboard-client-history
           :logView="logView"
           :loaded="logViewLoaded"
-          :days="daysPicker"
-          @change-days="testEvent"
+          :days="days"
+          @change-days="changeDays"
         ></dashboard-client-history>
       </v-col>
     </v-row>
@@ -15,6 +83,8 @@
         <dashboard-connection-time
           :logView="logView"
           :loaded="logViewLoaded"
+          :days="days"
+          @change-days="changeDays"
         ></dashboard-connection-time>
       </v-col>
       <v-col cols="12" xl="3" lg="4" md="6">
@@ -50,11 +120,14 @@ export default {
     return {
       logView: [],
       logViewLoaded: false,
+      lastPosition: undefined,
+      selectedDays: 30, // to-do: sync with both child components
+      currentDate: new Date(),
       clientDbList: [],
       clientDbListLoaded: false,
       clientList: [],
       serverInfo: {},
-      daysPicker: [
+      days: [
         { text: "Last 30 Days", value: 30 },
         { text: "Last 60 Days", value: 60 },
         { text: "Last 90 Days", value: 90 },
@@ -62,9 +135,30 @@ export default {
       ],
     };
   },
+  computed: {
+    // endDate() {
+    //   // start date can be replaced by new Date()
+    //   return new Date(
+    //     this.startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
+    //   );
+    // },
+  },
   methods: {
-    testEvent(e) {
-      console.log(e);
+    async changeDays(days) {
+      let endDate = new Date(
+        this.currentDate.getTime() - days * 24 * 60 * 60 * 1000
+      );
+      // save the last (current) position in the log file
+      let lastPosition = this.lastPosition;
+
+      let parsedLogView = await this.getParsedLogView(endDate);
+
+      if (parsedLogView.length) {
+        this.logView = [...this.logView, ...parsedLogView];
+      } else {
+        // reset the position to the save one
+        this.lastPosition = lastPosition;
+      }
     },
     getLocaleDate(timestamp) {
       let localeDate = new Date(timestamp);
@@ -75,55 +169,49 @@ export default {
 
       return localeDate;
     },
-    getParsedLogs(logs) {
-      return logs.map(({ l }) => {
-        let [timestamp, level, channel, sid, ...msg] = l.split("|");
+    getParsedLogEntry(line) {
+      let [timestamp, level, channel, sid, ...msg] = line.split("|");
 
-        return {
-          timestamp: this.getLocaleDate(timestamp),
-          level: level.trim(),
-          channel: channel.trim(),
-          sid: parseInt(sid),
-          msg: msg.join("|"),
-        };
-      });
+      return {
+        timestamp: this.getLocaleDate(timestamp),
+        level: level.trim(),
+        channel: channel.trim(),
+        sid: parseInt(sid),
+        msg: msg.join("|"),
+      };
     },
-    async getLogView(date) {
-      let logView = [];
-      let lastPosition = undefined;
-      let lastDate = undefined;
+    async getParsedLogView(endDate) {
+      let parsedLogView = [];
       let stop = false;
 
       try {
         while (!stop) {
-          let logs = await this.$TeamSpeak.execute("logview", {
+          let rawLogView = await this.$TeamSpeak.execute("logview", {
             instance: 0,
             reverse: 1,
             lines: 100,
-            begin_pos: lastPosition,
+            begin_pos: this.lastPosition,
           });
 
-          let parsedLogs = this.getParsedLogs(logs);
+          for (let { l } of rawLogView) {
+            let parsedLogEntry = this.getParsedLogEntry(l);
 
-          logView.push(...parsedLogs);
+            if (endDate.getTime() > parsedLogEntry.timestamp.getTime()) {
+              stop = true;
+            } else {
+              parsedLogView.push(parsedLogEntry);
+            }
+          }
 
-          lastPosition = logs[0].last_pos;
-          lastDate = parsedLogs[parsedLogs.length - 1].timestamp;
+          this.lastPosition = rawLogView[0].last_pos;
 
-          if (logs[0].last_pos === 0) stop = true;
-          if (lastDate.getTime() < date.getTime()) stop = true;
+          if (this.lastPosition === 0) stop = true;
         }
       } catch (err) {
         this.$toast.error(err.message);
       }
 
-      return logView;
-
-      let index = logView.findIndex(
-        (log) => log.timestamp.getTime() <= date.getTime()
-      );
-
-      return logView.slice(0, index);
+      return parsedLogView;
     },
     getClientList() {
       return this.$TeamSpeak.execute("clientlist", {}, ["-voice", "-away"]);
@@ -136,22 +224,19 @@ export default {
     try {
       // await sleep(1000); // just for debuging
 
-      let date = new Date();
+      let endDate = new Date(
+        this.currentDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
+      );
 
-      // Show log messages of the last 30 days
-      // date.setDate(date.getDate() - 30);
-      date.setDate();
-
-      this.logView = await this.getLogView(date);
-      // this.logView = await this.getLogView();
+      this.logView = await this.getParsedLogView(endDate);
 
       this.logViewLoaded = true;
 
       // await sleep(1000);
 
-      this.clientList = await this.getClientList();
+      // this.clientList = await this.getClientList();
 
-      this.serverInfo = await this.getServerInfo();
+      // this.serverInfo = await this.getServerInfo();
     } catch (err) {
       this.$toast.error(err.message);
     }

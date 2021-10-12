@@ -6,6 +6,7 @@
         v-if="connected"
       ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
+      <v-btn outlined large><v-icon left>dns</v-icon>Server List</v-btn>
       <dark-mode-switch></dark-mode-switch>
       <file-upload-icon v-if="connected"></file-upload-icon>
       <bell-icon v-if="connected"></bell-icon>
@@ -95,6 +96,11 @@ export default {
           title: "Server List",
           icon: "dns",
           route: { name: "servers" },
+        },
+        {
+          title: "Dashboard",
+          icon: "dashboard",
+          route: { name: "dashboard" },
         },
         {
           title: "Server Viewer",
