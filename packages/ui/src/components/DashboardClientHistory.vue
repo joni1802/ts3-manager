@@ -3,6 +3,10 @@
     <v-card-title>
       <v-row>
         <v-col>Client Connections History</v-col>
+        <v-col
+          ><v-btn color="primary" @click="updateChart">Hey</v-btn
+          ><v-btn @click="stop = true">stop</v-btn></v-col
+        >
         <v-col cols="12" sm="4" md="3">
           <v-select
             :value="selectedDays"
@@ -35,6 +39,7 @@ export default {
   data() {
     return {
       selectedDays: 30,
+      stop: false, // testing
     };
   },
   methods: {
@@ -43,17 +48,51 @@ export default {
 
       this.$emit("change-days", days);
     },
+    sleep(milliseconds) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, milliseconds);
+      });
+    },
+    getEndDate() {
+      let startDate = new Date();
+
+      return new Date(
+        startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
+      );
+    },
+    updateChart() {
+      let endDate = this.getEndDate();
+
+      let filteredClientConnections = this.clientConnections.filter(
+        ({ date }) => {
+          return date.getTime() > endDate.getTime();
+        }
+      );
+
+      this.chart.data.labels = [];
+
+      this.chart.data.datasets[0].data = filteredClientConnections.reverse(); //[...this.clientConnections].reverse();
+
+      this.chart.update();
+    },
   },
   computed: {
+    // endDate() {
+    //   let startDate = new Date();
+
+    //   return new Date(
+    //     startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
+    //   );
+    // },
     clientConnections() {
       let obj = {};
       let regex =
         /^client connected \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
-      // copy the original array and reverse it
-      let logView = [...this.logView].reverse();
 
       return (
-        logView
+        this.logView
           // filters all "client connected" log messages
           .filter(({ msg }) => regex.test(msg))
           // parse log messages into an object {clientDbId, clientNickname, timestamp}
@@ -82,7 +121,14 @@ export default {
             if (index === -1) {
               let arrLength = acc.push({
                 date: currentTimestamp,
-                localeDateString: currentTimestamp.toLocaleDateString(),
+                localeDateString: currentTimestamp.toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }
+                ),
                 clients: [],
               });
 
@@ -114,7 +160,8 @@ export default {
               datasets: [
                 {
                   label: "Unique Client Connections",
-                  data: this.clientConnections,
+                  // see below
+                  data: [...this.clientConnections].reverse(),
                   cubicInterpolationMode: "monotone",
                 },
               ],
@@ -125,6 +172,13 @@ export default {
                 xAxisKey: "localeDateString",
                 yAxisKey: "clients.length",
               },
+              scales: {
+                x: {
+                  // reverse order to be able to add older dates to the dataset
+                  // chart.js acts weird when you unshift data to the data array of a dataset
+                  reverse: true,
+                },
+              },
             },
           });
         }
@@ -133,6 +187,14 @@ export default {
         immediate: true,
       }
     );
+  },
+  watch: {
+    logView(logs) {
+      if (logs.length) {
+        console.log("fired");
+        this.updateChart();
+      }
+    },
   },
 };
 </script>
