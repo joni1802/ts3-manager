@@ -44,9 +44,19 @@ export default {
   },
   methods: {
     changeDays(days) {
-      this.selectedDays = days; // to-do: used for filtering in clientConnections
+      this.selectedDays = days;
 
-      this.$emit("change-days", days);
+      // Emit the selected days  as the first argument to the parent component.
+      // The second argument is a callback function, which will be executed after
+      // the asynchronous task in the parent component is completed.
+      this.$emit("change-days", days, () => {
+        // Even though the callback function gets executed after the logView in
+        // the parent component is updated, the logView in this component is not updated yet.
+        // This is a workaround for that.
+        this.$nextTick(() => {
+          this.updateChart();
+        });
+      });
     },
     sleep(milliseconds) {
       return new Promise((resolve) => {
@@ -187,14 +197,6 @@ export default {
         immediate: true,
       }
     );
-  },
-  watch: {
-    logView(logs) {
-      if (logs.length) {
-        console.log("fired");
-        this.updateChart();
-      }
-    },
   },
 };
 </script>

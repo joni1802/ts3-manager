@@ -144,7 +144,7 @@ export default {
     // },
   },
   methods: {
-    async changeDays(days) {
+    async changeDays(days, fn) {
       let endDate = new Date(
         this.currentDate.getTime() - days * 24 * 60 * 60 * 1000
       );
@@ -159,6 +159,8 @@ export default {
         // reset the position to the save one
         this.lastPosition = lastPosition;
       }
+
+      fn();
     },
     getLocaleDate(timestamp) {
       let localeDate = new Date(timestamp);
