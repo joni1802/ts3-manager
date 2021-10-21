@@ -2,11 +2,7 @@
   <v-card>
     <v-card-title>
       <v-row>
-        <v-col>Client Connections History</v-col>
-        <v-col
-          ><v-btn color="primary" @click="updateChart">Hey</v-btn
-          ><v-btn @click="stop = true">stop</v-btn></v-col
-        >
+        <v-col>Unique Client Connections Per Day</v-col>
         <v-col cols="12" sm="4" md="3">
           <v-select
             :value="selectedDays"
@@ -39,7 +35,7 @@ export default {
   data() {
     return {
       selectedDays: 30,
-      stop: false, // testing
+      clientConnectionsPerDay: [],
     };
   },
   methods: {
@@ -49,61 +45,27 @@ export default {
       // Emit the selected days  as the first argument to the parent component.
       // The second argument is a callback function, which will be executed after
       // the asynchronous task in the parent component is completed.
-      this.$emit("change-days", days, () => {
-        // Even though the callback function gets executed after the logView in
-        // the parent component is updated, the logView in this component is not updated yet.
-        // This is a workaround for that.
-        this.$nextTick(() => {
-          this.updateChart();
-        });
-      });
-    },
-    sleep(milliseconds) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, milliseconds);
-      });
-    },
-    getEndDate() {
-      let startDate = new Date();
+      this.$emit("change-days", days, (logView) => {
+        this.clientConnectionsPerDay = this.getClientConnectionsPerDay(logView);
 
-      return new Date(
-        startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
-      );
+        this.updateChart();
+      });
     },
     updateChart() {
-      let endDate = this.getEndDate();
-
-      let filteredClientConnections = this.clientConnections.filter(
-        ({ date }) => {
-          return date.getTime() > endDate.getTime();
-        }
-      );
-
       this.chart.data.labels = [];
 
-      this.chart.data.datasets[0].data = filteredClientConnections.reverse(); //[...this.clientConnections].reverse();
+      this.chart.data.datasets[0].data = this.clientConnectionsPerDay.reverse(); //[...this.clientConnections].reverse();
 
       this.chart.update();
     },
-  },
-  computed: {
-    // endDate() {
-    //   let startDate = new Date();
-
-    //   return new Date(
-    //     startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
-    //   );
-    // },
-    clientConnections() {
+    getClientConnectionsPerDay(logView) {
       let obj = {};
       let regex =
         /^client connected \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
 
       return (
-        this.logView
-          // filters all "client connected" log messages
+        // filters all "client connected" log messages
+        logView
           .filter(({ msg }) => regex.test(msg))
           // parse log messages into an object {clientDbId, clientNickname, timestamp}
           .map(({ msg, timestamp }) => {
@@ -156,6 +118,16 @@ export default {
             return acc;
           }, [])
           .sort((a, b) => a.date.getTime() - b.date.getTime())
+          .filter(({ date }) => date.getTime() > this.endDate.getTime())
+      );
+    },
+  },
+  computed: {
+    endDate() {
+      let startDate = new Date();
+
+      return new Date(
+        startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
       );
     },
   },
@@ -164,6 +136,10 @@ export default {
       "loaded",
       (loaded) => {
         if (loaded) {
+          this.clientConnectionsPerDay = this.getClientConnectionsPerDay(
+            this.logView
+          );
+
           this.renderChart(this.$refs.chart, {
             type: "line",
             data: {
@@ -171,7 +147,7 @@ export default {
                 {
                   label: "Unique Client Connections",
                   // see below
-                  data: [...this.clientConnections].reverse(),
+                  data: this.clientConnectionsPerDay.reverse(),
                   cubicInterpolationMode: "monotone",
                 },
               ],

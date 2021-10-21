@@ -160,7 +160,8 @@ export default {
         this.lastPosition = lastPosition;
       }
 
-      fn();
+      // send new log view to the child component
+      fn(this.logView);
     },
     getLocaleDate(timestamp) {
       let localeDate = new Date(timestamp);
