@@ -44,7 +44,7 @@
               v-else
               label="Name"
               v-model="channelName"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             >
             </v-text-field>
 
@@ -52,17 +52,17 @@
               type="password"
               label="Password"
               v-model="channelPassword"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-text-field>
             <v-text-field
               label="Topic"
               v-model="channelTopic"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-text-field>
             <v-textarea
               label="Description"
               v-model="channelDescription"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-textarea>
             <v-expansion-panels accordion flat>
               <v-expansion-panel>
@@ -78,7 +78,7 @@
                             :items="channelOrderSelection"
                             label="Sort This Channel After"
                             v-model="selectedChannelOrder"
-                            :disabled="$store.state.query.loading"
+                            :disabled="loading"
                           ></v-autocomplete>
                         </v-flex>
                         <v-flex md4>
@@ -137,18 +137,14 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              text
-              @click="save"
-              :disabled="this.$store.state.query.loading"
-              color="primary"
+            <v-btn text @click="save" :disabled="loading" color="primary"
               >OK</v-btn
             >
             <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
             <v-btn
               text
               @click="save"
-              :disabled="this.$store.state.query.loading"
+              :disabled="loading"
               color="primary"
               :class="{ 'd-none': !applyButton }"
               >Apply</v-btn
@@ -203,6 +199,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     channelOrderSelection() {
       let rootChannelName = {};
       let siblingChannels = this.channels

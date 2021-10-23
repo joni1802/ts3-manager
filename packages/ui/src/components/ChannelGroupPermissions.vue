@@ -17,7 +17,7 @@
                 v-model="selectedGroupId"
                 @change="changeChannelGroup"
                 label="Channel Group"
-                :disabled="$store.state.query.loading"
+                :disabled="loading"
                 item-text="name"
                 item-value="cgid"
               >
@@ -51,6 +51,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     allGroups() {
       return [
         { header: "Regular Groups" },

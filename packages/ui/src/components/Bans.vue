@@ -26,9 +26,7 @@
           </v-card-title>
           <v-card-text>
             <v-data-table
-              :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
+              :no-data-text="loading ? '...loading' : $vuetify.noDataText"
               :headers="headers"
               :items="preparedBanlist"
               v-model="selectedTableItems"
@@ -124,6 +122,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     // To enable the search for the column "Name/IP/UID"
     preparedBanlist() {
       return this.banlist.map((ban) => {

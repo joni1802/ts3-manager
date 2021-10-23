@@ -1,8 +1,6 @@
 import socket from "../socket";
 import store from "../store";
 import router from "../router";
-import NProgress from "nprogress";
-import Vue from "vue";
 
 // Polyfill for EventTarget because Safari has no constructor for it
 import EventTarget from "@ungap/event-target";
@@ -54,38 +52,25 @@ const throttleSocketConnection = (time) => {
   });
 };
 
-// Middleware that handles the progressbar
+// Middleware that handles the loading state (progressbar).
 const setLoadingState = (methods) => {
   methods.forEach((method) => {
     let next = TeamSpeak[method];
-    let timer = setTimeout(() => {
-      store.commit("isLoading", false);
-
-      NProgress.done();
-    }, 0);
 
     TeamSpeak[method] = async (...args) => {
       try {
-        clearTimeout(timer);
-        store.commit("isLoading", true);
-        NProgress.inc();
+        store.dispatch("startLoading");
 
-        if (process.env.NODE_ENV === "development")
-          await throttleSocketConnection(0);
+        // if (process.env.NODE_ENV === "development")
+        //   await throttleSocketConnection(1000);
 
         let response = await next(...args);
 
-        timer = setTimeout(() => {
-          store.commit("isLoading", false);
-
-          NProgress.done();
-        }, 0);
+        store.dispatch("stopLoading");
 
         return response;
       } catch (error) {
-        store.commit("isLoading", false);
-
-        NProgress.done();
+        store.dispatch("stopLoading");
 
         throw error;
       }
@@ -118,7 +103,7 @@ TeamSpeak.execute = (...args) => {
         params,
         options,
       },
-      (response) => handleResponse(response, resolve, reject)
+      async (response) => handleResponse(response, resolve, reject)
     );
   });
 };

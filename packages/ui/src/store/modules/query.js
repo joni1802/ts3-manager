@@ -3,15 +3,15 @@ import Cookies from "js-cookie";
 const state = {
   serverId: Cookies.get("serverId"),
   token: Cookies.get("token"),
-  loading: false,
+  loading: 0,
   connected: false,
   loggedOut: true,
   queryUser: {},
 };
 
 const mutations = {
-  isLoading(state, status) {
-    state.loading = status;
+  setLoading(state, val) {
+    state.loading = val;
   },
   saveUserInfo(state, userData) {
     state.queryUser = userData;
@@ -31,6 +31,14 @@ const mutations = {
 };
 
 const actions = {
+  startLoading({ commit, state }) {
+    commit("setLoading", state.loading + 1);
+  },
+  stopLoading({ commit, state }) {
+    setTimeout(() => {
+      commit("setLoading", state.loading - 1);
+    }, 0);
+  },
   saveToken({ commit, rootState }, token) {
     Cookies.set("token", token, {
       expires: rootState.settings.rememberLogin

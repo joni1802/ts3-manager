@@ -22,9 +22,7 @@
       </v-card-title>
       <v-card-text>
         <v-data-table
-          :no-data-text="
-            $store.state.query.loading ? '...loading' : $vuetify.noDataText
-          "
+          :no-data-text="loading ? '...loading' : $vuetify.noDataText"
           :headers="headers"
           :items="permissionlist"
           :footer-props="{ 'items-per-page-options': rowsPerPage }"
@@ -188,6 +186,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     permissionlist() {
       let list = this.availablePermissions.map((permission) => {
         let permissionValues = this.grantedPermissions.find(

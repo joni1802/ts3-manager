@@ -12,23 +12,23 @@
                 <v-flex xs12>
                   <v-text-field
                     label="IP"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     v-model="ip"
                   ></v-text-field>
                   <v-text-field
                     label="Name"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     v-model="name"
                   ></v-text-field>
                   <v-text-field
                     label="Unique ID"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     v-model="uid"
                   ></v-text-field>
                   <v-textarea
                     label="Reason"
                     v-model="reason"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                   >
                   </v-textarea>
                 </v-flex>
@@ -36,14 +36,14 @@
                   <v-text-field
                     type="number"
                     label="Duration"
-                    :disabled="!selectedUnit || $store.state.query.loading"
+                    :disabled="!selectedUnit || loading"
                     v-model="time"
                   ></v-text-field>
                 </v-flex>
                 <v-flex sm5 xs12>
                   <v-autocomplete
                     :items="timeUnits"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     v-model="selectedUnit"
                   ></v-autocomplete>
                 </v-flex>
@@ -101,6 +101,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     ip: {
       get() {
         return this.ban.ip;

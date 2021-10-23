@@ -11,7 +11,7 @@
                   <v-text-field
                     v-model="serverName"
                     label="Name"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     :rules="[rules.required]"
                   ></v-text-field>
                 </v-flex>
@@ -20,7 +20,7 @@
                     v-model="serverPort"
                     label="Port"
                     type="number"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     :rules="[rules.required]"
                   ></v-text-field>
                 </v-flex>
@@ -29,7 +29,7 @@
                     v-model="maxClients"
                     label="Max. Clients"
                     type="number"
-                    :disabled="$store.state.query.loading"
+                    :disabled="loading"
                     :rules="[rules.required]"
                   ></v-text-field>
                 </v-flex>
@@ -72,6 +72,11 @@ export default {
       },
       token: "",
     };
+  },
+  computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
   },
   methods: {
     getServerList() {

@@ -53,9 +53,7 @@
             <v-data-table
               :items="parsedLogView"
               :headers="headers"
-              :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
+              :no-data-text="loading ? '...loading' : $vuetify.noDataText"
               hide-default-footer
               :search="filter"
               :items-per-page="itemsPerPage"
@@ -130,6 +128,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     /**
      * Parse original log string into a javascript object.
      * @return {Array}

@@ -8,33 +8,23 @@
             <v-text-field
               v-model="serverGroupName"
               label="Name"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-text-field>
             <group-client-list
               v-model="serverGroupClients"
               :clientDbList="clients"
               :disabled="
-                $store.state.query.loading ||
-                serverGroup.type === 0 ||
-                serverGroup.type === 2
+                loading || serverGroup.type === 0 || serverGroup.type === 2
               "
             ></group-client-list>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn
-              text
-              @click="save"
-              :disabled="$store.state.query.loading"
-              color="primary"
+            <v-btn text @click="save" :disabled="loading" color="primary"
               >OK</v-btn
             >
             <v-btn text @click="$router.go(-1)" color="primary">Cancel</v-btn>
-            <v-btn
-              text
-              @click="save"
-              :disabled="$store.state.query.loading"
-              color="primary"
+            <v-btn text @click="save" :disabled="loading" color="primary"
               >Apply</v-btn
             >
           </v-card-actions>
@@ -63,6 +53,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     availableClients() {
       return this.clients.map((client) => {
         return {

@@ -17,7 +17,7 @@
                 v-model="selectedClient"
                 @change="changeClient"
                 label="Client"
-                :disabled="$store.state.query.loading"
+                :disabled="loading"
               ></v-autocomplete>
             </v-flex>
           </template>
@@ -40,6 +40,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     clientSelection() {
       return this.clients.map((client) => {
         return {

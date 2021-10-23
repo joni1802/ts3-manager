@@ -26,9 +26,7 @@
           </v-card-title>
           <v-card-text>
             <v-data-table
-              :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
+              :no-data-text="loading ? '...loading' : $vuetify.noDataText"
               :headers="headers"
               :items="clientdblist"
               :search="search"
@@ -135,6 +133,11 @@ export default {
       selectedTableItems: [],
       clientAvatarDialog: false,
     };
+  },
+  computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
   },
   methods: {
     openRemoveDialog(clients) {

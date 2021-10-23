@@ -15,9 +15,7 @@
           </v-card-title>
           <v-card-text>
             <v-data-table
-              :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
+              :no-data-text="loading ? '...loading' : $vuetify.noDataText"
               :headers="headers"
               :items="complaints"
               v-model="selected"
@@ -102,6 +100,11 @@ export default {
       selectedComplaints: [],
       rowsPerPage: [25, 50, 75, -1],
     };
+  },
+  computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
   },
   methods: {
     getComplainList() {

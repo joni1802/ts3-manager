@@ -2,7 +2,6 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import routes from "./routes";
 import store from "../store";
-import NProgress from "nprogress";
 
 const router = new VueRouter({
   mode: "history",
@@ -10,9 +9,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  store.commit("isLoading", true);
-
-  NProgress.start();
+  store.dispatch("startLoading");
 
   if (to.meta.requiresAuth) {
     if (store.state.query.connected) {
@@ -30,15 +27,7 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  store.commit("isLoading", false);
-
-  setTimeout(() => {
-    if (store.state.query.loading) {
-      NProgress.inc();
-    } else {
-      NProgress.done();
-    }
-  }, 0);
+  store.dispatch("stopLoading");
 });
 
 Vue.use(VueRouter);

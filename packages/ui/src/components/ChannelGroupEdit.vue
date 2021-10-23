@@ -8,18 +8,18 @@
             <v-text-field
               label="Channel Group Name"
               v-model="channelGroupName"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-text-field>
             <v-autocomplete
               :items="channelSelection"
               label="Channel"
               v-model="selectedChannel"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-autocomplete>
             <group-client-list
               v-model="selectedClients"
               :clientDbList="clients"
-              :disabled="disabled || $store.state.query.loading"
+              :disabled="disabled || loading"
             ></group-client-list>
           </v-card-text>
           <v-card-actions>
@@ -55,6 +55,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     channelGroupName: {
       get() {
         return this.channelGroup.name;

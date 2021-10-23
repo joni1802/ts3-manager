@@ -5,9 +5,7 @@
         <v-card>
           <v-card-text>
             <v-data-table
-              :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
+              :no-data-text="loading ? '...loading' : $vuetify.noDataText"
               :headers="headers"
               :items="servers"
               item-key="virtualserver_id"
@@ -40,8 +38,7 @@
                   <v-radio
                     :value="item.virtualserver_id"
                     :disabled="
-                      item.virtualserver_status === 'offline' ||
-                      $store.state.query.loading
+                      item.virtualserver_status === 'offline' || loading
                     "
                   >
                   </v-radio>
@@ -190,6 +187,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     joinedServerId: {
       get() {
         return this.queryUser.virtualserver_id;

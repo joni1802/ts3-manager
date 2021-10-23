@@ -17,7 +17,7 @@
                 v-model="selectedChannel"
                 @change="changeChannel"
                 label="Channel"
-                :disabled="$store.state.query.loading"
+                :disabled="loading"
               ></v-autocomplete>
             </v-flex>
           </template>
@@ -40,6 +40,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     channelSelection() {
       return this.channels.map((channel) => {
         return {

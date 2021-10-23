@@ -9,16 +9,13 @@
               :items="tokenTypes"
               label="Type"
               v-model="selectedType"
-              :disabled="$store.state.query.loading"
+              :disabled="loading"
             ></v-select>
             <v-autocomplete
               :items="availableGroups"
               label="Group"
               v-model="selectedGroup"
-              :disabled="
-                typeof selectedType === 'undefined' ||
-                $store.state.query.loading
-              "
+              :disabled="typeof selectedType === 'undefined' || loading"
             ></v-autocomplete>
             <v-autocomplete
               :items="availableChannels"
@@ -27,7 +24,7 @@
               :disabled="
                 selectedType === 0 ||
                 typeof selectedType === 'undefined' ||
-                $store.state.query.loading
+                loading
               "
             ></v-autocomplete>
             <v-textarea
@@ -77,6 +74,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     availableGroups() {
       return this.groups.map((group) => {
         return {

@@ -15,9 +15,7 @@
           </v-card-title>
           <v-card-text>
             <v-data-table
-              :no-data-text="
-                $store.state.query.loading ? '...loading' : $vuetify.noDataText
-              "
+              :no-data-text="loading ? '...loading' : $vuetify.noDataText"
               :headers="headers"
               :items="tokens"
               :footer-props="{ 'items-per-page-options': rowsPerPage }"
@@ -96,6 +94,11 @@ export default {
       selectedTableItems: [],
       tokenRemoveList: [],
     };
+  },
+  computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
   },
   methods: {
     getTokenList() {
