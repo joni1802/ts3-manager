@@ -1,26 +1,6 @@
 <template lang="html">
   <v-container>
-    <!-- <v-row justify="end">
-      <v-col cols="4" style="background: orange">
-        <div>Hey</div>
-      </v-col>
-    </v-row> -->
-    <v-row>
-      <v-col cols="3">
-        <v-card>
-          <v-list>
-            <v-list-item>
-              <v-list-item-avatar>
-                <v-icon size="48">info</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>Version</v-list-item-title>
-                <v-list-item-subtitle>3.6.7</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-col>
+    <v-row justify="center">
       <v-col cols="3">
         <v-card>
           <v-list>
@@ -68,8 +48,8 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
+    <v-row justify="center">
+      <v-col cols="12" xl="9">
         <dashboard-client-history
           :logView="logView"
           :loaded="logViewLoaded"
@@ -78,8 +58,8 @@
         ></dashboard-client-history>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" xl="6" lg="8">
+    <v-row justify="center">
+      <v-col cols="12" xl="6">
         <dashboard-connection-time
           :logView="logView"
           :loaded="logViewLoaded"
@@ -87,15 +67,15 @@
           @change-days="changeDays"
         ></dashboard-connection-time>
       </v-col>
-      <v-col cols="12" xl="3" lg="4" md="6">
+      <v-col cols="12" xl="3">
         <dashboard-clients-online
           :clientList="clientList"
           :serverInfo="serverInfo"
         ></dashboard-clients-online>
       </v-col>
-      <v-col cols="12" xl="3" lg="4" md="6">
+      <!-- <v-col cols="12" xl="3" lg="4" md="6">
         <dashboard-server-info :serverInfo="serverInfo"></dashboard-server-info>
-      </v-col>
+      </v-col> -->
     </v-row>
   </v-container>
 </template>
@@ -131,7 +111,6 @@ export default {
         { text: "Last 30 Days", value: 30 },
         { text: "Last 60 Days", value: 60 },
         { text: "Last 90 Days", value: 90 },
-        { text: "All Days", value: 0 },
       ],
     };
   },

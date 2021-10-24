@@ -1,22 +1,55 @@
 <template lang="html">
-  <v-card>
-    <v-card-title>
-      <v-row>
-        <v-col>Unique Client Connections Per Day</v-col>
-        <v-col cols="12" sm="4" md="3">
-          <v-select
-            :value="selectedDays"
-            :items="days"
-            @change="changeDays"
-          ></v-select>
-        </v-col>
-      </v-row>
-    </v-card-title>
-    <v-card-text>
-      <canvas v-if="loaded" ref="chart" height="200"></canvas>
-      <span v-else>Loading Data...</span>
-    </v-card-text>
-  </v-card>
+  <div>
+    <v-card>
+      <v-card-title>
+        <v-row>
+          <v-col md="9">
+            <div class="text-h6">Client Connections Per Day</div>
+            <div class="text-subtitle-1">Since last restart</div>
+          </v-col>
+
+          <v-col cols="12" sm="4" md="3">
+            <v-select
+              :value="selectedDays"
+              :items="days"
+              @change="changeDays"
+            ></v-select>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text>
+        <canvas v-if="loaded" ref="chart" height="200"></canvas>
+        <span v-else>Loading Data...</span>
+      </v-card-text>
+    </v-card>
+
+    <v-dialog v-model="dialog" max-width="500px">
+      <v-card>
+        <v-card-title
+          >Client Connections ({{
+            selectedData.localeDateString
+          }})</v-card-title
+        >
+        <v-card-text>
+          <v-list>
+            <v-list-item
+              v-for="client in selectedData.clients"
+              :key="client.clientDbId"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ client.clientNickname }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ client.clientDbId }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -36,7 +69,18 @@ export default {
     return {
       selectedDays: 30,
       clientConnectionsPerDay: [],
+      dialog: false,
+      selectedData: {},
     };
+  },
+  computed: {
+    endDate() {
+      let startDate = new Date();
+
+      return new Date(
+        startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
+      );
+    },
   },
   methods: {
     changeDays(days) {
@@ -59,7 +103,6 @@ export default {
       this.chart.update();
     },
     getClientConnectionsPerDay(logView) {
-      let obj = {};
       let regex =
         /^client connected \'(?<clientNickname>.*)\'\(id:(?<clientDbId>.*)\).*$/;
 
@@ -122,17 +165,8 @@ export default {
       );
     },
   },
-  computed: {
-    endDate() {
-      let startDate = new Date();
-
-      return new Date(
-        startDate.getTime() - this.selectedDays * 24 * 60 * 60 * 1000
-      );
-    },
-  },
   mounted() {
-    let watchLogView = this.$watch(
+    this.$watch(
       "loaded",
       (loaded) => {
         if (loaded) {
@@ -164,6 +198,15 @@ export default {
                   // chart.js acts weird when you unshift data to the data array of a dataset
                   reverse: true,
                 },
+              },
+              onClick: (e, arr) => {
+                if (arr.length) {
+                  let index = arr[0].index;
+
+                  this.selectedData = this.clientConnectionsPerDay[index];
+
+                  this.dialog = true;
+                }
               },
             },
           });
