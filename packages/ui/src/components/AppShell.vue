@@ -5,7 +5,6 @@
         @click="toggleDrawer"
         v-if="connected"
       ></v-app-bar-nav-icon>
-      <v-btn @click="toggleList">Toggle List</v-btn>
       <v-spacer></v-spacer>
 
       <dark-mode-switch></dark-mode-switch>
@@ -21,103 +20,87 @@
         mini-variant
         stateless
       >
-        <div class="d-flex justify-center">
+        <!-- <div class="d-flex justify-center">
           <v-btn icon x-large class="my-2" :to="{ name: 'servers' }">
             <v-avatar rounded size="36">
               <img src="@/assets/ts3_manager_logo.svg" />
             </v-avatar>
           </v-btn>
-        </div>
-        <!-- <v-avatar class="d-block text-center mx-auto mt-4" rounded size="36">
-          <img src="@/assets/ts3_manager_logo.svg" />
-        </v-avatar> -->
+        </div> -->
 
-        <v-divider class="mx-3 mb-5"></v-divider>
-
-        <!-- <v-avatar
-          v-for="n in 6"
-          :key="n"
-          class="d-block text-center mx-auto mb-9"
-          color="grey lighten-1"
-          size="28"
-        ></v-avatar> -->
-
-        <!-- <router-link :to="{ name: 'servers' }">
-          <v-avatar
-            v-for="n in 6"
-            :key="n"
-            class="d-block text-center mx-auto mb-9"
-            color="grey lighten-1"
-            size="36"
-            rounded
-          >
+        <v-list-item class="px-2">
+          <v-list-item-avatar tile>
             <img src="@/assets/ts3_manager_logo.svg" />
-          </v-avatar>
-        </router-link> -->
+          </v-list-item-avatar>
+        </v-list-item>
 
-        <!-- <v-btn icon x-large :to="{ name: 'servers' }">
-          <v-avatar rounded size="36">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/3/32/Telefunken_FuBK_test_pattern.svg"
-            />
-          </v-avatar>
-        </v-btn> -->
+        <v-divider class="mx-3"></v-divider>
 
-        <div class="d-flex justify-center">
+        <div class="pa-2" v-for="entry in navigation">
+          <v-btn dark text fab small :to="entry.route">
+            <v-icon>{{ entry.icon }}</v-icon>
+          </v-btn>
+        </div>
+        <!-- <div class="pa-2">
+          <v-btn dark text fab small :to="{ name: 'console' }">
+            <v-icon>mdi-console</v-icon>
+          </v-btn>
+        </div>
+        <div class="pa-2">
+          <v-btn dark text fab small :to="{ name: 'test' }">
+            <v-icon>science</v-icon>
+          </v-btn>
+        </div> -->
+
+        <v-divider class="mx-3 mb-2"></v-divider>
+
+        <div
+          class="d-flex justify-center mb-2"
+          v-for="server in serverList"
+          :key="server.virtualserver_id"
+        >
           <v-btn
             icon
             x-large
-            :to="{ name: 'server', params: { sid: 1 } }"
-            :disabled="serverId === 1"
+            :to="{ name: 'server', params: { sid: server.virtualserver_id } }"
+            :disabled="
+              serverId === server.virtualserver_id ||
+              server.virtualserver_status === 'offline'
+            "
             active-class="server--active"
-            :class="serverId === 1 ? 'server--active' : ''"
+            :class="
+              serverId === server.virtualserver_id ? 'server--active' : ''
+            "
           >
-            <v-avatar rounded size="36">
+            <v-avatar size="36" color="info">
+              <span v-if="true">{{
+                server.virtualserver_name.substring(0, 2).toUpperCase()
+              }}</span>
               <v-img
+                v-else
                 src="https://upload.wikimedia.org/wikipedia/commons/3/32/Telefunken_FuBK_test_pattern.svg"
                 class="rounded-xl"
               ></v-img>
             </v-avatar>
           </v-btn>
         </div>
-
-        <!-- <router-link :to="{ name: 'servers' }">
-          <v-img
-            src="https://upload.wikimedia.org/wikipedia/commons/3/32/Telefunken_FuBK_test_pattern.svg"
-            height="40"
-            max-width="40"
-            class="rounded ma-2"
-          ></v-img>
-        </router-link> -->
+        <div class="pa-2">
+          <v-btn color="primary" fab small>
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </div>
 
         <template #append>
           <div class="pa-2">
-            <v-btn color="primary" fab small>
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </div>
-          <div class="pa-2">
-            <v-btn color="primary" fab small :to="{ name: 'console' }">
-              <v-icon>mdi-console</v-icon>
-            </v-btn>
-          </div>
-          <div class="pa-2">
-            <v-btn color="primary" fab small :to="{ name: 'test' }">
-              <v-icon>science</v-icon>
-            </v-btn>
-          </div>
-          <div class="pa-2">
-            <v-btn color="primary" fab small :to="{ name: 'logout' }">
+            <v-btn dark text fab small :to="{ name: 'logout' }">
               <v-icon>logout</v-icon>
             </v-btn>
           </div>
         </template>
       </v-navigation-drawer>
 
-      <!-- <v-sheet color="grey lighten-5" height="128" width="100%"></v-sheet> -->
-
       <v-list class="pl-14" v-if="drawerWidth === '300'" dense>
-        <template v-for="(entry, i) in menuEntries">
+        <template v-for="(entry, i) in serverNavigation">
           <v-list-item
             :key="i"
             v-if="!entry.submenu"
@@ -173,17 +156,6 @@
             </v-list-item>
           </v-list-group>
         </template>
-
-        <v-list-item :to="{ name: 'test' }">
-          <v-list-item-content>
-            <v-list-item-title>Test</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item :to="{ name: 'test-test' }">
-          <v-list-item-content>
-            <v-list-item-title>Test Test</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
       </v-list>
     </v-navigation-drawer>
   </div>
@@ -204,6 +176,24 @@ export default {
       drawer: null,
       drawerWidth: "300",
       nestedDrawer: true,
+      navigation: [
+        {
+          icon: "dns",
+          route: { name: "servers" },
+        },
+        {
+          icon: "mdi-console",
+          route: { name: "console" },
+        },
+        {
+          icon: "mdi-shield-key",
+          // route: { name: "apikeys" },
+        },
+        {
+          icon: "science",
+          route: { name: "test" },
+        },
+      ],
     };
   },
   computed: {
@@ -213,13 +203,11 @@ export default {
     serverId() {
       return this.$store.state.query.serverId;
     },
-    menuEntries() {
+    serverList() {
+      return this.$store.state.query.serverList;
+    },
+    serverNavigation() {
       return [
-        // {
-        //   title: "Server List",
-        //   icon: "dns",
-        //   route: { name: "servers" },
-        // },
         {
           title: "Dashboard",
           icon: "dashboard",
@@ -231,7 +219,7 @@ export default {
         {
           title: "Edit Virtual Server",
           icon: "build",
-          route: { name: "server-edit" },
+          route: { name: "server-edit", params: { sid: this.serverId } },
         },
         {
           title: "Server Viewer",
@@ -389,26 +377,12 @@ export default {
       this.drawer = !this.drawer;
       this.nestedDrawer = true;
     },
-    toggleList() {
-      if (this.drawerWidth === "300") {
-        this.drawerWidth = "56";
-      } else {
-        this.drawerWidth = "300";
-      }
-    },
   },
   watch: {
-    // $route: {
-    //   immediate: true,
-    //   handler(route) {
-    //     if (route.name === "servers") {
-    //       this.drawerWidth = "56";
-    //     }
-    //   },
-    // },
     serverId: {
       immediate: true,
       handler(serverId) {
+        console.log("serverid", serverId);
         if (serverId) {
           this.drawerWidth = "300";
         } else {
