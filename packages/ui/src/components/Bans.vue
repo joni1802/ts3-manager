@@ -148,9 +148,7 @@ export default {
       return new Date(created * 1000 + duration * 1000).toLocaleString();
     },
     addBan() {
-      this.$router.push({
-        path: "/ban/add",
-      });
+      this.$router.push({ name: "ban-add" });
     },
     async deleteBans() {
       try {
