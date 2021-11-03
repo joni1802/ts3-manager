@@ -10,6 +10,8 @@
       <dark-mode-switch></dark-mode-switch>
       <file-upload-icon v-if="connected"></file-upload-icon>
       <bell-icon v-if="connected"></bell-icon>
+
+      <query-user></query-user>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app :width="drawerWidth">
@@ -169,6 +171,7 @@ export default {
     FileUploadIcon: () => import("@/components/FileUploadIcon"),
     Logo: () => import("@/components/Logo"),
     ServerSelection: () => import("@/components/ServerSelection"),
+    QueryUser: () => import("@/components/QueryUser"),
   },
   data() {
     return {
