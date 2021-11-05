@@ -10,8 +10,6 @@ import App from "./App.vue";
 import vuetify from "./plugins/vuetify";
 import VueToast from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
-import "nprogress/nprogress.css";
-import NProgress from "nprogress";
 import Clipboard from "v-clipboard";
 
 import TeamSpeak from "./api/TeamSpeak";
@@ -22,10 +20,6 @@ import router from "./router";
 import socket from "./socket";
 
 (async () => {
-  NProgress.configure({
-    showSpinner: false,
-  });
-
   Vue.use(Clipboard);
 
   Vue.use(VueToast, {

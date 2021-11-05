@@ -8,16 +8,9 @@
 </template>
 
 <script>
-import NProgress from "nprogress";
-
 export default {
   components: {
     AppShell: () => import("@/components/AppShell"),
-  },
-  computed: {
-    loading() {
-      return this.$store.state.query.loading;
-    },
   },
   methods: {
     handleReceivedMessages(e) {
@@ -52,17 +45,6 @@ export default {
       handler(number) {
         document.title = number ? `(${number}) TS3 Manager` : "TS3 Manager";
       },
-    },
-    loading(newValue, oldValue) {
-      if (oldValue === 0) {
-        NProgress.start();
-      }
-
-      if (newValue === 0) {
-        NProgress.done();
-      } else {
-        NProgress.inc();
-      }
     },
   },
 };

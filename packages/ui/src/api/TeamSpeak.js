@@ -43,7 +43,7 @@ let handleResponse = (response, resolve, reject) => {
   }
 };
 
-// Just for debugging the progress bar (NProgress)
+// Just for debugging the progress bar
 const throttleSocketConnection = (time) => {
   return new Promise((resolve) => {
     setTimeout(() => {

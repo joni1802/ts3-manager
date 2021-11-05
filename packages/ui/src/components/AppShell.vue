@@ -12,6 +12,12 @@
       <bell-icon v-if="connected"></bell-icon>
 
       <query-user></query-user>
+      <v-progress-linear
+        absolute
+        bottom
+        :active="loading"
+        :indeterminate="loading"
+      ></v-progress-linear>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app :width="drawerWidth">
@@ -200,6 +206,9 @@ export default {
     };
   },
   computed: {
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
     connected() {
       return this.$store.state.query.connected;
     },
