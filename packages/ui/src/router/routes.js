@@ -1,10 +1,10 @@
 export default [
-  // {
-  //   path: "/",
-  //   redirect: {
-  //     name: "login",
-  //   },
-  // },
+  {
+    path: "/",
+    redirect: {
+      name: "login",
+    },
+  },
   {
     path: "/servers",
     component: () => import("@/components/Servers"),
