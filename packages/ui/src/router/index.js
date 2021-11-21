@@ -16,10 +16,16 @@ router.beforeEach((to, from, next) => {
       next();
     } else {
       next({ name: "login" });
+
+      // The global after hook is not called on redirects so the loading state needs to be stopped manually.
+      // Otherwise the global progress bar would not go away even though everything is already loaded.
+      store.dispatch("stopLoading");
     }
   } else {
     if (to.name === "login" && store.state.query.connected) {
       next({ name: "servers" });
+
+      store.dispatch("stopLoading");
     } else {
       next();
     }
