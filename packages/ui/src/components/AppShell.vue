@@ -11,7 +11,7 @@
       <file-upload-icon v-if="connected"></file-upload-icon>
       <bell-icon v-if="connected"></bell-icon>
 
-      <query-user></query-user>
+      <query-user v-if="connected"></query-user>
       <v-progress-linear
         absolute
         bottom
@@ -20,7 +20,12 @@
       ></v-progress-linear>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app :width="drawerWidth">
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      :width="drawerWidth"
+      v-if="connected"
+    >
       <v-navigation-drawer
         v-model="nestedDrawer"
         absolute
@@ -28,14 +33,6 @@
         mini-variant
         stateless
       >
-        <!-- <div class="d-flex justify-center">
-          <v-btn icon x-large class="my-2" :to="{ name: 'servers' }">
-            <v-avatar rounded size="36">
-              <img src="@/assets/ts3_manager_logo.svg" />
-            </v-avatar>
-          </v-btn>
-        </div> -->
-
         <v-list-item class="px-2">
           <v-list-item-avatar tile>
             <img src="@/assets/ts3_manager_logo.svg" />
@@ -45,20 +42,23 @@
         <v-divider class="mx-3"></v-divider>
 
         <div class="pa-2" v-for="entry in navigation">
-          <v-btn dark text fab small :to="entry.route">
-            <v-icon>{{ entry.icon }}</v-icon>
-          </v-btn>
+          <v-tooltip right>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                dark
+                text
+                fab
+                small
+                :to="entry.route"
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>{{ entry.icon }}</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ entry.text }}</span>
+          </v-tooltip>
         </div>
-        <!-- <div class="pa-2">
-          <v-btn dark text fab small :to="{ name: 'console' }">
-            <v-icon>mdi-console</v-icon>
-          </v-btn>
-        </div>
-        <div class="pa-2">
-          <v-btn dark text fab small :to="{ name: 'test' }">
-            <v-icon>science</v-icon>
-          </v-btn>
-        </div> -->
 
         <v-divider class="mx-3 mb-2"></v-divider>
 
@@ -100,9 +100,22 @@
 
         <template #append>
           <div class="pa-2">
-            <v-btn dark text fab small :to="{ name: 'logout' }">
-              <v-icon>logout</v-icon>
-            </v-btn>
+            <v-tooltip right>
+              <template #activator="{ on, attrs }">
+                <v-btn
+                  dark
+                  text
+                  fab
+                  small
+                  v-on="on"
+                  v-bind="attrs"
+                  :to="{ name: 'logout' }"
+                >
+                  <v-icon>logout</v-icon>
+                </v-btn>
+              </template>
+              <span>Logout</span>
+            </v-tooltip>
           </div>
         </template>
       </v-navigation-drawer>
@@ -136,13 +149,9 @@
 
           <v-list-group v-else :key="i" no-action :prepend-icon="entry.icon">
             <template #activator>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ entry.title }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              <v-list-item-title>
+                {{ entry.title }}
+              </v-list-item-title>
             </template>
 
             <v-list-item
@@ -153,9 +162,6 @@
                 'v-list-item--active': $route.name === subEntry.route.name,
               }"
             >
-              <v-list-item-icon>
-                <v-icon>{{ subEntry.icon }}</v-icon>
-              </v-list-item-icon>
               <v-list-item-content>
                 <v-list-item-title>
                   {{ subEntry.title }}
@@ -188,18 +194,22 @@ export default {
       navigation: [
         {
           icon: "dns",
+          text: "Server List",
           route: { name: "servers" },
         },
         {
           icon: "mdi-console",
+          text: "Server Query",
           route: { name: "console" },
         },
         {
           icon: "mdi-shield-key",
+          text: "API Keys",
           // route: { name: "apikeys" },
         },
         {
           icon: "science",
+          text: "Test",
           route: { name: "test" },
         },
       ],
@@ -336,7 +346,6 @@ export default {
           submenu: [
             {
               title: "Server Group",
-              icon: "group",
               route: {
                 name: "permissions-servergroup",
                 params: { sid: this.serverId },
@@ -344,7 +353,6 @@ export default {
             },
             {
               title: "Client Permissions",
-              icon: "person",
               route: {
                 name: "permissions-client",
                 params: { sid: this.serverId },
@@ -352,7 +360,6 @@ export default {
             },
             {
               title: "Channel Permissions",
-              icon: "mdi-hexagon-slice-4",
               route: {
                 name: "permissions-channel",
                 params: { sid: this.serverId },
@@ -360,7 +367,6 @@ export default {
             },
             {
               title: "Channel Groups",
-              icon: "mdi-hexagon-slice-4",
               route: {
                 name: "permissions-channelgroup",
                 params: { sid: this.serverId },
@@ -368,7 +374,6 @@ export default {
             },
             {
               title: "Channel Client Permissions",
-              icon: "mdi-hexagon-slice-4",
               route: {
                 name: "permissions-channelclient",
                 params: { sid: this.serverId },
