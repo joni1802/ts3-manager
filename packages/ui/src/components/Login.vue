@@ -145,6 +145,9 @@ export default {
         return this.$store.state.settings.rememberLogin;
       },
     },
+    redirect() {
+      return this.$route.query.redirect;
+    },
   },
   methods: {
     connectTeamSpeak(credentials) {
@@ -166,7 +169,11 @@ export default {
         this.$store.commit("isConnected", true);
         this.$store.commit("isLoggedOut", false);
 
-        this.$router.push({ name: "servers" });
+        if (this.redirect) {
+          this.$router.push({ path: this.redirect });
+        } else {
+          this.$router.push({ name: "servers" });
+        }
       } catch (err) {
         this.$toast.error(err.message);
       }
