@@ -3,7 +3,7 @@
     <template #activator="{ on }">
       <v-btn icon x-large dark v-on="on">
         <v-avatar size="48" color="primary">
-          <span>JF</span>
+          <span>{{ loginNameShorthand }}</span>
         </v-avatar>
       </v-btn>
     </template>
@@ -25,5 +25,12 @@
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    loginNameShorthand() {
+      console.log(this.$store.state.query.loginName);
+      return this.$store.state.query.loginName.substring(0, 2).toUpperCase();
+    },
+  },
+};
 </script>

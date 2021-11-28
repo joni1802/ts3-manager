@@ -1,12 +1,15 @@
 import Cookies from "js-cookie";
 
 const state = {
-  serverId: Cookies.get("serverId"),
+  serverId: 0,
+  serverList: [],
+  serverHostBannerUrls: {},
   token: Cookies.get("token"),
   loading: 0,
   connected: false,
   loggedOut: true,
   queryUser: {},
+  loginName: "",
 };
 
 const mutations = {
@@ -25,8 +28,17 @@ const mutations = {
   setServerId(state, id) {
     state.serverId = id;
   },
+  setServerList(state, list) {
+    state.serverList = list;
+  },
   isLoggedOut(state, status) {
     state.loggedOut = status;
+  },
+  setServerHostBannerUrl(state, { sid, bannerUrl }) {
+    // to do
+  },
+  setLoginName(state, name) {
+    state.loginName = name;
   },
 };
 
