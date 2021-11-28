@@ -156,8 +156,8 @@ export default {
 
       return {
         timestamp: this.getLocaleDate(timestamp),
-        level: level.trim(),
-        channel: channel.trim(),
+        level: level && level.trim(),
+        channel: channel && channel.trim(),
         sid: parseInt(sid),
         msg: msg.join("|"),
       };
