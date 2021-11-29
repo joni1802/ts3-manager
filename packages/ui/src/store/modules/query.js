@@ -7,7 +7,6 @@ const state = {
   token: Cookies.get("token"),
   loading: 0,
   connected: false,
-  loggedOut: true,
   queryUser: {},
   loginName: "",
 };
@@ -30,9 +29,6 @@ const mutations = {
   },
   setServerList(state, list) {
     state.serverList = list;
-  },
-  isLoggedOut(state, status) {
-    state.loggedOut = status;
   },
   setServerHostBannerUrl(state, { sid, bannerUrl }) {
     // to do

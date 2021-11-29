@@ -99,8 +99,6 @@ export default {
     next(async (vm) => {
       let token = vm.$store.state.query.token;
 
-      vm.$store.commit("isLoggedOut", true);
-
       if (!token) return;
 
       vm.$socket.emit("autofillform", token, (response) => {
@@ -167,7 +165,6 @@ export default {
 
         this.$store.dispatch("saveToken", token);
         this.$store.commit("isConnected", true);
-        this.$store.commit("isLoggedOut", false);
 
         if (this.redirect) {
           this.$router.push({ path: this.redirect });
