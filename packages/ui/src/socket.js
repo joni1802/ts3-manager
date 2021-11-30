@@ -17,7 +17,10 @@ const handleLogout = () => {
   store.commit("isConnected", false);
 
   if (router.currentRoute.name !== "login") {
-    router.push({ name: "login" });
+    router.push({
+      name: "login",
+      query: { redirect: router.currentRoute.path },
+    });
   }
 };
 

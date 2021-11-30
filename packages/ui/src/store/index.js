@@ -37,7 +37,7 @@ const store = new Vuex.Store({
         "settings",
         "query.connected",
         "query.queryUser",
-        "query.loggedOut",
+        "query.token",
       ],
       // Encrypt local storage
       storage: process.env.NODE_ENV !== "development" && {

@@ -13,6 +13,7 @@
                     placeholder="IP or Domain"
                     v-model="form.host"
                     :rules="[rules.required]"
+                    :disabled="loading"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs2>
@@ -21,10 +22,16 @@
                     type="number"
                     v-model="form.queryport"
                     :rules="[rules.required]"
+                    :disabled="loading"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs3>
-                  <v-checkbox v-model="form.ssh" label="SSH">
+                  <v-checkbox
+                    v-model="form.ssh"
+                    label="SSH"
+                    :disabled="loading"
+                    @click="changePort"
+                  >
                     <template #append>
                       <v-tooltip bottom>
                         <template #activator="{ on }">
@@ -46,6 +53,7 @@
                     placeholder="e.g. serveradmin"
                     name="username"
                     autocomplete="username"
+                    :disabled="loading"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
@@ -56,12 +64,14 @@
                     :rules="[rules.required]"
                     name="password"
                     autocomplete="current-password"
+                    :disabled="loading"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
                   <v-checkbox
                     label="Remember me"
                     v-model="rememberLogin"
+                    :disabled="loading"
                   ></v-checkbox>
                 </v-flex>
               </v-layout>
@@ -72,9 +82,9 @@
             <v-btn
               text
               color="primary"
-              :disabled="!valid"
+              :disabled="!valid || loading"
               @click="connect"
-              :loading="loading"
+              :loading="connecting"
             >
               <v-icon>arrow_forward</v-icon>Connect
               <template #loader>
@@ -95,32 +105,10 @@
 import { version } from "../../../../package.json";
 
 export default {
-  beforeRouteEnter(to, from, next) {
-    next(async (vm) => {
-      let token = vm.$store.state.query.token;
-
-      if (!token) return;
-
-      vm.$socket.emit("autofillform", token, (response) => {
-        if (response.host) {
-          vm.form.host = response.host;
-          vm.form.queryport = response.queryport;
-          vm.form.ssh = response.protocol === "ssh" ? true : false;
-          vm.form.username = response.username;
-          vm.form.password = response.password;
-        } else {
-          vm.$store.dispatch("removeToken");
-
-          vm.$toast.error(response);
-        }
-      });
-    });
-  },
   data() {
     return {
       panel: [true],
       valid: false,
-      loading: false,
       rules: {
         required: (value) => !!value || "Required.",
       },
@@ -132,6 +120,7 @@ export default {
         password: "",
       },
       appVersion: version,
+      connecting: false,
     };
   },
   computed: {
@@ -146,13 +135,21 @@ export default {
     redirect() {
       return this.$route.query.redirect;
     },
+    token() {
+      return this.$store.state.query.token;
+    },
+    loading() {
+      return !!this.$store.state.query.loading;
+    },
   },
   methods: {
     connectTeamSpeak(credentials) {
       return this.$TeamSpeak.connect(credentials);
     },
     async connect() {
-      this.loading = true;
+      this.$store.dispatch("startLoading");
+
+      this.connecting = true;
 
       try {
         let { token } = await this.connectTeamSpeak({
@@ -172,16 +169,53 @@ export default {
           this.$router.push({ name: "servers" });
         }
       } catch (err) {
+        this.connecting = false;
+
         this.$toast.error(err.message);
       }
 
-      this.loading = false;
+      this.$store.dispatch("stopLoading");
+    },
+    decryptToken() {
+      return new Promise((resolve, reject) => {
+        this.$socket.emit("autofillform", this.token, (response) => {
+          if (response.host) {
+            resolve(response);
+          } else {
+            reject(new Error(response));
+          }
+        });
+      });
+    },
+    autofillForm() {
+      return this.decryptToken().then((response) => {
+        this.form.host = response.host;
+        this.form.queryport = response.queryport;
+        this.form.ssh = response.protocol === "ssh" ? true : false;
+        this.form.username = response.username;
+        this.form.password = response.password;
+      });
+    },
+    changePort() {
+      this.form.ssh
+        ? (this.form.queryport = 10022)
+        : (this.form.queryport = 10011);
     },
   },
-  watch: {
-    "form.ssh"(ssh) {
-      ssh ? (this.form.queryport = 10022) : (this.form.queryport = 10011);
-    },
+  async created() {
+    this.$store.dispatch("startLoading");
+
+    try {
+      if (this.rememberLogin && this.token) {
+        await this.autofillForm();
+      }
+    } catch (err) {
+      this.$store.dispatch("removeToken");
+
+      this.$toast.error(err.message);
+    }
+
+    this.$store.dispatch("stopLoading");
   },
 };
 </script>
