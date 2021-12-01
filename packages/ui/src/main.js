@@ -32,11 +32,12 @@ import socket from "./socket";
   // Connect to websocket server
   socket.open();
 
-  if (!store.state.query.loggedOut) {
+  if (store.state.query.connected) {
     try {
       await TeamSpeak.reconnect();
+      await TeamSpeak.init();
     } catch (err) {
-      console.log(err);
+      Vue.prototype.$toast.error(err.message);
     }
   }
 

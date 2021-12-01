@@ -213,6 +213,7 @@ TeamSpeak.unregisterEvent = () => {
   });
 };
 
+// To-do: Modifiy "whoami" and add this to the components "server" and "servers"
 TeamSpeak.selectServer = (sid) => {
   return TeamSpeak.execute("use", { sid })
     .then(() => store.dispatch("saveServerId", sid))
@@ -229,6 +230,16 @@ TeamSpeak.downloadFile = (path, cid, cpw = "") => {
   });
 };
 
+TeamSpeak.init = () => {
+  return TeamSpeak.execute("serverlist")
+    .then((list) => store.commit("setServerList", list))
+    .then(() => TeamSpeak.execute("whoami"))
+    .then((userInfo) =>
+      store.commit("setLoginName", userInfo[0].client_login_name)
+    );
+};
+
+// To-do: Remove when init method is finished
 TeamSpeak.reconnect = () => {
   return new Promise((resolve, reject) => {
     socket.emit(
@@ -239,18 +250,6 @@ TeamSpeak.reconnect = () => {
       },
       async (res) => {
         if (res.reconnected) {
-          try {
-            let queryUser = await TeamSpeak.execute("whoami").then(
-              (list) => list[0]
-            );
-
-            if (store.state.query.serverId) await TeamSpeak.registerAllEvents();
-
-            store.dispatch("saveConnection", { queryUser, connected: true });
-          } catch (err) {
-            reject(err);
-          }
-
           resolve();
         } else {
           reject(res);
