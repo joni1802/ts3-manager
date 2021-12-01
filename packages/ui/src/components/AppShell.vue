@@ -70,15 +70,12 @@
           <v-btn
             icon
             x-large
-            :to="{ name: 'server', params: { sid: server.virtualserver_id } }"
-            :disabled="
-              serverId === server.virtualserver_id ||
-              server.virtualserver_status === 'offline'
-            "
-            active-class="server--active"
-            :class="
-              serverId === server.virtualserver_id ? 'server--active' : ''
-            "
+            :to="{
+              name: 'dashboard',
+              params: { sid: server.virtualserver_id },
+            }"
+            :disabled="server.virtualserver_status === 'offline'"
+            :class="{ 'v-btn--active': serverId === server.virtualserver_id }"
           >
             <v-avatar size="36" color="info">
               <span v-if="true">{{
@@ -399,7 +396,6 @@ export default {
     serverId: {
       immediate: true,
       handler(serverId) {
-        console.log("serverid", serverId);
         if (serverId) {
           this.drawerWidth = "300";
         } else {
