@@ -143,8 +143,6 @@ socket.init = (server, corsOptions) => {
 
         ServerQuery = await TeamSpeak.connect(decoded);
 
-        if (serverId) await ServerQuery.execute("use", { sid: serverId });
-
         registerEvents(ServerQuery, log, socket);
 
         log.info("ServerQuery reconnected");
