@@ -43,38 +43,47 @@ jobs:
           asset_name: ${{ matrix.file-name }}
           tag: ${{ github.ref }}
           overwrite: true
-          
+
   publish-docker:
     name: Publish Docker images
     runs-on: ubuntu-latest
-   
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Docker Setup QEMU
         uses: docker/setup-qemu-action@v1
         with:
           platforms: arm64,arm
-        
+
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v1
-        
+
       - name: Docker Login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Prepare
+        id: prep
+        run: |
+          DOCKER_IMAGE=${{ secrets.DOCKER_USER }}/ts3-manager
+          TAGS="${DOCKER_IMAGE}:latest"
           
+          # If event is release, add release version tag
+          if [[ $GITHUB_EVENT_NAME == release ]]; then
+            TAGS="$TAGS,${DOCKER_IMAGE}:${{ github.event.release.tag_name }}"
+          fi
+
+          # Set output parameters.
+          echo ::set-output name=tags::${TAGS}
+      
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
           platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
           push: true
-          tags: |
-            ${{secrets.DOCKER_USER}}/ts3-manager:${{ github.event.release.tag_name }}
-            ${{secrets.DOCKER_USER}}/ts3-manager:latest
-          
-          
-          
+          tags: ${{ steps.prep.outputs.tags }}
