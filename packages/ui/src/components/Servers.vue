@@ -11,8 +11,6 @@
               item-key="virtualserver_id"
               :footer-props="{ 'items-per-page-options': rowsPerPage }"
             >
-              <!-- show-select
-          single-select v-model="selectedServer" -->
               <template #item.actions="{ item }">
                 <v-menu>
                   <template #activator="{ on, attrs }">
@@ -21,12 +19,6 @@
                     </v-btn>
                   </template>
                   <v-list>
-                    <v-list-item
-                      :to="{ name: 'server-edit' }"
-                      :disabled="isOffline(item.virtualserver_status)"
-                    >
-                      <v-list-item-title> Edit Server </v-list-item-title>
-                    </v-list-item>
                     <v-list-item @click="openDeleteDialog(item)">
                       <v-list-item-title> Delete Server </v-list-item-title>
                     </v-list-item>
@@ -34,7 +26,7 @@
                 </v-menu>
               </template>
               <template #item.selected_sid="{ item }">
-                <v-radio-group v-model="joinedServerId">
+                <!-- <v-radio-group v-model="joinedServerId">
                   <v-radio
                     :value="item.virtualserver_id"
                     :disabled="
@@ -42,7 +34,26 @@
                     "
                   >
                   </v-radio>
-                </v-radio-group>
+                </v-radio-group> -->
+
+                <v-btn
+                  color="warning"
+                  v-if="serverId === item.virtualserver_id"
+                  @click="disconnectFromServer"
+                  :disabled="item.virtualserver_status === 'offline' || loading"
+                >
+                  <v-icon left>mdi-location-exit</v-icon>
+                  Disconnect
+                </v-btn>
+                <v-btn
+                  color="info"
+                  v-else
+                  @click="connectToServer(item.virtualserver_id)"
+                  :disabled="item.virtualserver_status === 'offline' || loading"
+                >
+                  <v-icon left>mdi-location-enter</v-icon>
+                  Connect
+                </v-btn>
               </template>
               <template #item.virtualserver_clientsonline_maxclients="{ item }">
                 {{ item.virtualserver_clientsonline }}/{{
@@ -113,30 +124,26 @@
 
 <script>
 export default {
-  beforeRouteEnter(to, from, next) {
-    next(async (vm) => {
-      try {
-        vm.servers = await vm.getServerList();
-
-        // Pick the first virtual server after login
-        if (from.name === "login") {
-          let onlineServer = vm.servers.find(
-            (server) => server.virtualserver_status === "online"
-          );
-
-          if (onlineServer)
-            await vm.$TeamSpeak.selectServer(onlineServer.virtualserver_id);
-        }
-
-        // Is primary needed to get the used server id
-        vm.queryUser = await vm.getQueryUserData();
-
-        vm.startUptimeCounters();
-      } catch (err) {
-        vm.$toast.error(err.message);
-      }
-    });
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   next(async (vm) => {
+  //     try {
+  //       vm.servers = await vm.getServerList();
+  //       // Pick the first virtual server after login
+  //       if (from.name === "login") {
+  //         let onlineServer = vm.servers.find(
+  //           (server) => server.virtualserver_status === "online"
+  //         );
+  //         if (onlineServer)
+  //           await vm.$TeamSpeak.selectServer(onlineServer.virtualserver_id);
+  //       }
+  //       // Is primary needed to get the used server id
+  //       vm.queryUser = await vm.getQueryUserData();
+  //       vm.startUptimeCounters();
+  //     } catch (err) {
+  //       vm.$toast.error(err.message);
+  //     }
+  //   });
+  // },
   data() {
     return {
       headers: [
@@ -147,7 +154,7 @@ export default {
           sortable: false,
         },
         {
-          text: "Select",
+          text: "",
           align: "start",
           value: "selected_sid",
           sortable: false,
@@ -202,6 +209,9 @@ export default {
           this.$toast.error(err.message);
         }
       },
+    },
+    serverId() {
+      return this.$store.state.query.serverId;
     },
   },
   methods: {
@@ -315,6 +325,37 @@ export default {
       this.removeUptimeCounters();
       this.startUptimeCounters();
     },
+    async connectToServer(serverId) {
+      try {
+        await this.$TeamSpeak.execute("use", { sid: serverId });
+
+        this.$store.dispatch("saveServerId", serverId);
+
+        this.$router.push({ name: "server", params: { sid: serverId } });
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
+    },
+    async disconnectFromServer() {
+      try {
+        await this.$TeamSpeak.execute("use", { sid: 0 });
+
+        this.$store.dispatch("saveServerId", 0);
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
+    },
+  },
+  async created() {
+    try {
+      this.servers = await this.getServerList();
+
+      this.$store.commit("setServerList", this.servers);
+
+      this.startUptimeCounters();
+    } catch (err) {
+      this.$toast.error(err.message);
+    }
   },
   beforeRouteLeave(from, to, next) {
     this.removeUptimeCounters();
