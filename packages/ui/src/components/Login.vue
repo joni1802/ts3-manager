@@ -217,6 +217,15 @@ export default {
 
     this.$store.dispatch("stopLoading");
   },
+  async beforeRouteLeave(from, to, next) {
+    try {
+      await this.$TeamSpeak.init();
+    } catch (err) {
+      this.$toast.error(err.message);
+    }
+
+    next();
+  },
 };
 </script>
 
