@@ -8,7 +8,6 @@ const state = {
   loading: 0,
   connected: false,
   queryUser: {},
-  loginName: "",
 };
 
 const mutations = {
@@ -32,9 +31,6 @@ const mutations = {
   },
   setServerHostBannerUrl(state, { sid, bannerUrl }) {
     // to do
-  },
-  setLoginName(state, name) {
-    state.loginName = name;
   },
 };
 

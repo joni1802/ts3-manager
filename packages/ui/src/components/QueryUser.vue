@@ -28,7 +28,9 @@
 export default {
   computed: {
     loginNameShorthand() {
-      return this.$store.state.query.loginName.substring(0, 2).toUpperCase();
+      return this.$store.state.query.queryUser.client_login_name
+        .substring(0, 2)
+        .toUpperCase();
     },
   },
 };

@@ -234,9 +234,7 @@ TeamSpeak.init = () => {
   return TeamSpeak.execute("serverlist")
     .then((list) => store.commit("setServerList", list))
     .then(() => TeamSpeak.execute("whoami"))
-    .then((userInfo) =>
-      store.commit("setLoginName", userInfo[0].client_login_name)
-    );
+    .then((userInfo) => store.commit("saveUserInfo", userInfo[0]));
 };
 
 // To-do: Remove when init method is finished
