@@ -246,7 +246,7 @@ export default {
 
         this.deleteDialog = false;
 
-        this.servers = await this.getServerList();
+        await this.setServerList();
       } catch (err) {
         this.$toast.error(err.message);
       }
