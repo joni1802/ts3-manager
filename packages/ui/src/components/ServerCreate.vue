@@ -82,6 +82,11 @@ export default {
     getServerList() {
       return this.$TeamSpeak.execute("serverlist");
     },
+    async setServerList() {
+      this.servers = await this.getServerList();
+
+      this.$store.commit("setServerList", this.servers);
+    },
     getAvailablePort() {
       return (
         Math.max(...this.servers.map((server) => server.virtualserver_port)) + 1
@@ -98,8 +103,12 @@ export default {
         this.token = response.token;
 
         this.$toast.success("Server successfully created");
+      } catch (err) {
+        this.$toast.error(err.message);
+      }
 
-        await this.$TeamSpeak.selectServer(response.sid);
+      try {
+        await this.setServerList();
       } catch (err) {
         this.$toast.error(err.message);
       }
@@ -107,7 +116,8 @@ export default {
   },
   async created() {
     try {
-      this.servers = await this.getServerList();
+      await this.setServerList();
+
       this.serverPort = this.getAvailablePort();
     } catch (err) {
       this.$toast.error(err.message);
