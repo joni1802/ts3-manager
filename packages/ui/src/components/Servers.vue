@@ -26,16 +26,6 @@
                 </v-menu>
               </template>
               <template #item.selected_sid="{ item }">
-                <!-- <v-radio-group v-model="joinedServerId">
-                  <v-radio
-                    :value="item.virtualserver_id"
-                    :disabled="
-                      item.virtualserver_status === 'offline' || loading
-                    "
-                  >
-                  </v-radio>
-                </v-radio-group> -->
-
                 <v-btn
                   color="warning"
                   v-if="serverId === item.virtualserver_id"
@@ -267,7 +257,8 @@ export default {
     async startServer(sid) {
       try {
         await this.$TeamSpeak.execute("serverstart", { sid });
-        await this.$TeamSpeak.selectServer(sid);
+
+        await this.setServerList();
 
         this.queryUser = await this.getQueryUserData();
       } catch (err) {
@@ -282,7 +273,9 @@ export default {
 
         this.stopDialog = false;
 
-        this.servers = await this.getServerList();
+        await this.setServerList();
+
+        this.$store.dispatch("saveServerId", 0);
 
         if (this.joinedServerId === this.selectedServer.virtualserver_id)
           this.$store.dispatch("removeServerId");
@@ -345,12 +338,15 @@ export default {
         this.$toast.error(err.message);
       }
     },
-  },
-  async created() {
-    try {
+    async setServerList() {
       this.servers = await this.getServerList();
 
       this.$store.commit("setServerList", this.servers);
+    },
+  },
+  async created() {
+    try {
+      await this.setServerList();
 
       this.startUptimeCounters();
     } catch (err) {
