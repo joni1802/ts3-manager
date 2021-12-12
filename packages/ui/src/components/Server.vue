@@ -36,13 +36,19 @@ export default {
 
       this.$store.commit("setServerList", serverList);
     },
+    async setQueryUser() {
+      let [queryUser] = await this.$TeamSpeak.execute("whoami");
+
+      this.$store.commit("saveUserInfo", queryUser);
+    },
   },
   async created() {
     try {
-      // to-do: check selected server id with whoami and set whoami in vuex
       await this.setServerList();
 
       await this.useServer();
+
+      await this.setQueryUser();
 
       await this.registerServerNotifications();
 
@@ -63,6 +69,8 @@ export default {
         this.serverId = to.params.sid;
 
         await this.useServer();
+
+        await this.setQueryUser();
 
         await this.registerServerNotifications();
 
