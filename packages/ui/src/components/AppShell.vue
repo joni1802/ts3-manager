@@ -90,7 +90,7 @@
           </v-btn>
         </div>
         <div class="pa-2">
-          <v-btn color="primary" fab small>
+          <v-btn color="primary" fab small :to="{ name: 'server-create' }">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </div>
@@ -204,11 +204,11 @@ export default {
           text: "API Keys",
           // route: { name: "apikeys" },
         },
-        {
-          icon: "science",
-          text: "Test",
-          route: { name: "test" },
-        },
+        // {
+        //   icon: "science",
+        //   text: "Test",
+        //   route: { name: "test" },
+        // },
       ],
     };
   },
