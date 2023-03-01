@@ -34,7 +34,7 @@ export default {
       let disassembledSpacer = name.match(this.spacer);
       let alignment = disassembledSpacer[1];
 
-      this.text = disassembledSpacer[4];
+      this.text = name.split(/](.*)/s)[1];
 
       if (this.characterBlocks.includes(this.text)) {
         this.specialSpacer = true;
