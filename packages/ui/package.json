@@ -18,7 +18,7 @@
     "path-browserify": "^1.0.1",
     "register-service-worker": "^1.6.2",
     "secure-ls": "^1.2.6",
-    "socket.io-client": "^4.1.1",
+    "socket.io-client": "^4.6.1",
     "v-clipboard": "^2.2.2",
     "vue": "^2.6.12",
     "vue-router": "^3.0.2",
