@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       URL: {
-        teamSpeak: ["https://files.teamspeak-services.com/releases/server/"],
+        teamSpeak: "https://raw.githubusercontent.com/TeamSpeak-Systems/official-images/master/library/teamspeak",
         ts3Manager: [
           "https://api.github.com/repos/joni1802/ts3-manager/tags",
           "https://www.ts3.app/releases",
@@ -87,30 +87,13 @@ export default {
         .execute("version")
         .then((version) => version[0].version);
     },
-    getTeamSpeakVersions() {
-      return fetch(this.URL.teamSpeak[0])
+    getLatestTeamSpeakVersion() {
+      return fetch(this.URL.teamSpeak)
         .then((res) => res.text())
         .then((text) => {
-          let parser = new DOMParser();
-          let html = parser.parseFromString(text, "text/html");
-          let links = html.querySelectorAll("a");
-
-          return [...links]
-            .map((link) => link.text)
-            .filter((version) => this.parseVersionNumber(version));
+          const version = text.match(/[0-9]+\.[0-9]+\.[0-9]+/);
+          return version[0];
         });
-    },
-    getLatestTeamSpeakVersion() {
-      return this.getTeamSpeakVersions().then((versions) => {
-        let parsedVersions = versions.map((version) =>
-          this.parseVersionNumber(version)
-        );
-        let newestParsedVersion = Math.max(...parsedVersions);
-
-        return versions.find(
-          (version) => this.parseVersionNumber(version) === newestParsedVersion
-        );
-      });
     },
     getLatestTSMRelease() {
       return fetch(this.URL.ts3Manager[0])
@@ -160,8 +143,7 @@ export default {
           )
         ) {
           this.createNotification({
-            link: `${this.URL.teamSpeak[0]}${(() =>
-              this.latestTeamSpeakVersion)()}`,
+            link: `https://files.teamspeak-services.com/releases/server/${this.latestTeamSpeakVersion}/index.html`,
             title: `New TeamSpeak Server Version <b>${(() =>
               this.latestTeamSpeakVersion)()}</b> Available`,
             icon: "mdi-update",
