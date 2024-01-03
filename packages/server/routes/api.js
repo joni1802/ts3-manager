@@ -122,6 +122,22 @@ router.post("/upload", async (req, res, next) => {
 });
 
 /**
+ * Get newest available TeamSpeak server versions.
+ * The fetch is run on the server side to bypass CORS restrictions on the client side.
+ */
+router.get("/teamspeak-versions", async (req, res, next) => {
+  try {
+    let data = await fetch(
+      "https://www.teamspeak.com/versions/server.json"
+    ).then((data) => data.json());
+
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
  * Handle errors.
  * This middleware needs to have 4 arguments in the callback function.
  * Otherwise express.js will not handle it as an error middleware.

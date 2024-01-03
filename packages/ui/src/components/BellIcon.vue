@@ -52,7 +52,6 @@ export default {
   data() {
     return {
       URL: {
-        teamSpeak: "https://raw.githubusercontent.com/TeamSpeak-Systems/official-images/master/library/teamspeak",
         ts3Manager: [
           "https://api.github.com/repos/joni1802/ts3-manager/tags",
           "https://www.ts3.app/releases",
@@ -87,13 +86,33 @@ export default {
         .execute("version")
         .then((version) => version[0].version);
     },
-    getLatestTeamSpeakVersion() {
-      return fetch(this.URL.teamSpeak)
-        .then((res) => res.text())
-        .then((text) => {
-          const version = text.match(/[0-9]+\.[0-9]+\.[0-9]+/);
-          return version[0];
-        });
+    getServerPlatform() {
+      return this.$TeamSpeak
+        .execute("serverinfo")
+        .then(([serverinfo]) => serverinfo.virtualserver_platform);
+    },
+    getTeamSpeakVersionsUrl() {
+      let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin;
+      let url = new URL("/api/teamspeak-versions", base);
+
+      return url.href;
+    },
+    async getLatestTeamSpeakVersion() {
+      let teamSpeakVersionUrl = this.getTeamSpeakVersionsUrl();
+      let teamSpeakVersions = await fetch(teamSpeakVersionUrl, {
+        credentials: "include",
+      }).then((data) => data.json());
+      let serverPlatform = await this.getServerPlatform();
+
+      // Use the linux version as a fallback if the platform is not listed in the response
+      let platformVersion = teamSpeakVersions[serverPlatform.toLowerCase()]
+        ? teamSpeakVersions[serverPlatform.toLowerCase()]
+        : teamSpeakVersions["linux"];
+
+      // Return the 64 bit version number by default if it is available for the platform
+      return platformVersion["x86_64"]
+        ? platformVersion["x86_64"].version
+        : platformVersion[Object.keys(platformVersion)[0]].version;
     },
     getLatestTSMRelease() {
       return fetch(this.URL.ts3Manager[0])
