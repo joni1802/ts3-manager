@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "build": "pkg . --target node14"
+    "build": "pkg . --target node18"
   },
   "author": "J.F.",
   "license": "ISC",
@@ -31,6 +31,6 @@
   "bin": "app.js",
   "devDependencies": {
     "nodemon": "^2.0.20",
-    "pkg": "^4.4.9"
+    "pkg": "^5.8.1"
   }
 }
