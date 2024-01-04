@@ -30,7 +30,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 18.x
       - run: |
           npm install
           npm run build --if-present
@@ -71,7 +71,7 @@ jobs:
         run: |
           DOCKER_IMAGE=${{ secrets.DOCKER_USER }}/ts3-manager
           TAGS="${DOCKER_IMAGE}:latest"
-          
+
           # If event is release, add release version tag
           if [[ $GITHUB_EVENT_NAME == release ]]; then
             TAGS="$TAGS,${DOCKER_IMAGE}:${{ github.event.release.tag_name }}"
@@ -79,7 +79,7 @@ jobs:
 
           # Set output parameters.
           echo ::set-output name=tags::${TAGS}
-      
+
       - name: Build and push
         uses: docker/build-push-action@v2
         with:

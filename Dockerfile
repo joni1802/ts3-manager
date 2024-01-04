@@ -1,6 +1,6 @@
 # package local-echo needs git for installation
 # alpine image of node does not have git installed
-FROM node:16 AS build
+FROM node:18 AS build
 
 # create the directory "app" inside the docker image and set it to the default directory
 WORKDIR /app
