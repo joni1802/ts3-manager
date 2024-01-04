@@ -13,6 +13,7 @@ const { logger, whitelist } = require("../utils");
 const { Socket } = require("net");
 const Busboy = require("busboy");
 const Path = require("path");
+const fetch = require("node-fetch");
 
 /**
  * Get the ip address or hostname of the TeamSpeak server by decoding the cookie
