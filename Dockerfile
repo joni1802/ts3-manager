@@ -1,38 +1,29 @@
 # package local-echo needs git for installation
 # alpine image of node does not have git installed
-FROM node:16 AS build
+FROM node:16 as build
 
 # create the directory "app" inside the docker image and set it to the default directory
-WORKDIR /app
+WORKDIR /app 
 
 # copy the files into the workdir (node_modules are excluded by ignore file)
-COPY . .
+COPY . . 
 
-ENV UI_DIR ./packages/ui
+# download all the packages for the ui and the server
+# build app for production with minification
+RUN npm install --prefix ./packages/ui && \
+  npm run --prefix ./packages/ui && \
+  npm install --prefix ./packages/server
 
-# download all the packages for the ui and build app for production with minification
-RUN npm install --prefix ${UI_DIR} && npm run --prefix ${UI_DIR} build
+FROM node:21-alpine
 
+WORKDIR /app 
 
-FROM node:lts-alpine
-
-# the webserver will look for the environment variable "PORT"
-# otherwise the default port is hard coded as 3000
-ENV PORT 8080
-
-# set directory for frontend and backend
-ENV SERVER_DIR ./packages/server
-
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-# only copy the relevant dist and backend files
 COPY --from=build /app/packages/ui/dist ./packages/ui/dist
-COPY ./packages/server ./packages/server
+COPY --from=build /app/packages/server ./packages/server
 
-# download all the packages for the backend
-RUN npm install --prefix ${SERVER_DIR}
+# the webserver will look for the environment variables "PORT" and "NODE_ENV"
+ENV PORT 8080
+ENV NODE_ENV=production
 
 # the webserver port
 EXPOSE ${PORT}
