@@ -11,10 +11,10 @@ COPY . .
 # download all the packages for the ui and the server
 # build app for production with minification
 RUN npm install --prefix ./packages/ui && \
-  npm run --prefix ./packages/ui && \
+  npm run build --prefix ./packages/ui && \
   npm install --prefix ./packages/server
 
-FROM node:21-alpine
+FROM node:22-alpine
 
 WORKDIR /app 
 
