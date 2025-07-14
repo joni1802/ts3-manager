@@ -6,6 +6,7 @@
         v-if="connected"
       ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
+      <language-switcher></language-switcher>
       <dark-mode-switch></dark-mode-switch>
       <file-upload-icon v-if="connected"></file-upload-icon>
       <bell-icon v-if="connected"></bell-icon>
@@ -85,19 +86,24 @@ export default {
     FileUploadIcon: () => import("@/components/FileUploadIcon"),
     Logo: () => import("@/components/Logo"),
     ServerSelection: () => import("@/components/ServerSelection"),
+    LanguageSwitcher: () => import("@/components/LanguageSwitcher"),
   },
   data() {
     return {
       mini: true,
       drawer: null,
-      menuEntries: [
+    };
+  },
+  computed: {
+    menuEntries() {
+      return [
         {
-          title: "Server List",
+          title: this.$t('navigation.servers'),
           icon: "dns",
           route: { name: "servers" },
         },
         {
-          title: "Server Viewer",
+          title: this.$t('navigation.dashboard'),
           icon: "remove_red_eye",
           route: { name: "serverviewer" },
         },
@@ -107,12 +113,12 @@ export default {
           route: { name: "chat" },
         },
         {
-          title: "File Browser",
+          title: this.$t('navigation.file_browser'),
           icon: "mdi-folder",
           route: { name: "files" },
         },
         {
-          title: "Server Log",
+          title: this.$t('navigation.server_logs'),
           icon: "mdi-file-document-outline",
           route: { name: "logs" },
         },
@@ -122,7 +128,7 @@ export default {
           route: { name: "snapshot" },
         },
         {
-          title: "Server Query",
+          title: this.$t('navigation.console'),
           icon: "mdi-console",
           route: { name: "console" },
         },
@@ -137,28 +143,27 @@ export default {
           route: { name: "apikeys" },
         },
         {
-          title: "Ban List",
+          title: this.$t('navigation.bans'),
           icon: "not_interested",
           route: { name: "bans" },
         },
         {
-          title: "Complaints List",
+          title: this.$t('navigation.complaints'),
           icon: "warning",
           route: { name: "complaints" },
         },
-
         {
-          title: "List All Clients",
+          title: this.$t('navigation.clients'),
           icon: "person",
           route: { name: "clients" },
         },
         {
-          title: "Server Groups",
+          title: this.$t('navigation.server_groups'),
           icon: "group",
           route: { name: "servergroups" },
         },
         {
-          title: "Channel Groups",
+          title: this.$t('navigation.channel_groups'),
           icon: "mdi-hexagon-slice-4",
           route: { name: "channelgroups" },
         },
@@ -194,14 +199,12 @@ export default {
           ],
         },
         {
-          title: "Logout",
+          title: this.$t('common.logout'),
           icon: "exit_to_app",
           route: { name: "logout" },
         },
-      ],
-    };
-  },
-  computed: {
+      ];
+    },
     connected() {
       return this.$store.state.query.connected;
     },
