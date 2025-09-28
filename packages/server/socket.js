@@ -8,7 +8,7 @@ socket.init = (server, corsOptions) => {
   });
   const crypto = require("crypto");
   const jwt = require("jsonwebtoken");
-  const { logger, whitelist } = require("./utils");
+  const { logger, whitelist, sanatizer } = require("./utils");
   const cookie = require("cookie");
   const { TeamSpeak } = require("ts3-nodejs-library");
 
@@ -163,13 +163,15 @@ socket.init = (server, corsOptions) => {
      */
     socket.on("teamspeak-connect", async (options, fn) => {
       try {
-        whitelist.check(options.host);
+        const validOptions = sanatizer.sanatizeOptions(options);
 
-        ServerQuery = await TeamSpeak.connect(options);
+        whitelist.check(validOptions.host);
+
+        ServerQuery = await TeamSpeak.connect(validOptions);
 
         log.info("ServerQuery connected");
 
-        token = jwt.sign(options, config.secret);
+        token = jwt.sign(validOptions, config.secret);
 
         registerEvents(ServerQuery, log, socket);
 
