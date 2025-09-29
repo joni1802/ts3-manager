@@ -35,11 +35,13 @@ const sanatizeUsername = function (input) {
  * @returns {String|Number}
  */
 const sanatizePort = function (input) {
-  if (typeof input === "number") {
-    return input;
-  }
+  const port = Number(input);
 
-  return input.replace(/[^0-9]/g, "");
+  if (port > 0 && port < 65536) {
+    return port;
+  } else {
+    throw new Error("No valid port number");
+  }
 };
 
 /**
