@@ -80,7 +80,7 @@ const actions = {
     for (let clientDbId of clientDbIdList) {
       try {
         // The serveradmin has no database data
-        if (clientDbId !== 1) {
+        if (clientDbId !== "1") {
           let clientDbInfo = await dispatch("getClientDbInfo", clientDbId);
 
           // If client has an avatar

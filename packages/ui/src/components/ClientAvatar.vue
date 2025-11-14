@@ -14,7 +14,7 @@
 <script>
 export default {
   props: {
-    clientDbId: Number,
+    clientDbId: String,
   },
   data() {
     return {

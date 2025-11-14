@@ -19,7 +19,7 @@ const TeamSpeak = Object.create(new EventTarget());
 const handleError = (error, resolve, reject) => {
   if (error.connected) {
     // Ignore empty result error e.g. an empty permissionlist
-    if (error.id === 1281) {
+    if (error.id === "1281") {
       resolve([]);
     } else {
       reject(error);
