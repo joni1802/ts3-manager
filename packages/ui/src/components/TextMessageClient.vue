@@ -1,7 +1,7 @@
 <template lang="html">
   <v-list-item @click="$emit('click', client)">
     <v-list-item-avatar>
-      <client-avatar :clientDbId="client.client_database_id"> </client-avatar>
+      <client-avatar :clientDbId="client.clientDatabaseId"> </client-avatar>
     </v-list-item-avatar>
     <v-badge color="error" :value="!!badgeValue">
       <template #badge>
@@ -9,7 +9,7 @@
       </template>
       <v-list-item-content>
         <v-list-item-title>
-          {{ client.client_nickname }} <v-icon>{{ statusIcon }}</v-icon>
+          {{ client.clientNickname }} <v-icon>{{ statusIcon }}</v-icon>
         </v-list-item-title>
       </v-list-item-content>
     </v-badge>
@@ -30,11 +30,11 @@ export default {
   },
   computed: {
     statusIcon() {
-      if (this.client.client_away === 1) {
+      if (this.client.clientAway === 1) {
         return "cancel_presentation";
-      } else if (this.client.client_output_muted === 1) {
+      } else if (this.client.clientOutputMuted === 1) {
         return "volume_off";
-      } else if (this.client.client_input_muted === 1) {
+      } else if (this.client.clientInputMuted === 1) {
         return "mic_off";
       }
     },

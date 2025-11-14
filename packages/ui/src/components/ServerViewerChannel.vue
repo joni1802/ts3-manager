@@ -2,10 +2,10 @@
   <div>
     <v-menu offset-y max-width="300px">
       <template #activator="{ on }">
-        <v-list-item v-if="isSpacer(channel.channel_name)" dense v-on="on">
+        <v-list-item v-if="isSpacer(channel.channelName)" dense v-on="on">
           <v-list-item-content>
             <v-list-item-title>
-              <spacer :channelName="channel.channel_name"></spacer>
+              <spacer :channelName="channel.channelName"></spacer>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -15,7 +15,7 @@
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
-              {{ channel.channel_name }}
+              {{ channel.channelName }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -142,7 +142,7 @@ export default {
     },
     moveClient() {
       return this.$TeamSpeak.execute("clientmove", {
-        clid: this.queryUser.client_id,
+        clid: this.queryUser.clientId,
         cid: this.channel.cid,
       });
     },

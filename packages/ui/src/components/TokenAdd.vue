@@ -88,7 +88,7 @@ export default {
     availableChannels() {
       return this.channels.map((channel) => {
         return {
-          text: channel.channel_name,
+          text: channel.channelName,
           value: channel.cid,
         };
       });

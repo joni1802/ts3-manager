@@ -100,17 +100,17 @@ export default {
             instance: 0,
             reverse: 1,
             lines: 100,
-            begin_pos: lastPosition,
+            beginPos: lastPosition,
           });
 
           let parsedLogs = this.getParsedLogs(logs);
 
           logView.push(...parsedLogs);
 
-          lastPosition = logs[0].last_pos;
+          lastPosition = logs[0].lastPos;
           lastDate = parsedLogs[parsedLogs.length - 1].timestamp;
 
-          if (logs[0].last_pos === 0) stop = true;
+          if (logs[0].lastPos === 0) stop = true;
           if (lastDate.getTime() < date.getTime()) stop = true;
         }
       } catch (err) {

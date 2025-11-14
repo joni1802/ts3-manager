@@ -3,17 +3,17 @@
     <v-select
       outlined
       :items="serverList"
-      item-value="virtualserver_id"
+      item-value="virtualserverId"
       :item-disabled="checkServerStatus"
       hide-details
       :value="selectedSid"
       @click="setServerList"
       @change="switchServer"
-      item-text="virtualserver_name"
+      item-text="virtualserverName"
       placeholder="Select A Server"
     >
       <template #item="{ item }">
-        {{ item.virtualserver_name }} (sid: {{ item.virtualserver_id }})
+        {{ item.virtualserverName }} (sid: {{ item.virtualserverId }})
       </template>
     </v-select>
   </v-col>
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     checkServerStatus(server) {
-      if (server.virtualserver_status === "online") {
+      if (server.virtualserverStatus === "online") {
         return false;
       } else {
         return true;

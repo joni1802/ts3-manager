@@ -84,8 +84,8 @@ const actions = {
           let clientDbInfo = await dispatch("getClientDbInfo", clientDbId);
 
           // If client has an avatar
-          if (clientDbInfo.client_flag_avatar) {
-            let fileName = `/avatar_${clientDbInfo.client_base64HashClientUID}`;
+          if (clientDbInfo.clientFlagAvatar) {
+            let fileName = `/avatar_${clientDbInfo.clientBase64HashClientUID}`;
             let avatarFileInfo = await dispatch("getAvatarFileInfo", fileName);
             let currentAvatar = state.files.find(
               (avatar) => avatar.name === avatarFileInfo.name

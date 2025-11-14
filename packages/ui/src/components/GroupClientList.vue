@@ -20,10 +20,10 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ client.client_nickname }} ({{ client.cldbid }})
+                  {{ client.clientNickname }} ({{ client.cldbid }})
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ client.client_unique_identifier }}
+                  {{ client.clientUniqueIdentifier }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </template>
@@ -58,10 +58,10 @@
                     </v-list-item-action>
                     <v-list-item-content>
                       <v-list-item-title>
-                        {{ client.client_nickname }} ({{ client.cldbid }})
+                        {{ client.clientNickname }} ({{ client.cldbid }})
                       </v-list-item-title>
                       <v-list-item-subtitle>
-                        {{ client.client_unique_identifier }}
+                        {{ client.clientUniqueIdentifier }}
                       </v-list-item-subtitle>
                     </v-list-item-content>
                   </template>
@@ -125,7 +125,7 @@ export default {
       return this.clientDbList.filter((dbClient) => {
         return (
           !this.value.find((client) => client.cldbid === dbClient.cldbid) &&
-          regex.test(dbClient.client_nickname)
+          regex.test(dbClient.clientNickname)
         );
       });
     },
@@ -135,7 +135,7 @@ export default {
       return this.clientDbList.filter((dbClient) => {
         return (
           this.value.find(({ cldbid }) => cldbid === dbClient.cldbid) &&
-          regex.test(dbClient.client_nickname)
+          regex.test(dbClient.clientNickname)
         );
       });
     },

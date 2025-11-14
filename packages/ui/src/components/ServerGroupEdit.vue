@@ -66,9 +66,9 @@ export default {
     availableClients() {
       return this.clients.map((client) => {
         return {
-          text: `${client.client_nickname} (${client.cldbid})`,
+          text: `${client.clientNickname} (${client.cldbid})`,
           value: client.cldbid,
-          uid: client.client_unique_identifier,
+          uid: client.clientUniqueIdentifier,
         };
       });
     },

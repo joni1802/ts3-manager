@@ -79,15 +79,15 @@ export default {
     },
     getAvailablePort() {
       return (
-        Math.max(...this.servers.map((server) => server.virtualserver_port)) + 1
+        Math.max(...this.servers.map((server) => server.virtualserverPort)) + 1
       );
     },
     async createServer() {
       try {
         let [response] = await this.$TeamSpeak.execute("servercreate", {
-          virtualserver_name: this.serverName,
-          virtualserver_port: this.serverPort,
-          virtualserver_maxclients: this.maxClients,
+          virtualserverName: this.serverName,
+          virtualserverPort: this.serverPort,
+          virtualserverMaxclients: this.maxClients,
         });
 
         this.token = response.token;

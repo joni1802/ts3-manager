@@ -5,12 +5,12 @@
         <v-list-item v-on="on">
           <v-list-item-avatar>
             <client-avatar
-              :clientDbId="client.client_database_id"
+              :clientDbId="client.clientDatabaseId"
             ></client-avatar>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
-              {{ client.client_nickname }} <v-icon>{{ statusIcon }}</v-icon>
+              {{ client.clientNickname }} <v-icon>{{ statusIcon }}</v-icon>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -61,7 +61,7 @@
         <v-list-item
           :to="{
             name: 'client-ban',
-            params: { cldbid: client.client_database_id },
+            params: { cldbid: client.clientDatabaseId },
           }"
         >
           <v-list-item-action>
@@ -131,11 +131,11 @@ export default {
   },
   computed: {
     statusIcon() {
-      if (this.client.client_away === 1) {
+      if (this.client.clientAway === 1) {
         return "cancel_presentation";
-      } else if (this.client.client_output_muted === 1) {
+      } else if (this.client.clientOutputMuted === 1) {
         return "volume_off";
-      } else if (this.client.client_input_muted === 1) {
+      } else if (this.client.clientInputMuted === 1) {
         return "mic_off";
       }
     },

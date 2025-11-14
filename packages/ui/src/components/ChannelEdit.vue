@@ -51,8 +51,8 @@ export default {
       let newChannelProps = { ...this.channel, ...channelProps };
 
       if (
-        newChannelProps.channel_flag_permanent === 0 &&
-        newChannelProps.channel_flag_semi_permanent === 0
+        newChannelProps.channelFlagPermanent === 0 &&
+        newChannelProps.channelFlagSemiPermanent === 0
       ) {
         return true;
       } else {

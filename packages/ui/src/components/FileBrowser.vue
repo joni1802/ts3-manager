@@ -101,7 +101,7 @@ export default {
         return channels.map((channel) => {
           return {
             id: channel.cid,
-            name: channel.channel_name,
+            name: channel.channelName,
             cid: channel.cid,
             children: [],
           };

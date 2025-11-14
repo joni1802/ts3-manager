@@ -93,11 +93,11 @@ export default {
 
         return {
           id: key.id,
-          clientNickname: client ? client.client_nickname : "serveradmin",
+          clientNickname: client ? client.clientNickname : "serveradmin",
           cldbid: key.cldbid,
           scope: key.scope,
-          createdAt: new Date(key.created_at * 1000).toLocaleString(),
-          expiresAt: new Date(key.expires_at * 1000).toLocaleString(),
+          createdAt: new Date(key.createdAt * 1000).toLocaleString(),
+          expiresAt: new Date(key.expiresAt * 1000).toLocaleString(),
         };
       });
     },

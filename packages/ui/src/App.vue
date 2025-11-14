@@ -20,7 +20,7 @@ export default {
       let { client } = e.detail;
 
       try {
-        if (client.clid === this.$store.state.query.queryUser.client_id) {
+        if (client.clid === this.$store.state.query.queryUser.clientId) {
           let queryUser = await this.$TeamSpeak
             .execute("whoami")
             .then((list) => list[0]);

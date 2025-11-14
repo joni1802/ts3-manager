@@ -66,7 +66,7 @@ export default {
     channelSelection() {
       return this.channels.map((channel) => {
         return {
-          text: channel.channel_name,
+          text: channel.channelName,
           value: channel.cid,
         };
       });
@@ -74,9 +74,9 @@ export default {
     clientSelection() {
       return this.clients.map((client) => {
         return {
-          text: `${client.client_nickname} (${client.cldbid})`,
+          text: `${client.clientNickname} (${client.cldbid})`,
           value: client.cldbid,
-          uid: client.client_unique_identifier,
+          uid: client.clientUniqueIdentifier,
         };
       });
     },
@@ -85,7 +85,7 @@ export default {
     getDefaultChannelGroup() {
       return this.$TeamSpeak
         .execute("serverinfo")
-        .then((info) => info[0].virtualserver_default_channel_group);
+        .then((info) => info[0].virtualserverDefaultChannelGroup);
     },
     getChannelGroup() {
       return this.$TeamSpeak

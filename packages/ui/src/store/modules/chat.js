@@ -39,12 +39,12 @@ const mutations = {
 const actions = {
   async handleReceivedMessages({ dispatch, rootState }, notification) {
     try {
-      if (notification.invoker.clid !== rootState.query.queryUser.client_id) {
+      if (notification.invoker.clid !== rootState.query.queryUser.clientId) {
         dispatch("saveTextMessage", {
           targetmode: notification.targetmode,
           sender: {
             clid: notification.invoker.clid,
-            client_nickname: notification.invoker.client_nickname,
+            clientNickname: notification.invoker.clientNickname,
           },
           text: notification.msg,
           meta: {
@@ -68,7 +68,7 @@ const actions = {
 
             break;
           case 2:
-            target = rootState.query.queryUser.client_channel_id;
+            target = rootState.query.queryUser.clientChannelId;
 
             break;
           case 3:

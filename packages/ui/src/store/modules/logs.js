@@ -84,7 +84,7 @@ const actions = {
   //     if (state.logView.length) {
   //     }
 
-  //     let fileSize = state.logView.length ? state.logView[0].file_size : 0;
+  //     let fileSize = state.logView.length ? state.logView[0].fileSize : 0;
 
   //     await dispatch("syncLogViewState");
 
@@ -123,10 +123,10 @@ const actions = {
         instance: 0,
         reverse: 1,
         lines: 100,
-        begin_pos: lastPosition,
+        beginPos: lastPosition,
       });
 
-      lastPosition = logs[0].last_pos;
+      lastPosition = logs[0].lastPos;
 
       let parsedLogs = getParsedLogs(logs);
 

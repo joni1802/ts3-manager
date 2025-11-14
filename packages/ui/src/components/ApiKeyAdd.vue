@@ -20,7 +20,7 @@
               label="Client"
               chips
               :items="dbClients"
-              item-text="client_nickname"
+              item-text="clientNickname"
               item-value="cldbid"
               v-model="selectedClient"
               deletable-chips
@@ -28,7 +28,7 @@
               <template #item="{ item }">
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{ item.client_nickname }}
+                    {{ item.clientNickname }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     {{ item.cldbid }}

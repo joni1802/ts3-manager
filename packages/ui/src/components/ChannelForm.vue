@@ -118,7 +118,7 @@
                           <v-checkbox
                             label="Default Channel"
                             v-model="channelIsDefault"
-                            :disabled="!!initChannelData.channel_flag_default"
+                            :disabled="!!initChannelData.channelFlagDefault"
                           ></v-checkbox>
                         </v-flex>
                         <v-flex md4>
@@ -212,7 +212,7 @@ export default {
             channel.cid !== +this.$route.params.cid
           );
         })
-        .map((channel) => ({ text: channel.channel_name, value: channel.cid }));
+        .map((channel) => ({ text: channel.channelName, value: channel.cid }));
 
       // If the current channel is a sub channel
       if (this.parentChannelId !== 0) {
@@ -220,11 +220,11 @@ export default {
           (channel) => channel.cid === this.parentChannelId
         );
 
-        rootChannelName = rootChannel && rootChannel.channel_name;
-        // siblingChannels.unshift({text: parentChannel && parentChannel.channel_name, value: 0})
+        rootChannelName = rootChannel && rootChannel.channelName;
+        // siblingChannels.unshift({text: parentChannel && parentChannel.channelName, value: 0})
       } else {
-        rootChannelName = this.serverInfo.virtualserver_name;
-        // siblingChannels.unshift({text: this.serverInfo.virtualserver_name, value: 0})
+        rootChannelName = this.serverInfo.virtualserverName;
+        // siblingChannels.unshift({text: this.serverInfo.virtualserverName, value: 0})
       }
 
       siblingChannels.unshift({ text: rootChannelName, value: 0 });
@@ -233,62 +233,62 @@ export default {
     },
     selectedChannelOrder: {
       get() {
-        return this.channel.channel_order && this.channel.channel_order;
+        return this.channel.channelOrder && this.channel.channelOrder;
       },
       set(cid) {
-        this.channel.channel_order = cid;
+        this.channel.channelOrder = cid;
       },
     },
     channelName: {
       get() {
-        return this.channel.channel_name && this.channel.channel_name;
+        return this.channel.channelName && this.channel.channelName;
       },
       set(name) {
-        this.channel.channel_name = name;
+        this.channel.channelName = name;
       },
     },
     channelPassword: {
       get() {
-        return this.channel.channel_password && this.channel.channel_password;
+        return this.channel.channelPassword && this.channel.channelPassword;
       },
       set(password) {
-        this.channel.channel_password = password;
+        this.channel.channelPassword = password;
       },
     },
     channelTopic: {
       get() {
-        return this.channel.channel_topic && this.channel.channel_topic;
+        return this.channel.channelTopic && this.channel.channelTopic;
       },
       set(topic) {
-        this.channel.channel_topic = topic;
+        this.channel.channelTopic = topic;
       },
     },
     channelDescription: {
       get() {
         return (
-          this.channel.channel_description && this.channel.channel_description
+          this.channel.channelDescription && this.channel.channelDescription
         );
       },
       set(description) {
-        this.channel.channel_description = description;
+        this.channel.channelDescription = description;
       },
     },
     channelUnlimitedClients: {
       get() {
         return (
-          this.channel.channel_flag_maxclients_unlimited &&
-          this.channel.channel_flag_maxclients_unlimited
+          this.channel.channelFlagMaxclientsUnlimited &&
+          this.channel.channelFlagMaxclientsUnlimited
         );
       },
       set(limited) {
-        this.channel.channel_flag_maxclients_unlimited = +limited;
+        this.channel.channelFlagMaxclientsUnlimited = +limited;
       },
     },
     channelType: {
       get() {
-        if (this.channel.channel_flag_permanent) {
+        if (this.channel.channelFlagPermanent) {
           return "permanent";
-        } else if (this.channel.channel_flag_semi_permanent) {
+        } else if (this.channel.channelFlagSemiPermanent) {
           return "semi-permanent";
         } else {
           return "temporary";
@@ -296,45 +296,45 @@ export default {
       },
       set(type) {
         if (type === "permanent") {
-          this.channel.channel_flag_semi_permanent = 0;
-          this.channel.channel_flag_permanent = 1;
+          this.channel.channelFlagSemiPermanent = 0;
+          this.channel.channelFlagPermanent = 1;
         } else if (type === "semi-permanent") {
-          this.channel.channel_flag_semi_permanent = 1;
-          this.channel.channel_flag_permanent = 0;
+          this.channel.channelFlagSemiPermanent = 1;
+          this.channel.channelFlagPermanent = 0;
         } else {
-          this.channel.channel_flag_semi_permanent = 0;
-          this.channel.channel_flag_permanent = 0;
+          this.channel.channelFlagSemiPermanent = 0;
+          this.channel.channelFlagPermanent = 0;
         }
       },
     },
     channelMaxClients: {
       get() {
         return (
-          this.channel.channel_maxclients && this.channel.channel_maxclients
+          this.channel.channelMaxclients && this.channel.channelMaxclients
         );
       },
       set(number) {
-        this.channel.channel_maxclients = number;
+        this.channel.channelMaxclients = number;
       },
     },
     channelIsUnencrypted: {
       get() {
-        return typeof this.channel.channel_codec_is_unencrypted !== "undefined"
-          ? !!!this.channel.channel_codec_is_unencrypted
+        return typeof this.channel.channelCodecIsUnencrypted !== "undefined"
+          ? !!!this.channel.channelCodecIsUnencrypted
           : false;
       },
       set(encrypted) {
-        this.channel.channel_codec_is_unencrypted = +!encrypted;
+        this.channel.channelCodecIsUnencrypted = +!encrypted;
       },
     },
     channelIsDefault: {
       get() {
         return (
-          this.channel.channel_flag_default && this.channel.channel_flag_default
+          this.channel.channelFlagDefault && this.channel.channelFlagDefault
         );
       },
       set(flag) {
-        this.channel.channel_flag_default = +flag;
+        this.channel.channelFlagDefault = +flag;
       },
     },
   },
@@ -342,7 +342,7 @@ export default {
     setSpacer() {
       let randomId = Math.floor(Math.random() * 100);
 
-      this.channel.channel_name = `[${this.spacerAlignment}spacer${randomId}]${
+      this.channel.channelName = `[${this.spacerAlignment}spacer${randomId}]${
         this.specialSpacer || this.spacerText
       }`;
     },

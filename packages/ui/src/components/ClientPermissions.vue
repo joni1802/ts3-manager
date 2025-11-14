@@ -43,7 +43,7 @@ export default {
     clientSelection() {
       return this.clients.map((client) => {
         return {
-          text: client.client_nickname,
+          text: client.clientNickname,
           value: client.cldbid,
         };
       });
@@ -56,7 +56,7 @@ export default {
 
         return (
           client && {
-            text: client.client_nickname,
+            text: client.clientNickname,
             value: client.cldbid,
           }
         );

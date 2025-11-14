@@ -81,7 +81,7 @@ export default {
   methods: {
     getCurrentTeamSpeakVersion() {
       // Command "serverinfo" would not work here, because after login the
-      // returned object does not contain the property "virtualserver_version"
+      // returned object does not contain the property "virtualserverVersion"
       return this.$TeamSpeak
         .execute("version")
         .then((version) => version[0].version);
@@ -89,7 +89,7 @@ export default {
     getServerPlatform() {
       return this.$TeamSpeak
         .execute("serverinfo")
-        .then(([serverinfo]) => serverinfo.virtualserver_platform);
+        .then(([serverinfo]) => serverinfo.virtualserverPlatform);
     },
     getTeamSpeakVersionsUrl() {
       let base = process.env.VUE_APP_WEBSOCKET_URI || window.location.origin;

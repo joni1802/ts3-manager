@@ -42,8 +42,8 @@
                   </v-list>
                 </v-menu>
               </template>
-              <template #item.token_created="{ item }">
-                {{ new Date(item.token_created * 1000).toLocaleString() }}
+              <template #item.tokenCreated="{ item }">
+                {{ new Date(item.tokenCreated * 1000).toLocaleString() }}
               </template>
             </v-data-table>
           </v-card-text>
@@ -86,11 +86,11 @@ export default {
       headers: [
         { text: "", value: "actions", align: "start", sortable: false },
         { text: "Privilege Key", value: "token" },
-        { text: "Type", value: "token_type" },
-        { text: "Group", value: "token_id1" },
-        { text: "Channel", value: "token_id2" },
-        { text: "Created", value: "token_created" },
-        { text: "Description", value: "token_description" },
+        { text: "Type", value: "tokenType" },
+        { text: "Group", value: "tokenId1" },
+        { text: "Channel", value: "tokenId2" },
+        { text: "Created", value: "tokenCreated" },
+        { text: "Description", value: "tokenDescription" },
       ],
       rowsPerPage: [25, 50, 75, -1],
       selectedTableItems: [],

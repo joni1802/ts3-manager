@@ -7,12 +7,12 @@
           <v-card-text>
             <v-text-field
               label="Server Name"
-              v-model="serverInfo.virtualserver_name"
+              v-model="serverInfo.virtualserverName"
               :disabled="$store.state.query.loading"
             ></v-text-field>
             <v-text-field
               label="Password"
-              v-model="serverInfo.virtualserver_password"
+              v-model="serverInfo.virtualserverPassword"
               :disabled="$store.state.query.loading"
               type="password"
             ></v-text-field>
@@ -20,7 +20,7 @@
               <v-flex xs5>
                 <v-text-field
                   label="Maximum Clients"
-                  v-model="serverInfo.virtualserver_maxclients"
+                  v-model="serverInfo.virtualserverMaxclients"
                   :disabled="$store.state.query.loading"
                   type="number"
                 ></v-text-field>
@@ -28,7 +28,7 @@
               <v-flex xs5>
                 <v-text-field
                   label="Reserved Slots"
-                  v-model="serverInfo.virtualserver_reserved_slots"
+                  v-model="serverInfo.virtualserverReservedSlots"
                   :disabled="$store.state.query.loading"
                   type="number"
                 ></v-text-field>
@@ -36,7 +36,7 @@
             </v-layout>
             <v-textarea
               label="Welcome Message"
-              v-model="serverInfo.virtualserver_welcomemessage"
+              v-model="serverInfo.virtualserverWelcomemessage"
               :disabled="$store.state.query.loading"
             ></v-textarea>
 
@@ -49,12 +49,12 @@
                     <v-card-text>
                       <v-text-field
                         label="Message"
-                        v-model="serverInfo.virtualserver_hostmessage"
+                        v-model="serverInfo.virtualserverHostmessage"
                         :disabled="$store.state.query.loading"
                       ></v-text-field>
                       <v-select
                         label="Message Mode"
-                        v-model="serverInfo.virtualserver_hostmessage_mode"
+                        v-model="serverInfo.virtualserverHostmessageMode"
                         :items="messageModes"
                       ></v-select>
                     </v-card-text>
@@ -64,12 +64,12 @@
                     <v-card-text>
                       <v-text-field
                         label="Banner Gfx URL"
-                        v-model="serverInfo.virtualserver_hostbanner_gfx_url"
+                        v-model="serverInfo.virtualserverHostbannerGfxUrl"
                         :disabled="$store.state.query.loading"
                       ></v-text-field>
                       <v-text-field
                         label="URL"
-                        v-model="serverInfo.virtualserver_hostbanner_url"
+                        v-model="serverInfo.virtualserverHostbannerUrl"
                         :disabled="$store.state.query.loading"
                       ></v-text-field>
                       <v-layout justify-space-between>
@@ -77,7 +77,7 @@
                           <v-text-field
                             label="Gfx Interval"
                             v-model="
-                              serverInfo.virtualserver_hostbanner_gfx_interval
+                              serverInfo.virtualserverHostbannerGfxInterval
                             "
                             type="number"
                             :disabled="$store.state.query.loading"
@@ -87,7 +87,7 @@
                           <v-select
                             label="Resize"
                             :items="bannerModes"
-                            v-model="serverInfo.virtualserver_hostbanner_mode"
+                            v-model="serverInfo.virtualserverHostbannerMode"
                           ></v-select>
                         </v-flex>
                       </v-layout>
@@ -98,17 +98,17 @@
                     <v-card-text>
                       <v-text-field
                         label="Tooltip"
-                        v-model="serverInfo.virtualserver_hostbutton_tooltip"
+                        v-model="serverInfo.virtualserverHostbuttonTooltip"
                         :disabled="$store.state.query.loading"
                       ></v-text-field>
                       <v-text-field
                         label="URL"
-                        v-model="serverInfo.virtualserver_hostbutton_url"
+                        v-model="serverInfo.virtualserverHostbuttonUrl"
                         :disabled="$store.state.query.loading"
                       ></v-text-field>
                       <v-text-field
                         label="Icon URL"
-                        v-model="serverInfo.virtualserver_hostbutton_gfx_url"
+                        v-model="serverInfo.virtualserverHostbuttonGfxUrl"
                         :disabled="$store.state.query.loading"
                       ></v-text-field>
                     </v-card-text>
@@ -124,7 +124,7 @@
                       <v-text-field
                         label="Bandwidth Limit"
                         v-model="
-                          serverInfo.virtualserver_max_upload_total_bandwidth
+                          serverInfo.virtualserverMaxUploadTotalBandwidth
                         "
                         :disabled="$store.state.query.loading"
                         type="number"
@@ -135,7 +135,7 @@
                       </v-text-field>
                       <v-text-field
                         label="Upload Quota"
-                        v-model="serverInfo.virtualserver_upload_quota"
+                        v-model="serverInfo.virtualserverUploadQuota"
                         :disabled="$store.state.query.loading"
                         type="number"
                       >
@@ -151,7 +151,7 @@
                       <v-text-field
                         label="Bandwidth Limit"
                         v-model="
-                          serverInfo.virtualserver_max_download_total_bandwidth
+                          serverInfo.virtualserverMaxDownloadTotalBandwidth
                         "
                         :disabled="$store.state.query.loading"
                         type="number"
@@ -162,7 +162,7 @@
                       </v-text-field>
                       <v-text-field
                         label="Download Quota"
-                        v-model="serverInfo.virtualserver_download_quota"
+                        v-model="serverInfo.virtualserverDownloadQuota"
                         :disabled="$store.state.query.loading"
                         type="number"
                       >
@@ -184,7 +184,7 @@
                       <v-text-field
                         label="Reduced point per tick"
                         v-model="
-                          serverInfo.virtualserver_antiflood_points_tick_reduce
+                          serverInfo.virtualserverAntifloodPointsTickReduce
                         "
                         :disabled="$store.state.query.loading"
                         type="number"
@@ -192,7 +192,7 @@
                       <v-text-field
                         label="Points needed to block commands"
                         v-model="
-                          serverInfo.virtualserver_antiflood_points_needed_command_block
+                          serverInfo.virtualserverAntifloodPointsNeededCommand_block
                         "
                         :disabled="$store.state.query.loading"
                         type="number"
@@ -200,7 +200,7 @@
                       <v-text-field
                         label="Points needed to block IP"
                         v-model="
-                          serverInfo.virtualserver_antiflood_points_needed_ip_block
+                          serverInfo.virtualserverAntifloodPointsNeededIp_block
                         "
                         :disabled="$store.state.query.loading"
                         type="number"
@@ -217,14 +217,14 @@
                       <v-text-field
                         label="Needed Security Level"
                         v-model="
-                          serverInfo.virtualserver_needed_identity_security_level
+                          serverInfo.virtualserverNeededIdentitySecurityLevel
                         "
                         :disabled="$store.state.query.loading"
                         type="number"
                       ></v-text-field>
                       <v-select
                         label="Channel voice data encrypption"
-                        v-model="serverInfo.virtualserver_codec_encryption_mode"
+                        v-model="serverInfo.virtualserverCodecEncryptionMode"
                         :items="encryptionModes"
                       ></v-select>
                     </v-card-text>
@@ -241,7 +241,7 @@
                         :items="serverGroups"
                         item-text="name"
                         item-value="sgid"
-                        v-model="serverInfo.virtualserver_default_server_group"
+                        v-model="serverInfo.virtualserverDefaultServerGroup"
                         label="Server Group"
                         :disabled="$store.state.query.loading"
                       >
@@ -256,7 +256,7 @@
                         :items="channelGroups"
                         item-text="name"
                         item-value="cgid"
-                        v-model="serverInfo.virtualserver_default_channel_group"
+                        v-model="serverInfo.virtualserverDefaultChannelGroup"
                         label="Channel Group"
                         :disabled="$store.state.query.loading"
                       >
@@ -272,7 +272,7 @@
                         item-text="name"
                         item-value="cgid"
                         v-model="
-                          serverInfo.virtualserver_default_channel_admin_group
+                          serverInfo.virtualserverDefaultChannelAdminGroup
                         "
                         label="Channel Admin Group"
                         :disabled="$store.state.query.loading"
@@ -295,7 +295,7 @@
                             label="Autoban Count"
                             :disabled="$store.state.query.loading"
                             v-model="
-                              serverInfo.virtualserver_complain_autoban_count
+                              serverInfo.virtualserverComplainAutobanCount
                             "
                             type="number"
                           ></v-text-field>
@@ -305,7 +305,7 @@
                             label="Autoban Time"
                             :disabled="$store.state.query.loading"
                             v-model="
-                              serverInfo.virtualserver_complain_autoban_time
+                              serverInfo.virtualserverComplainAutobanTime
                             "
                             type="number"
                           >
@@ -319,7 +319,7 @@
                             label="Remove Time"
                             :disabled="$store.state.query.loading"
                             v-model="
-                              serverInfo.virtualserver_complain_remove_time
+                              serverInfo.virtualserverComplainRemoveTime
                             "
                             type="number"
                           >
@@ -337,7 +337,7 @@
                         label="Min clients in channel before silence"
                         :disabled="$store.state.query.loading"
                         v-model="
-                          serverInfo.virtualserver_min_clients_in_channel_before_forced_silence
+                          serverInfo.virtualserverMinClientsInChannel_beforeForcedSilence
                         "
                         type="number"
                       ></v-text-field>
@@ -345,7 +345,7 @@
                         label="Priority Speaker dim modificator"
                         :disabled="$store.state.query.loading"
                         v-model="
-                          serverInfo.virtualserver_priority_speaker_dimm_modificator
+                          serverInfo.virtualserverPrioritySpeakerDimmModificator
                         "
                         type="number"
                       ></v-text-field>
@@ -353,14 +353,14 @@
                         label="Delete delay for temporary channel"
                         :disabled="$store.state.query.loading"
                         v-model="
-                          serverInfo.virtualserver_channel_temp_delete_delay_default
+                          serverInfo.virtualserverChannelTempDeleteDelay_default
                         "
                         type="number"
                       ></v-text-field>
                       <v-text-field
                         label="Phonetic Name"
                         :disabled="$store.state.query.loading"
-                        v-model="serverInfo.virtualserver_name_phonetic"
+                        v-model="serverInfo.virtualserverNamePhonetic"
                       ></v-text-field>
                       <v-checkbox
                         label="Enable reporting to serverlist"
@@ -459,58 +459,58 @@ export default {
   computed: {
     weblistEnabled: {
       get() {
-        return this.serverInfo.virtualserver_weblist_enabled ? true : false;
+        return this.serverInfo.virtualserverWeblistEnabled ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_weblist_enabled = bool ? 1 : 0;
+        this.serverInfo.virtualserverWeblistEnabled = bool ? 1 : 0;
       },
     },
     logClient: {
       get() {
-        return this.serverInfo.virtualserver_log_client ? true : false;
+        return this.serverInfo.virtualserverLogClient ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_log_client = bool ? 1 : 0;
+        this.serverInfo.virtualserverLogClient = bool ? 1 : 0;
       },
     },
     logQuery: {
       get() {
-        return this.serverInfo.virtualserver_log_query ? true : false;
+        return this.serverInfo.virtualserverLogQuery ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_log_query = bool ? 1 : 0;
+        this.serverInfo.virtualserverLogQuery = bool ? 1 : 0;
       },
     },
     logChannel: {
       get() {
-        return this.serverInfo.virtualserver_log_channel ? true : false;
+        return this.serverInfo.virtualserverLogChannel ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_log_channel = bool ? 1 : 0;
+        this.serverInfo.virtualserverLogChannel = bool ? 1 : 0;
       },
     },
     logPermissions: {
       get() {
-        return this.serverInfo.virtualserver_log_permissions ? true : false;
+        return this.serverInfo.virtualserverLogPermissions ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_log_permissions = bool ? 1 : 0;
+        this.serverInfo.virtualserverLogPermissions = bool ? 1 : 0;
       },
     },
     logServer: {
       get() {
-        return this.serverInfo.virtualserver_log_server ? true : false;
+        return this.serverInfo.virtualserverLogServer ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_log_server = bool ? 1 : 0;
+        this.serverInfo.virtualserverLogServer = bool ? 1 : 0;
       },
     },
     logFileTransfer: {
       get() {
-        return this.serverInfo.virtualserver_log_filetransfer ? true : false;
+        return this.serverInfo.virtualserverLogFiletransfer ? true : false;
       },
       set(bool) {
-        this.serverInfo.virtualserver_log_filetransfer = bool ? 1 : 0;
+        this.serverInfo.virtualserverLogFiletransfer = bool ? 1 : 0;
       },
     },
   },

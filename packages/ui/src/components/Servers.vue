@@ -10,7 +10,7 @@
               "
               :headers="headers"
               :items="servers"
-              item-key="virtualserver_id"
+              item-key="virtualserverId"
               :footer-props="{ 'items-per-page-options': rowsPerPage }"
             >
               <!-- show-select
@@ -25,7 +25,7 @@
                   <v-list>
                     <v-list-item
                       :to="{ name: 'server-edit' }"
-                      :disabled="isOffline(item.virtualserver_status)"
+                      :disabled="isOffline(item.virtualserverStatus)"
                     >
                       <v-list-item-title> Edit Server </v-list-item-title>
                     </v-list-item>
@@ -35,30 +35,30 @@
                   </v-list>
                 </v-menu>
               </template>
-              <template #item.selected_sid="{ item }">
+              <template #item.selectedSid="{ item }">
                 <v-radio-group v-model="joinedServerId">
                   <v-radio
-                    :value="item.virtualserver_id"
+                    :value="item.virtualserverId"
                     :disabled="
-                      item.virtualserver_status === 'offline' ||
+                      item.virtualserverStatus === 'offline' ||
                       $store.state.query.loading
                     "
                   >
                   </v-radio>
                 </v-radio-group>
               </template>
-              <template #item.virtualserver_clientsonline_maxclients="{ item }">
-                {{ item.virtualserver_clientsonline }}/{{
-                  item.virtualserver_maxclients
+              <template #item.virtualserverClientsonlineMaxclients="{ item }">
+                {{ item.virtualserverClientsonline }}/{{
+                  item.virtualserverMaxclients
                 }}
               </template>
-              <template #item.virtualserver_uptime="{ item }">
-                {{ calcUptime(item.virtualserver_uptime) }}
+              <template #item.virtualserverUptime="{ item }">
+                {{ calcUptime(item.virtualserverUptime) }}
               </template>
-              <template #item.virtualserver_status="{ item }">
-                <!-- <v-switch v-model="onlineServerIds" :value="item.virtualserver_id"></v-switch> -->
+              <template #item.virtualserverStatus="{ item }">
+                <!-- <v-switch v-model="onlineServerIds" :value="item.virtualserverId"></v-switch> -->
                 <v-switch
-                  :input-value="!isOffline(item.virtualserver_status)"
+                  :input-value="!isOffline(item.virtualserverStatus)"
                   readonly
                   @click="changeServerStatus(item)"
                 >
@@ -124,11 +124,11 @@ export default {
         // Pick the first virtual server after login
         if (from.name === "login") {
           let onlineServer = vm.servers.find(
-            (server) => server.virtualserver_status === "online"
+            (server) => server.virtualserverStatus === "online"
           );
 
           if (onlineServer)
-            await vm.$TeamSpeak.selectServer(onlineServer.virtualserver_id);
+            await vm.$TeamSpeak.selectServer(onlineServer.virtualserverId);
         }
 
         // Is primary needed to get the used server id
@@ -152,32 +152,32 @@ export default {
         {
           text: "Select",
           align: "start",
-          value: "selected_sid",
+          value: "selectedSid",
           sortable: false,
         },
         {
           text: "Name",
-          value: "virtualserver_name",
+          value: "virtualserverName",
           sortable: false,
         },
         {
           text: "Port",
-          value: "virtualserver_port",
+          value: "virtualserverPort",
           sortable: false,
         },
         {
           text: "Clients",
-          value: "virtualserver_clientsonline_maxclients",
+          value: "virtualserverClientsonlineMaxclients",
           sortable: false,
         },
         {
           text: "Uptime (d:h:m:s)",
-          value: "virtualserver_uptime",
+          value: "virtualserverUptime",
           sortable: false,
         },
         {
           text: "Status",
-          value: "virtualserver_status",
+          value: "virtualserverStatus",
           sortable: false,
         },
       ],
@@ -192,7 +192,7 @@ export default {
   computed: {
     joinedServerId: {
       get() {
-        return this.queryUser.virtualserver_id;
+        return this.queryUser.virtualserverId;
       },
       async set(sid) {
         try {
@@ -214,8 +214,8 @@ export default {
       };
     },
     async changeServerStatus(server) {
-      if (this.isOffline(server.virtualserver_status)) {
-        await this.startServer(server.virtualserver_id);
+      if (this.isOffline(server.virtualserverStatus)) {
+        await this.startServer(server.virtualserverId);
       } else {
         this.openStopDialog(server);
       }
@@ -241,7 +241,7 @@ export default {
     async deleteServer() {
       try {
         await this.$TeamSpeak.execute("serverdelete", {
-          sid: this.selectedServer.virtualserver_id,
+          sid: this.selectedServer.virtualserverId,
         });
 
         this.deleteDialog = false;
@@ -267,14 +267,14 @@ export default {
     async stopServer() {
       try {
         await this.$TeamSpeak.execute("serverstop", {
-          sid: this.selectedServer.virtualserver_id,
+          sid: this.selectedServer.virtualserverId,
         });
 
         this.stopDialog = false;
 
         this.servers = await this.getServerList();
 
-        if (this.joinedServerId === this.selectedServer.virtualserver_id)
+        if (this.joinedServerId === this.selectedServer.virtualserverId)
           this.$store.dispatch("removeServerId");
       } catch (err) {
         this.$toast.error(err.message);
@@ -295,13 +295,13 @@ export default {
     },
     startUptimeCounters() {
       for (let i = 0; i < this.servers.length; i++) {
-        this.servers[i].virtualserver_uptime = parseInt(
-          this.servers[i].virtualserver_uptime
+        this.servers[i].virtualserverUptime = parseInt(
+          this.servers[i].virtualserverUptime
         );
 
-        if (!this.isOffline(this.servers[i].virtualserver_status)) {
+        if (!this.isOffline(this.servers[i].virtualserverStatus)) {
           this.counterIds[i] = setInterval(() => {
-            this.servers[i].virtualserver_uptime += 1;
+            this.servers[i].virtualserverUptime += 1;
           }, 1000);
         }
       }

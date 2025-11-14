@@ -50,8 +50,8 @@ export default {
     try {
       this.clientDbInfo = await this.getClientDbInfo();
 
-      this.form.ip = this.clientDbInfo.client_lastip;
-      this.form.uid = this.clientDbInfo.client_unique_identifier;
+      this.form.ip = this.clientDbInfo.clientLastip;
+      this.form.uid = this.clientDbInfo.clientUniqueIdentifier;
     } catch (err) {
       this.$toast.error(err.message);
     }

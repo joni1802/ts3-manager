@@ -183,10 +183,10 @@ TeamSpeak.fullLogView = async (instance = 0) => {
         instance,
         reverse: 1,
         lines: 100,
-        begin_pos: lastPosition,
+        beginPos: lastPosition,
       });
 
-      lastPosition = logs[0].last_pos;
+      lastPosition = logs[0].lastPos;
 
       allLogs.push(...logs);
     }

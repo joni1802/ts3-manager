@@ -3,12 +3,12 @@
     <v-layout>
       <v-flex md8 sm10 xs12 offset-md2 offset-sm1>
         <v-card>
-          <v-card-title>{{ serverInfo.virtualserver_name }}</v-card-title>
+          <v-card-title>{{ serverInfo.virtualserverName }}</v-card-title>
           <v-card-text>
             <v-treeview :items="channelTree" :open="itemIDs" dense>
               <template #label="{ item }">
                 <channel
-                  v-if="item.channel_name"
+                  v-if="item.channelName"
                   :channel="item"
                   :queryUser="queryUser"
                 ></channel>
@@ -68,8 +68,8 @@ export default {
       let out = [];
 
       for (let item of list) {
-        if (item.parent_item_id == itemID) {
-          let children = this.createNestedList(list, item.item_id);
+        if (item.parentItemId == itemID) {
+          let children = this.createNestedList(list, item.itemId);
 
           if (children.length) {
             item.children = children;
@@ -117,13 +117,13 @@ export default {
     },
     getSingleClientAvatar(e) {
       this.$store.dispatch("getClientAvatars", [
-        e.detail.client.client_database_id,
+        e.detail.client.clientDatabaseId,
       ]);
     },
     getAllClientAvatars() {
       this.$store.dispatch(
         "getClientAvatars",
-        this.clientList.map((client) => client.client_database_id)
+        this.clientList.map((client) => client.clientDatabaseId)
       );
     },
     getServerInfo() {
@@ -142,20 +142,20 @@ export default {
     },
     mergedList(clientlist, channellist) {
       return [...clientlist, ...channellist].map((item) => {
-        if (item.client_nickname) {
+        if (item.clientNickname) {
           return {
             id: `${item.clid}-client`,
-            name: item.client_nickname,
-            parent_item_id: item.cid,
-            item_id: null,
+            name: item.clientNickname,
+            parentItemId: item.cid,
+            itemId: null,
             ...item,
           };
         } else {
           return {
             id: `${item.cid}-channel`,
-            name: item.channel_name,
-            item_id: item.cid,
-            parent_item_id: item.pid,
+            name: item.channelName,
+            itemId: item.cid,
+            parentItemId: item.pid,
             ...item,
           };
         }
@@ -163,7 +163,7 @@ export default {
     },
     getCurrentChannel(channelList, queryUser) {
       return channelList.find(
-        (channel) => channel.cid === queryUser.client_channel_id
+        (channel) => channel.cid === queryUser.clientChannelId
       );
     },
     async updateCurrentChannel() {
@@ -198,7 +198,7 @@ export default {
   async created() {
     try {
       this.serverInfo = await this.getServerInfo();
-      this.serverInfo.unread_messages = 0;
+      this.serverInfo.unreadMessages = 0;
       this.channelList = await this.getChannelList();
       this.clientList = await this.getClientList();
       this.queryUser = await this.whoAmI();

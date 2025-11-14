@@ -176,7 +176,7 @@ export default {
         instance: 0,
         reverse: 1,
         lines: 100,
-        begin_pos: beginPosition,
+        beginPos: beginPosition,
       });
     },
 
@@ -286,7 +286,7 @@ export default {
      * Save the last returned log position.
      */
     logView(logView) {
-      this.lastPosition = logView[logView.length - 1].last_pos;
+      this.lastPosition = logView[logView.length - 1].lastPos;
     },
   },
   beforeRouteLeave(from, to, next) {

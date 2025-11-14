@@ -2,22 +2,22 @@
 <template lang="html">
   <v-card>
     <v-card-title>
-      Clients Online ({{ serverInfo.virtualserver_clientsonline }}/{{serverInfo.virtualserver_maxclients}})
+      Clients Online ({{ serverInfo.virtualserverClientsonline }}/{{serverInfo.virtualserverMaxclients}})
     </v-card-title>
     <v-card-text>
       <v-list>
         <v-list-item
           v-for="client in clientList"
-          :key="client.client_database_id"
+          :key="client.clientDatabaseId"
         >
           <v-list-item-avatar>
             <client-avatar
-              :clientDbId="client.client_database_id"
+              :clientDbId="client.clientDatabaseId"
             ></client-avatar>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
-              {{ client.client_nickname }}
+              {{ client.clientNickname }}
               <!-- <v-icon>{{ statusIcon }}</v-icon> -->
             </v-list-item-title>
           </v-list-item-content>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-// virtualserver_maxclients
+// virtualserverMaxclients
 export default {
   components: {
     ClientAvatar: () => import("@/components/ClientAvatar"),

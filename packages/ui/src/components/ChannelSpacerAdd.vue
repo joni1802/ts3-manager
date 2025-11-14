@@ -15,7 +15,7 @@ export default {
   data() {
     return {
       // set channel type to permanent by default
-      channel: { channel_flag_permanent: 1 },
+      channel: { channelFlagPermanent: 1 },
     };
   },
   methods: {
@@ -25,7 +25,7 @@ export default {
     async save(channelProps) {
       try {
         await this.createChannel({
-          channel_flag_permanent: 1,
+          channelFlagPermanent: 1,
           ...channelProps,
         });
 

@@ -7,7 +7,7 @@
           <v-card-text>
             <v-text-field
               label="Nickname"
-              :placeholder="client.client_nickname"
+              :placeholder="client.clientNickname"
               disabled
             ></v-text-field>
             <v-textarea label="Description" v-model="description"></v-textarea>
@@ -93,7 +93,7 @@ export default {
     getDefaultServerGroupId() {
       return this.$TeamSpeak
         .execute("serverinfo")
-        .then((info) => info[0].virtualserver_default_server_group);
+        .then((info) => info[0].virtualserverDefaultServerGroup);
     },
     getClientInfo() {
       return this.$TeamSpeak
@@ -117,12 +117,12 @@ export default {
       this.init();
     },
     getClientServergroups() {
-      return this.client.client_servergroups;
+      return this.client.clientServergroups;
     },
     getClientDescription() {
       // if not null
-      return this.client.client_description
-        ? this.client.client_description
+      return this.client.clientDescription
+        ? this.client.clientDescription
         : "";
     },
     addServergroups() {
@@ -153,14 +153,14 @@ export default {
       for (let sgid of list) {
         await this.$TeamSpeak.execute(command, {
           sgid: sgid,
-          cldbid: this.client.client_database_id,
+          cldbid: this.client.clientDatabaseId,
         });
       }
     },
     async changeDescription() {
       await this.$TeamSpeak.execute("clientedit", {
         clid: this.clientId,
-        client_description: this.description,
+        clientDescription: this.description,
       });
     },
     async init() {

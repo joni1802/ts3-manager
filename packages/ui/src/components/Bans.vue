@@ -56,7 +56,7 @@
                   </v-list>
                 </v-menu>
               </template>
-              <template #item.name_ip_uid="{ item }">
+              <template #item.nameIpUid="{ item }">
                 <span v-if="item.ip">ip = {{ item.ip }}, </span>
                 <span v-if="item.name">name = {{ item.name }}, </span>
                 <span v-if="item.uid">uid = {{ item.uid }}, </span>
@@ -104,7 +104,7 @@ export default {
         },
         {
           text: "Name/IP/UID",
-          value: "name_ip_uid",
+          value: "nameIpUid",
         },
         {
           text: "Reason",
@@ -129,7 +129,7 @@ export default {
       return this.banlist.map((ban) => {
         return {
           ...ban,
-          name_ip_uid: `${ban.name} ${ban.uid} ${ban.ip}`,
+          nameIpUid: `${ban.name} ${ban.uid} ${ban.ip}`,
         };
       });
     },

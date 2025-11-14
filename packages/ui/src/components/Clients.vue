@@ -54,12 +54,12 @@
                   </v-list>
                 </v-menu>
               </template>
-              <template #item.client_created="{ item }">
-                {{ new Date(item.client_created * 1000).toLocaleString() }}
+              <template #item.clientCreated="{ item }">
+                {{ new Date(item.clientCreated * 1000).toLocaleString() }}
               </template>
-              <template #item.client_lastconnected="{ item }">
+              <template #item.clientLastconnected="{ item }">
                 {{
-                  new Date(item.client_lastconnected * 1000).toLocaleString()
+                  new Date(item.clientLastconnected * 1000).toLocaleString()
                 }}
               </template>
             </v-data-table>
@@ -72,7 +72,7 @@
           <v-card-text>
             Do you really want to delete
             <b v-if="clientRemoveList.length === 1">{{
-              clientRemoveList[0].client_nickname
+              clientRemoveList[0].clientNickname
             }}</b>
             <b v-else>all selected clients</b> from the list?
           </v-card-text>
@@ -100,31 +100,31 @@ export default {
         },
         {
           text: "Last Nickname",
-          value: "client_nickname",
+          value: "clientNickname",
         },
         {
           text: "Unique Identifier",
-          value: "client_unique_identifier",
+          value: "clientUniqueIdentifier",
         },
         {
           text: "Created",
-          value: "client_created",
+          value: "clientCreated",
         },
         {
           text: "Last",
-          value: "client_lastconnected",
+          value: "clientLastconnected",
         },
         {
           text: "Total",
-          value: "client_totalconnections",
+          value: "clientTotalconnections",
         },
         {
           text: "Last IP",
-          value: "client_lastip",
+          value: "clientLastip",
         },
         {
           text: "Description",
-          value: "client_description",
+          value: "clientDescription",
         },
       ],
       clientdblist: [],

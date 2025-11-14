@@ -54,7 +54,7 @@ export default {
     channelSelection() {
       return this.channels.map((channel) => {
         return {
-          text: channel.channel_name,
+          text: channel.channelName,
           value: channel.cid,
         };
       });
@@ -74,7 +74,7 @@ export default {
     clientSelection() {
       return this.clients.map((client) => {
         return {
-          text: client.client_nickname,
+          text: client.clientNickname,
           value: client.cldbid,
         };
       });

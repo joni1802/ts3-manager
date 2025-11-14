@@ -2,7 +2,7 @@ const winston = require("winston");
 const path = require("path");
 
 // If there is a query parameter which contains a password, it will be not logged in clear text.
-// E.g channeledit channel_password=**** cid=5
+// E.g channeledit channelPassword=**** cid=5
 const hidePasswords = winston.format((info) => {
   let password = /password/;
   let queryParams = info.message.params;

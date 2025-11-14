@@ -109,12 +109,12 @@
                   </p>
                   <div v-for="message in serverTextMessages">
                     <div>
-                      <v-icon v-if="message.sender.clid === queryUser.client_id"
+                      <v-icon v-if="message.sender.clid === queryUser.clientId"
                         >arrow_upward</v-icon
                       >
                       <v-icon v-else>arrow_downward</v-icon>
                       {{ new Date(message.meta.timestamp).toLocaleString() }}
-                      <b>{{ message.sender.client_nickname }}</b>
+                      <b>{{ message.sender.clientNickname }}</b>
                     </div>
                     <div>
                       {{ message.text }}
@@ -128,12 +128,12 @@
                   </p>
                   <div v-for="message in channelTextMessages">
                     <div>
-                      <v-icon v-if="message.sender.clid === queryUser.client_id"
+                      <v-icon v-if="message.sender.clid === queryUser.clientId"
                         >arrow_upward</v-icon
                       >
                       <v-icon v-else>arrow_downward</v-icon>
                       {{ new Date(message.meta.timestamp).toLocaleString() }}
-                      <b>{{ message.sender.client_nickname }}</b>
+                      <b>{{ message.sender.clientNickname }}</b>
                     </div>
                     <div>
                       {{ message.text }}
@@ -154,12 +154,12 @@
                     <div v-if="message.target === textPrivateTab.target">
                       <div>
                         <v-icon
-                          v-if="message.sender.clid === queryUser.client_id"
+                          v-if="message.sender.clid === queryUser.clientId"
                           >arrow_upward</v-icon
                         >
                         <v-icon v-else>arrow_downward</v-icon>
                         {{ new Date(message.meta.timestamp).toLocaleString() }}
-                        <b>{{ message.sender.client_nickname }}</b>
+                        <b>{{ message.sender.clientNickname }}</b>
                       </div>
                       <div>
                         {{ message.text }}
@@ -197,13 +197,13 @@ export default {
           vm.$router.replace({
             name: "chat",
             params: {
-              cid: vm.queryUser.client_channel_id,
+              cid: vm.queryUser.clientChannelId,
             },
             // Send "openTextPrivate" from ServerViewer.vue
             query: vm.$route.query,
           });
         } else {
-          await vm.moveClient(vm.queryUser.client_id, to.params.cid);
+          await vm.moveClient(vm.queryUser.clientId, to.params.cid);
         }
       } catch (err) {
         vm.$toast.error(err.message);
@@ -227,7 +227,7 @@ export default {
       channelId: +this.$route.params.cid,
       /**
        * Clientlist of opened private chats
-       * @type {Array.<{clid: number, cid: number, client_database_id: number, client_nickname: string, client_type: number}>}
+       * @type {Array.<{clid: number, cid: number, clientDatabaseId: number, clientNickname: string, clientType: number}>}
        */
       textPrivateTargets: [],
       selectedTab: 0,
@@ -247,22 +247,22 @@ export default {
     },
     textServerTab() {
       return {
-        name: this.serverInfo.virtualserver_name,
-        target: this.serverInfo.virtualserver_id,
+        name: this.serverInfo.virtualserverName,
+        target: this.serverInfo.virtualserverId,
         targetmode: 3,
       };
     },
     textChannelTab() {
       return {
         name:
-          this.currentJoinedChannel && this.currentJoinedChannel.channel_name,
+          this.currentJoinedChannel && this.currentJoinedChannel.channelName,
         target: this.currentJoinedChannel && this.currentJoinedChannel.cid,
         targetmode: 2,
       };
     },
     textPrivateTabs() {
       return this.textPrivateTargets.map((target) => ({
-        name: target.client_nickname,
+        name: target.clientNickname,
         target: target.clid,
         targetmode: 1,
       }));
@@ -317,11 +317,11 @@ export default {
       this.hideChatTargets = false;
     },
     clientStatusIcon(client) {
-      if (client.client_away === 1) {
+      if (client.clientAway === 1) {
         return "cancel_presentation";
-      } else if (client.client_output_muted === 1) {
+      } else if (client.clientOutputMuted === 1) {
         return "volume_off";
-      } else if (client.client_input_muted === 1) {
+      } else if (client.clientInputMuted === 1) {
         return "mic_off";
       } else {
         return "fiber_manual_record";
@@ -374,7 +374,7 @@ export default {
       try {
         this.openChatOnMobile();
 
-        await this.moveClient(this.queryUser.client_id, cid);
+        await this.moveClient(this.queryUser.clientId, cid);
 
         this.$router.replace({
           name: "chat",
@@ -458,13 +458,13 @@ export default {
     },
     getSingleClientAvatar(e) {
       this.$store.dispatch("getClientAvatars", [
-        e.detail.client.client_database_id,
+        e.detail.client.clientDatabaseId,
       ]);
     },
     getAllClientAvatars() {
       this.$store.dispatch(
         "getClientAvatars",
-        this.clientList.map((client) => client.client_database_id)
+        this.clientList.map((client) => client.clientDatabaseId)
       );
     },
     keyPressed(e) {
@@ -475,8 +475,8 @@ export default {
       try {
         let { targetmode, target } = this.selectedChat;
         let sender = {
-          clid: this.queryUser.client_id,
-          client_nickname: this.queryUser.client_nickname,
+          clid: this.queryUser.clientId,
+          clientNickname: this.queryUser.clientNickname,
         };
 
         await this.$TeamSpeak.execute("sendtextmessage", {
@@ -485,7 +485,7 @@ export default {
           msg: this.message,
         });
 
-        // targetmode = number ,  sender = {clid, client_nickname}, text = string, target = number
+        // targetmode = number ,  sender = {clid, clientNickname}, text = string, target = number
         this.$store.dispatch("saveTextMessage", {
           targetmode,
           target,
