@@ -53,7 +53,7 @@ export default {
     return {
       URL: {
         ts3Manager: [
-          "https://api.github.com/repos/joni1802/ts3-manager/tags",
+          "https://api.github.com/repos/joni1802/ts3-manager/releases",
           "https://www.ts3.app/releases",
         ],
       },
@@ -117,20 +117,39 @@ export default {
     getLatestTSMRelease() {
       return fetch(this.URL.ts3Manager[0])
         .then((res) => res.json())
-        .then((data) => data[0]);
+        .then((releases) => releases.filter((release) => !release.prerelease))
+        .then((releases) => releases[0]);
     },
-    parseVersionNumber(version) {
-      let extractedVersion = version.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/);
+    // returns -1 if a is older than b
+    // returns 1 if a is newer than b
+    // returns 0 if both version are equal
+    compareVersionNumbers(a, b) {
+      // convert "v6.0.0-beta" to "6.0.0"
+      const versionRegex = /(\d+\.)*\d+/;
 
-      if (extractedVersion) {
-        let [_number, major, minor, patches] = extractedVersion;
+      const versionA = a.match(versionRegex);
+      const versionB = b.match(versionRegex);
 
-        return parseFloat(`${major}${minor}.${patches}`);
+      const versionAArray =
+        versionA && versionA.length ? versionA[0].split(".") : [];
+      const versionBArray =
+        versionB && versionB.length ? versionB[0].split(".") : [];
+
+      const length = Math.max(versionAArray.length, versionBArray.length);
+
+      for (let i = 0; i < length; i++) {
+        const numberA = +versionAArray[i] || 0;
+        const numberB = +versionBArray[i] || 0;
+
+        if (numberA !== numberB) {
+          return numberA > numberB ? 1 : -1;
+        }
       }
+
+      return 0;
     },
     updateAvailable(currentVersion, latestVersion) {
-      return this.parseVersionNumber(currentVersion) <
-        this.parseVersionNumber(latestVersion)
+      return this.compareVersionNumbers(currentVersion, latestVersion) === -1
         ? true
         : false;
     },
@@ -140,6 +159,7 @@ export default {
     async init() {
       try {
         this.latestTSMRelease = await this.getLatestTSMRelease();
+
         this.latestTSMVersion = this.latestTSMRelease.name;
         this.currentTeamSpeakVersion = await this.getCurrentTeamSpeakVersion();
         this.latestTeamSpeakVersion = await this.getLatestTeamSpeakVersion();
