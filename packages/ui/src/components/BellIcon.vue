@@ -32,6 +32,7 @@
           v-for="notification in notifications"
           :href="notification.link"
           target="_blank"
+          :key="notification.title"
         >
           <v-list-item-action>
             <v-icon>{{ notification.icon }}</v-icon>
