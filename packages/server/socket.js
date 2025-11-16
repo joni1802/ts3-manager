@@ -145,7 +145,7 @@ socket.init = (server, corsOptions) => {
 
         if (serverId) await ServerQuery.execute("use", { sid: serverId });
 
-        registerEvents(ServerQuery, log, socket);
+        registerEvents();
 
         log.info("ServerQuery reconnected");
 
@@ -172,8 +172,6 @@ socket.init = (server, corsOptions) => {
         log.info("ServerQuery connected");
 
         token = jwt.sign(validOptions, config.secret);
-
-        registerEvents(ServerQuery, log, socket);
 
         fn({ token });
       } catch (err) {
@@ -231,11 +229,11 @@ socket.init = (server, corsOptions) => {
     /**
      * Register TeamSpeak notifications.
      */
-    socket.on("teamspeak-registerevent", async ({ event, id }, fn) => {
+    socket.on("teamspeak-registerevents", async (fn) => {
       try {
-        let response = await ServerQuery.registerEvent(event, id);
+        registerEvents();
 
-        handleResponse(response, fn);
+        handleResponse("ok", fn);
       } catch (err) {
         handleServerQueryError(err, fn);
       }

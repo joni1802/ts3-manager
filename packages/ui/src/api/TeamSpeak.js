@@ -197,27 +197,12 @@ TeamSpeak.fullLogView = async (instance = 0) => {
   return allLogs;
 };
 
-TeamSpeak.registerEvent = (event, id = undefined) => {
+TeamSpeak.registerEvents = () => {
   return new Promise((resolve, reject) => {
-    socket.emit(
-      "teamspeak-registerevent",
-      {
-        event,
-        id,
-      },
-      (response) => handleResponse(response, resolve, reject)
+    socket.emit("teamspeak-registerevents", (response) =>
+      handleResponse(response, resolve, reject)
     );
   });
-};
-
-TeamSpeak.registerAllEvents = () => {
-  return Promise.all([
-    TeamSpeak.registerEvent("textserver"),
-    TeamSpeak.registerEvent("textchannel"),
-    TeamSpeak.registerEvent("textprivate"),
-    TeamSpeak.registerEvent("server"),
-    TeamSpeak.registerEvent("channel", 0),
-  ]);
 };
 
 TeamSpeak.unregisterEvent = () => {
@@ -231,7 +216,7 @@ TeamSpeak.unregisterEvent = () => {
 TeamSpeak.selectServer = (sid) => {
   return TeamSpeak.execute("use", { sid })
     .then(() => store.dispatch("saveServerId", sid))
-    .then(() => TeamSpeak.registerAllEvents())
+    .then(() => TeamSpeak.registerEvents())
     .then(() => TeamSpeak.execute("whoami"))
     .then((userInfo) => store.commit("saveUserInfo", userInfo[0]));
 };
