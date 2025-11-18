@@ -131,11 +131,11 @@ export default {
   },
   computed: {
     statusIcon() {
-      if (this.client.clientAway === 1) {
+      if (this.client.clientAway) {
         return "cancel_presentation";
-      } else if (this.client.clientOutputMuted === 1) {
+      } else if (this.client.clientOutputMuted) {
         return "volume_off";
-      } else if (this.client.clientInputMuted === 1) {
+      } else if (this.client.clientInputMuted) {
         return "mic_off";
       }
     },

@@ -317,11 +317,11 @@ export default {
       this.hideChatTargets = false;
     },
     clientStatusIcon(client) {
-      if (client.clientAway === 1) {
+      if (client.clientAway) {
         return "cancel_presentation";
-      } else if (client.clientOutputMuted === 1) {
+      } else if (client.clientOutputMuted) {
         return "volume_off";
-      } else if (client.clientInputMuted === 1) {
+      } else if (client.clientInputMuted) {
         return "mic_off";
       } else {
         return "fiber_manual_record";
