@@ -244,8 +244,6 @@ TeamSpeak.reconnect = () => {
               (list) => list[0]
             );
 
-            if (store.state.query.serverId) await TeamSpeak.registerEvents();
-
             store.dispatch("saveConnection", { queryUser, connected: true });
           } catch (err) {
             reject(err);
