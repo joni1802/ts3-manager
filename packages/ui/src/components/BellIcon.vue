@@ -106,9 +106,9 @@ export default {
       let serverPlatform = await this.getServerPlatform();
 
       // Use the linux version as a fallback if the platform is not listed in the response
-      let platformVersion = teamSpeakVersions[serverPlatform.toLowerCase()]
-        ? teamSpeakVersions[serverPlatform.toLowerCase()]
-        : teamSpeakVersions["linux"];
+      let platformVersion = !serverPlatform
+        ? teamSpeakVersions["linux"]
+        : teamSpeakVersions[serverPlatform.toLowerCase()];
 
       // Return the 64 bit version number by default if it is available for the platform
       return platformVersion["x86_64"]
