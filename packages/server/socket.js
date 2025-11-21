@@ -70,7 +70,7 @@ socket.init = (server, corsOptions) => {
     /**
      * Register all available ServerQuery events.
      */
-    const registerEvents = () => {
+    const initEventListeners = () => {
       ServerQuery.on("error", (err) => {
         log.error(err.stack);
 
@@ -143,9 +143,11 @@ socket.init = (server, corsOptions) => {
 
         ServerQuery = await TeamSpeak.connect(decoded);
 
-        if (serverId) await ServerQuery.execute("use", { sid: serverId });
+        if (serverId) {
+          await ServerQuery.execute("use", { sid: serverId });
 
-        registerEvents();
+          initEventListeners();
+        }
 
         log.info("ServerQuery reconnected");
 
@@ -227,11 +229,25 @@ socket.init = (server, corsOptions) => {
     });
 
     /**
-     * Register TeamSpeak notifications.
+     * Register TeamSpeak servernotifyregister. Used when a virtual server gets selected.
      */
     socket.on("teamspeak-registerevents", async (fn) => {
       try {
-        registerEvents();
+        // Check if the event listeners for the teamspeak notifications got already initialized.
+        // If this is not the case, eventNames() will just return in Array with the value [newListener].
+        // With v3 of the TS3-NodeJS-Library it registers server notifications automatically when you start listening of the events.
+        // To avoid registering teamspeak notifications multiple times if a server got stopped and restarted
+        // or a server got recovered from a snapshot, this check is needed.
+        if (ServerQuery.eventNames().length > 1) {
+          await ServerQuery.registerEvent("textserver");
+          await ServerQuery.registerEvent("textchannel");
+          await ServerQuery.registerEvent("textprivate");
+          await ServerQuery.registerEvent("server");
+          await ServerQuery.registerEvent("channel", 0);
+        } else {
+          // This will fire after login when no event are initialized.
+          initEventListeners();
+        }
 
         handleResponse("ok", fn);
       } catch (err) {

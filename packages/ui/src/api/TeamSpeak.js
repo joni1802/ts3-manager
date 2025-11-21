@@ -205,6 +205,14 @@ TeamSpeak.registerEvents = () => {
   });
 };
 
+TeamSpeak.registerEvents = () => {
+  return new Promise((resolve, reject) => {
+    socket.emit("teamspeak-registerevents", (response) => {
+      return handleResponse(response, resolve, reject);
+    });
+  });
+};
+
 TeamSpeak.unregisterEvent = () => {
   return new Promise((resolve, reject) => {
     socket.emit("teamspeak-unregisterevent", (response) =>
