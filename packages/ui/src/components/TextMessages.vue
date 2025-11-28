@@ -224,7 +224,7 @@ export default {
        * The id of the currently joined channel.
        * @type {number}
        */
-      channelId: +this.$route.params.cid,
+      channelId: this.$route.params.cid,
       /**
        * Clientlist of opened private chats
        * @type {Array.<{clid: number, cid: number, clientDatabaseId: number, clientNickname: string, clientType: number}>}
