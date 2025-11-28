@@ -116,7 +116,7 @@ export default {
   },
   methods: {
     isSpacer(channelName) {
-      return this.spacer.test(channelName) && this.channel.pid === 0;
+      return this.spacer.test(channelName) && this.channel.pid === "0";
     },
     confirmChannelDeletion(channel) {
       this.selectedChannel = {
