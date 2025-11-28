@@ -188,7 +188,7 @@ export default {
     return {
       initChannelData: {},
       channels: [],
-      parentChannelId: this.$route.query.pid ? +this.$route.query.pid : 0,
+      parentChannelId: this.$route.query.pid ? this.$route.query.pid : "0",
       serverInfo: {},
       specialSpacerList: ["", "---", "...", "-.-", "___", "-.."],
       specialSpacer: "",
@@ -209,13 +209,13 @@ export default {
         .filter((channel) => {
           return (
             channel.pid === this.parentChannelId &&
-            channel.cid !== +this.$route.params.cid
+            channel.cid !== this.$route.params.cid
           );
         })
         .map((channel) => ({ text: channel.channelName, value: channel.cid }));
 
       // If the current channel is a sub channel
-      if (this.parentChannelId !== 0) {
+      if (this.parentChannelId !== "0") {
         let rootChannel = this.channels.find(
           (channel) => channel.cid === this.parentChannelId
         );
@@ -233,6 +233,8 @@ export default {
     },
     selectedChannelOrder: {
       get() {
+        console.log(this.channel.channelOrder);
+
         return this.channel.channelOrder && this.channel.channelOrder;
       },
       set(cid) {
@@ -309,9 +311,7 @@ export default {
     },
     channelMaxClients: {
       get() {
-        return (
-          this.channel.channelMaxclients && this.channel.channelMaxclients
-        );
+        return this.channel.channelMaxclients && this.channel.channelMaxclients;
       },
       set(number) {
         this.channel.channelMaxclients = number;
