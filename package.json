@@ -1,6 +1,6 @@
 {
   "name": "ts3-manager",
-  "version": "v2.2.4",
+  "version": "v2.2.5",
   "workspaces": [
     "packages/*"
   ],
