@@ -243,7 +243,7 @@ export default {
       );
     },
     currentJoinedChannel() {
-      return this.channelList.find((channel) => channel.cid === this.channelId);
+      return this.channelList.find((channel) => channel.cid == this.channelId);
     },
     textServerTab() {
       return {
