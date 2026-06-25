@@ -9,48 +9,45 @@
               <v-layout justify-space-between wrap>
                 <v-flex xs6>
                   <v-text-field
-                    label="Server"
-                    placeholder="IP or Domain"
+                    :label="$t('login.server')"
+                    :placeholder="$t('login.server_placeholder')"
                     v-model="form.host"
                     :rules="[rules.required]"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs2>
                   <v-text-field
-                    label="Port"
+                    :label="$t('login.port')"
                     type="number"
                     v-model="form.queryport"
                     :rules="[rules.required]"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs3>
-                  <v-checkbox v-model="form.ssh" label="SSH">
+                  <v-checkbox v-model="form.ssh" :label="$t('login.ssh')">
                     <template #append>
                       <v-tooltip bottom>
                         <template #activator="{ on }">
                           <v-icon v-on="on">mdi-help-circle-outline</v-icon>
                         </template>
-                        <span
-                          >If SSH is checked (default), the connection to the
-                          ServerQuery is encrypted.</span
-                        >
+                        <span>{{ $t('login.ssh_tooltip') }}</span>
                       </v-tooltip>
                     </template>
                   </v-checkbox>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field
-                    label="Name"
+                    :label="$t('login.username')"
                     v-model="form.username"
                     :rules="[rules.required]"
-                    placeholder="e.g. serveradmin"
+                    :placeholder="$t('login.username_placeholder')"
                     name="username"
                     autocomplete="username"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field
-                    label="Password"
+                    :label="$t('login.password')"
                     type="password"
                     v-model="form.password"
                     :rules="[rules.required]"
@@ -60,7 +57,7 @@
                 </v-flex>
                 <v-flex xs12>
                   <v-checkbox
-                    label="Remember me"
+                    :label="$t('common.remember_me')"
                     v-model="rememberLogin"
                   ></v-checkbox>
                 </v-flex>
@@ -76,9 +73,9 @@
               @click="connect"
               :loading="loading"
             >
-              <v-icon>arrow_forward</v-icon>Connect
+              <v-icon>arrow_forward</v-icon>{{ $t('login.connect') }}
               <template #loader>
-                <span>Connecting...</span>
+                <span>{{ $t('common.loading') }}</span>
               </template>
             </v-btn>
           </v-card-actions>
